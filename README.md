@@ -12,6 +12,24 @@ FastAPI and PostgreSQL/pgvector foundation.
 2. Run `docker compose up --build`.
 3. Open `http://localhost:8000/docs`.
 
+Upload a PDF:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@tender.pdf"
+```
+
+The upload endpoint returns `202 Accepted`. Use `GET /api/v1/documents/{document_id}` to
+poll the processing status. At this stage digitally generated PDFs are supported; scanned
+documents return `no_extractable_text` until the OCR milestone is implemented.
+
+With the Docker stack running, execute an end-to-end smoke test:
+
+```bash
+uv run python scripts/smoke_ingestion.py
+```
+
 Windows helpers:
 
 ```powershell
@@ -31,4 +49,3 @@ uv run pytest
 
 Models, API keys, uploaded documents, and personal data are intentionally excluded from the
 repository.
-
