@@ -37,10 +37,13 @@ services:
       RETRIEVAL_LEXICAL_K: ${RETRIEVAL_LEXICAL_K:-20}
       RETRIEVAL_FINAL_K: ${RETRIEVAL_FINAL_K:-5}
       RRF_K: ${RRF_K:-60}
-      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      LLM_PROVIDER: ${LLM_PROVIDER:-extractive}
       LLM_MODEL: ${LLM_MODEL:-qwen3:4b}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-90}
+      QA_EVIDENCE_LIMIT: ${QA_EVIDENCE_LIMIT:-5}
+      QA_MAX_CLAIMS: ${QA_MAX_CLAIMS:-5}
     ports:
       - "8000:8000"
     volumes:
