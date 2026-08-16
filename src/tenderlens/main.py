@@ -15,6 +15,9 @@ from tenderlens.ingestion.chunking import PageAwareChunker
 from tenderlens.ingestion.extractor import PdfTextExtractor
 from tenderlens.ingestion.service import DocumentIngestionService
 from tenderlens.ingestion.storage import FileSystemDocumentStorage
+from tenderlens.retrieval.embeddings import FastEmbedEmbeddingProvider
+from tenderlens.retrieval.indexing import ChunkIndexingService
+from tenderlens.retrieval.service import HybridRetrievalService
 
 logger = structlog.get_logger(__name__)
 
@@ -43,8 +46,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 resolved_settings.chunk_overlap_chars,
             ),
         )
+        embedding_provider = FastEmbedEmbeddingProvider(
+            resolved_settings.embedding_model,
+            resolved_settings.embedding_dimensions,
+            resolved_settings.embedding_cache_dir,
+        )
+        indexing_service = ChunkIndexingService(
+            database.session_factory,
+            embedding_provider,
+        )
+        retrieval_service = HybridRetrievalService(
+            database.session_factory,
+            embedding_provider,
+            indexing_service,
+            dense_k=resolved_settings.retrieval_dense_k,
+            lexical_k=resolved_settings.retrieval_lexical_k,
+            default_limit=resolved_settings.retrieval_final_k,
+            rrf_k=resolved_settings.rrf_k,
+        )
         application.state.database = database
         application.state.ingestion_service = ingestion_service
+        application.state.retrieval_service = retrieval_service
         logger.info("application_started", environment=resolved_settings.app_env)
         try:
             yield

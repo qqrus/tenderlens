@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     BigInteger,
     CheckConstraint,
@@ -100,6 +101,7 @@ class DocumentChunk(Base):
     start_char: Mapped[int] = mapped_column(Integer)
     end_char: Mapped[int] = mapped_column(Integer)
     text: Mapped[str] = mapped_column(Text)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(384), nullable=True)
 
     document: Mapped[Document] = relationship(back_populates="chunks")
     page: Mapped[DocumentPage] = relationship(back_populates="chunks")
