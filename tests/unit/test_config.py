@@ -20,3 +20,7 @@ def test_upload_limit_is_exposed_in_bytes() -> None:
 def test_chunk_overlap_must_be_smaller_than_chunk_size() -> None:
     with pytest.raises(ValidationError):
         Settings(chunk_size_chars=200, chunk_overlap_chars=200)
+
+
+def test_zero_cost_answer_provider_is_default() -> None:
+    assert Settings().llm_provider == "extractive"
