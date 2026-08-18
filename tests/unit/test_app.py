@@ -13,7 +13,7 @@ def make_settings() -> Settings:
         database_url=SecretStr(
             "postgresql+asyncpg://tenderlens:tenderlens@localhost:5432/tenderlens_test"
         ),
-        cors_origins=["http://localhost:8501"],
+        cors_origins=["http://localhost:5173"],
     )
 
 
@@ -90,3 +90,19 @@ def test_unexpected_error_is_hidden_from_client() -> None:
         }
     }
     assert "sensitive" not in response.text
+
+
+def test_application_allows_configured_frontend_origin() -> None:
+    app = create_app(make_settings())
+
+    with TestClient(app) as client:
+        response = client.options(
+            "/api/v1/health/live",
+            headers={
+                "Origin": "http://localhost:5173",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"

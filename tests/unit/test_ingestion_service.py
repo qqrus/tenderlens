@@ -10,6 +10,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from starlette.datastructures import Headers
 
+from tenderlens.core.errors import AppError
 from tenderlens.db.base import Base
 from tenderlens.db.models.document import DocumentChunk, DocumentPage
 from tenderlens.domain.documents import DocumentStatus
@@ -78,6 +79,13 @@ async def test_service_processes_and_deduplicates_document(
     assert page_count == 1
     assert chunk_count == 1
 
+    documents, total = await service.list_documents(limit=10, offset=0)
+    source = await service.get_document_source(document.id)
+    assert total == 1
+    assert [item.id for item in documents] == [document.id]
+    assert source is not None
+    assert source[1].read_bytes() == content
+
 
 @pytest.mark.asyncio
 async def test_service_marks_document_failed_when_ocr_is_required(
@@ -91,3 +99,16 @@ async def test_service_marks_document_failed_when_ocr_is_required(
     assert processed is not None
     assert processed.status == DocumentStatus.FAILED.value
     assert processed.error_code == "no_extractable_text"
+
+
+@pytest.mark.asyncio
+async def test_service_reports_missing_source_file(
+    service: DocumentIngestionService,
+) -> None:
+    document, _ = await service.register_upload(upload(pdf_bytes("Budget: 100 RUB")))
+    service.storage.source_path(document.id).unlink()
+
+    with pytest.raises(AppError) as error:
+        await service.get_document_source(document.id)
+
+    assert error.value.code == "document_file_not_found"

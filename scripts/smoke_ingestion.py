@@ -97,6 +97,24 @@ def main() -> int:
                         "analysis ready: categories=4 "
                         f"penalty_page={penalty_risk['citation']['page_number']}"
                     )
+                    list_response = client.get(
+                        f"{API_URL}/documents",
+                        params={"limit": 100, "offset": 0},
+                    )
+                    list_response.raise_for_status()
+                    documents = list_response.json()
+                    if document_id not in {item["id"] for item in documents["items"]}:
+                        print("document list does not contain uploaded PDF", file=sys.stderr)
+                        return 1
+                    file_response = client.get(f"{API_URL}/documents/{document_id}/file")
+                    file_response.raise_for_status()
+                    if file_response.headers.get("content-type") != "application/pdf":
+                        print("document file has unexpected content type", file=sys.stderr)
+                        return 1
+                    if not file_response.content.startswith(b"%PDF-"):
+                        print("document file is not a PDF", file=sys.stderr)
+                        return 1
+                    print(f"frontend API ready: listed={documents['total']} pdf_download=ok")
                     return 0
                 if document["status"] == "failed":
                     print(
