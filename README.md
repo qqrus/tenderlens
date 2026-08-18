@@ -66,6 +66,22 @@ OPENAI_API_KEY=YOUR_LOCAL_SECRET
 If Ollama or OpenAI is unavailable during a request, TenderLens falls back to a verified
 extractive answer rather than returning an unsupported model claim.
 
+Extract key conditions and build a risk checklist:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents/DOCUMENT_ID/analysis
+```
+
+The analysis endpoint returns four condition categories: `deadline`, `budget`, `penalty`,
+and `requirement`. Each extracted condition includes an exact quote, page, chunk ID,
+page-relative character offsets, and a rule match score. Overlapping retrieval hits are
+deduplicated.
+
+The risk checklist is intentionally conservative. A risk based on a found condition carries
+the same verified citation. If a category is not found, TenderLens creates an ungrounded
+manual-review warning instead of claiming that the condition is absent from the original PDF.
+This checklist helps navigate the document and is not legal advice.
+
 With the Docker stack running, execute an end-to-end smoke test:
 
 ```bash

@@ -16,6 +16,10 @@ def create_sample_pdf(path: Path) -> None:
     pdf.showPage()
     pdf.drawString(72, 750, "Maximum budget: 1000000 RUB")
     pdf.showPage()
+    pdf.drawString(72, 750, "Penalty: 0.1% of contract value per day")
+    pdf.showPage()
+    pdf.drawString(72, 750, "Supplier must provide an ISO 9001 certificate")
+    pdf.showPage()
     pdf.save()
 
 
@@ -71,6 +75,27 @@ def main() -> int:
                     print(
                         f"grounded answer ready: mode={answer['answer_mode']} "
                         f"citation_page={answer['citations'][0]['page_number']}"
+                    )
+                    analysis_response = client.post(f"{API_URL}/documents/{document_id}/analysis")
+                    analysis_response.raise_for_status()
+                    analysis = analysis_response.json()
+                    found = set(analysis["coverage"]["found_categories"])
+                    expected = {"deadline", "budget", "penalty", "requirement"}
+                    if found != expected:
+                        print(
+                            f"analysis coverage mismatch: {sorted(found)}",
+                            file=sys.stderr,
+                        )
+                        return 1
+                    penalty_risk = next(
+                        risk for risk in analysis["risks"] if risk["rule_id"] == "penalty_exposure"
+                    )
+                    if penalty_risk["citation"]["page_number"] != 3:
+                        print("analysis cited the wrong penalty page", file=sys.stderr)
+                        return 1
+                    print(
+                        "analysis ready: categories=4 "
+                        f"penalty_page={penalty_risk['citation']['page_number']}"
                     )
                     return 0
                 if document["status"] == "failed":
