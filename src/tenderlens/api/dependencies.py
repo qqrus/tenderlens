@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
+from tenderlens.analysis.service import DocumentAnalysisService
 from tenderlens.ingestion.service import DocumentIngestionService
 from tenderlens.qa.service import GroundedQuestionAnsweringService
 from tenderlens.retrieval.service import HybridRetrievalService
@@ -37,4 +38,17 @@ def get_qa_service(request: Request) -> GroundedQuestionAnsweringService:
 QuestionAnsweringServiceDependency = Annotated[
     GroundedQuestionAnsweringService,
     Depends(get_qa_service),
+]
+
+
+def get_analysis_service(request: Request) -> DocumentAnalysisService:
+    service = request.app.state.analysis_service
+    if not isinstance(service, DocumentAnalysisService):
+        raise RuntimeError("Document analysis service is not configured.")
+    return service
+
+
+DocumentAnalysisServiceDependency = Annotated[
+    DocumentAnalysisService,
+    Depends(get_analysis_service),
 ]

@@ -24,3 +24,8 @@ def test_chunk_overlap_must_be_smaller_than_chunk_size() -> None:
 
 def test_zero_cost_answer_provider_is_default() -> None:
     assert Settings().llm_provider == "extractive"
+
+
+def test_analysis_limits_are_bounded() -> None:
+    with pytest.raises(ValidationError):
+        Settings(analysis_retrieval_limit=21)
