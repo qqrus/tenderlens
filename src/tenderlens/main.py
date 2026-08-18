@@ -5,6 +5,8 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from tenderlens.analysis.extractor import RuleBasedConditionExtractor
+from tenderlens.analysis.service import DocumentAnalysisService
 from tenderlens.api.router import api_router
 from tenderlens.core.config import Settings, get_settings
 from tenderlens.core.errors import register_error_handlers
@@ -95,10 +97,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             evidence_limit=resolved_settings.qa_evidence_limit,
             max_claims=resolved_settings.qa_max_claims,
         )
+        analysis_service = DocumentAnalysisService(
+            retrieval_service,
+            RuleBasedConditionExtractor(
+                resolved_settings.analysis_max_items_per_category,
+            ),
+            retrieval_limit=resolved_settings.analysis_retrieval_limit,
+        )
         application.state.database = database
         application.state.ingestion_service = ingestion_service
         application.state.retrieval_service = retrieval_service
         application.state.qa_service = qa_service
+        application.state.analysis_service = analysis_service
         logger.info("application_started", environment=resolved_settings.app_env)
         try:
             yield

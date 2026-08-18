@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = Field(default=90.0, ge=1, le=300)
     qa_evidence_limit: int = Field(default=5, ge=1, le=10)
     qa_max_claims: int = Field(default=5, ge=1, le=10)
+    analysis_retrieval_limit: int = Field(default=8, ge=1, le=20)
+    analysis_max_items_per_category: int = Field(default=5, ge=1, le=10)
 
     @model_validator(mode="after")
     def validate_chunk_settings(self) -> Self:
