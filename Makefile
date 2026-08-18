@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format typecheck migrate compose-up compose-down
+.PHONY: install dev test lint format typecheck evaluate migrate compose-up compose-down
 
 install:
 	uv sync --dev
@@ -19,6 +19,9 @@ format:
 
 typecheck:
 	uv run mypy src
+
+evaluate:
+	uv run python scripts/evaluate.py
 
 migrate:
 	uv run alembic upgrade head
