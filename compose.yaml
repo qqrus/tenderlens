@@ -23,7 +23,7 @@ services:
       APP_ENV: ${APP_ENV:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       API_PREFIX: ${API_PREFIX:-/api/v1}
-      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:5173"]}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:5173","http://127.0.0.1:5173"]}
       DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://tenderlens:tenderlens@postgres:5432/tenderlens}
       UPLOAD_DIR: ${UPLOAD_DIR:-data/uploads}
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-20}
@@ -42,7 +42,7 @@ services:
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-90}
-      QA_EVIDENCE_LIMIT: ${QA_EVIDENCE_LIMIT:-5}
+      QA_EVIDENCE_LIMIT: ${QA_EVIDENCE_LIMIT:-8}
       QA_MAX_CLAIMS: ${QA_MAX_CLAIMS:-5}
       ANALYSIS_RETRIEVAL_LIMIT: ${ANALYSIS_RETRIEVAL_LIMIT:-8}
       ANALYSIS_MAX_ITEMS_PER_CATEGORY: ${ANALYSIS_MAX_ITEMS_PER_CATEGORY:-5}
@@ -54,6 +54,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

@@ -106,3 +106,21 @@ def test_application_allows_configured_frontend_origin() -> None:
 
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+
+
+def test_development_application_allows_loopback_frontend_origin() -> None:
+    settings = make_settings()
+    settings.app_env = "development"
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        response = client.options(
+            "/api/v1/health/live",
+            headers={
+                "Origin": "http://127.0.0.1:5173",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5173"

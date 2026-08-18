@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format typecheck evaluate migrate compose-up compose-down
+.PHONY: install dev test lint format typecheck frontend-check evaluate migrate compose-up compose-down
 
 install:
 	uv sync --dev
@@ -19,6 +19,9 @@ format:
 
 typecheck:
 	uv run mypy src
+
+frontend-check:
+	cd frontend && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e
 
 evaluate:
 	uv run python scripts/evaluate.py

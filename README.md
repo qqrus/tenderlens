@@ -10,7 +10,15 @@ FastAPI and PostgreSQL/pgvector foundation.
 
 1. Copy `.env.example` to `.env`.
 2. Run `docker compose up --build`.
-3. Open `http://localhost:8000/docs`.
+3. Open the TenderLens interface at `http://localhost:5173`.
+
+The interface is Russian by default and can be switched to English with the `RU / EN`
+control. Exact quotes and PDF text always stay in the document's original language so that
+citations remain verifiable. API documentation is available separately at
+`http://localhost:8000/docs`.
+
+Docker Compose starts PostgreSQL, FastAPI, and the production-built React frontend. PDF files
+are downloaded through the checked API client and rendered locally by PDF.js.
 
 Upload a PDF:
 
@@ -132,6 +140,7 @@ Windows helpers:
 ```powershell
 .\scripts\dev.ps1
 .\scripts\test.ps1
+.\scripts\test-all.ps1
 ```
 
 ## Development checks
@@ -142,6 +151,13 @@ uv run ruff format --check .
 uv run ruff check .
 uv run mypy src
 uv run pytest
+cd frontend
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm test:e2e
 ```
 
 Models, API keys, uploaded documents, and personal data are intentionally excluded from the

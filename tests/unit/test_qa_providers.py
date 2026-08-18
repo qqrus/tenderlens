@@ -28,6 +28,11 @@ def evidence(text: str = "Maximum budget: 1000000 RUB") -> Evidence:
     )
 
 
+def evidence_with_id(text: str, evidence_id: str) -> Evidence:
+    item = evidence(text)
+    return Evidence(evidence_id=evidence_id, hit=item.hit)
+
+
 @pytest.mark.asyncio
 async def test_extractive_provider_returns_verbatim_evidence() -> None:
     item = evidence()
@@ -37,6 +42,23 @@ async def test_extractive_provider_returns_verbatim_evidence() -> None:
     assert draft.cannot_answer is False
     assert draft.claims[0].quote == item.hit.text
     assert draft.claims[0].evidence_id == "C1"
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_selects_relevant_sentence_across_evidence() -> None:
+    unrelated = evidence_with_id("Оплата выполняется в течение 30 дней.", "C1")
+    relevant = evidence_with_id(
+        "Общие положения. Участник должен предоставить сертификат и подтвердить опыт.",
+        "C2",
+    )
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какие требования предъявляются к участнику?",
+        [unrelated, relevant],
+    )
+
+    assert draft.claims[0].evidence_id == "C2"
+    assert draft.claims[0].quote == "Участник должен предоставить сертификат и подтвердить опыт."
 
 
 def test_prompt_marks_evidence_and_page() -> None:
