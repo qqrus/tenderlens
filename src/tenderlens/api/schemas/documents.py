@@ -24,3 +24,10 @@ class DocumentResponse(BaseModel):
 class DocumentUploadResponse(BaseModel):
     document: DocumentResponse
     deduplicated: bool
+
+
+class DocumentListResponse(BaseModel):
+    items: list[DocumentResponse]
+    total: int
+    limit: int
+    offset: int

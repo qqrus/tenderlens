@@ -1,3 +1,4 @@
+from pathlib import Path
 from uuid import UUID, uuid4
 
 import structlog
@@ -5,6 +6,7 @@ from fastapi import UploadFile
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from tenderlens.core.errors import AppError
 from tenderlens.db.models.document import Document
 from tenderlens.ingestion.chunking import PageAwareChunker
 from tenderlens.ingestion.extractor import PdfExtractionError, PdfTextExtractor
@@ -54,6 +56,23 @@ class DocumentIngestionService:
     async def get_document(self, document_id: UUID) -> Document | None:
         async with self.session_factory() as session:
             return await DocumentRepository(session).get(document_id)
+
+    async def list_documents(self, *, limit: int, offset: int) -> tuple[list[Document], int]:
+        async with self.session_factory() as session:
+            return await DocumentRepository(session).list_documents(limit=limit, offset=offset)
+
+    async def get_document_source(self, document_id: UUID) -> tuple[Document, Path] | None:
+        document = await self.get_document(document_id)
+        if document is None:
+            return None
+        source = self.storage.source_path(document_id)
+        if not source.is_file():
+            raise AppError(
+                code="document_file_not_found",
+                message="The original PDF is not available.",
+                status_code=404,
+            )
+        return document, source
 
     async def process(self, document_id: UUID) -> None:
         async with self.session_factory() as session:

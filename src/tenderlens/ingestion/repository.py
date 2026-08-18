@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tenderlens.db.models.document import Document, DocumentChunk, DocumentPage
@@ -18,6 +18,18 @@ class DocumentRepository:
     async def get_by_sha256(self, sha256: str) -> Document | None:
         result = await self.session.execute(select(Document).where(Document.sha256 == sha256))
         return result.scalar_one_or_none()
+
+    async def list_documents(self, *, limit: int, offset: int) -> tuple[list[Document], int]:
+        documents = (
+            await self.session.scalars(
+                select(Document)
+                .order_by(Document.created_at.desc(), Document.id.desc())
+                .offset(offset)
+                .limit(limit)
+            )
+        ).all()
+        total = await self.session.scalar(select(func.count(Document.id)))
+        return list(documents), int(total or 0)
 
     def add_upload(self, stored: StoredUpload) -> Document:
         document = Document(
