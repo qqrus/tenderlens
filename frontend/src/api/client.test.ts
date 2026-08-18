@@ -16,13 +16,18 @@ describe('downloadDocumentFile', () => {
     const pdf = new Blob(['%PDF-1.4'], { type: 'application/pdf' })
     vi.stubGlobal(
       'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response(pdf, { status: 200, headers: { 'Content-Type': 'application/pdf' } }),
-        ),
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/pdf' }),
+        blob: vi.fn().mockResolvedValue(pdf),
+      } satisfies Partial<Response>),
     )
 
-    await expect(downloadDocumentFile('document-id')).resolves.toEqual(pdf)
+    const downloaded = await downloadDocumentFile('document-id')
+
+    expect(downloaded).toBe(pdf)
+    expect(downloaded.type).toBe('application/pdf')
+    expect(downloaded.size).toBe(pdf.size)
   })
 })
