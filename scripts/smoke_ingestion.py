@@ -25,7 +25,7 @@ def main() -> int:
         create_sample_pdf(pdf_path)
 
         with (
-            httpx.Client(timeout=30, trust_env=False) as client,
+            httpx.Client(timeout=180, trust_env=False) as client,
             pdf_path.open("rb") as pdf_file,
         ):
             response = client.post(
@@ -43,6 +43,19 @@ def main() -> int:
                 document = status_response.json()
                 if document["status"] == "ready":
                     print(f"ingestion ready: id={document_id} pages={document['page_count']}")
+                    search_response = client.post(
+                        f"{API_URL}/documents/{document_id}/search",
+                        json={"query": "maximum budget", "limit": 3},
+                    )
+                    search_response.raise_for_status()
+                    search = search_response.json()
+                    if not search["hits"]:
+                        print("retrieval returned no hits", file=sys.stderr)
+                        return 1
+                    print(
+                        f"retrieval ready: mode={search['mode']} "
+                        f"top_page={search['hits'][0]['page_number']}"
+                    )
                     return 0
                 if document["status"] == "failed":
                     print(

@@ -24,6 +24,19 @@ The upload endpoint returns `202 Accepted`. Use `GET /api/v1/documents/{document
 poll the processing status. At this stage digitally generated PDFs are supported; scanned
 documents return `no_extractable_text` until the OCR milestone is implemented.
 
+Search within a processed document:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents/DOCUMENT_ID/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "maximum budget", "limit": 5}'
+```
+
+The first semantic search downloads a multilingual ONNX embedding model into the Docker
+`models_data` volume. Search combines PostgreSQL full-text results and pgvector cosine
+similarity with Reciprocal Rank Fusion. If the embedding model is temporarily unavailable,
+the endpoint degrades to lexical search instead of failing the request.
+
 With the Docker stack running, execute an end-to-end smoke test:
 
 ```bash

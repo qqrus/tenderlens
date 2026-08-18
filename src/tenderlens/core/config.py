@@ -30,6 +30,14 @@ class Settings(BaseSettings):
     chunk_size_chars: int = Field(default=1_600, ge=200, le=10_000)
     chunk_overlap_chars: int = Field(default=200, ge=0, le=2_000)
 
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embedding_dimensions: int = Field(default=384, ge=32, le=4_096)
+    embedding_cache_dir: Path = Path("data/models")
+    retrieval_dense_k: int = Field(default=20, ge=1, le=100)
+    retrieval_lexical_k: int = Field(default=20, ge=1, le=100)
+    retrieval_final_k: int = Field(default=5, ge=1, le=20)
+    rrf_k: int = Field(default=60, ge=1, le=1_000)
+
     llm_provider: Literal["ollama", "openai"] = "ollama"
     llm_model: str = "qwen3:4b"
     ollama_base_url: AnyHttpUrl = AnyHttpUrl("http://localhost:11434")
