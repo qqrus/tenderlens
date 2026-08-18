@@ -38,10 +38,13 @@ class Settings(BaseSettings):
     retrieval_final_k: int = Field(default=5, ge=1, le=20)
     rrf_k: int = Field(default=60, ge=1, le=1_000)
 
-    llm_provider: Literal["ollama", "openai"] = "ollama"
+    llm_provider: Literal["extractive", "ollama", "openai"] = "extractive"
     llm_model: str = "qwen3:4b"
     ollama_base_url: AnyHttpUrl = AnyHttpUrl("http://localhost:11434")
     openai_api_key: SecretStr | None = None
+    llm_timeout_seconds: float = Field(default=90.0, ge=1, le=300)
+    qa_evidence_limit: int = Field(default=5, ge=1, le=10)
+    qa_max_claims: int = Field(default=5, ge=1, le=10)
 
     @model_validator(mode="after")
     def validate_chunk_settings(self) -> Self:

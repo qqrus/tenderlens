@@ -56,6 +56,22 @@ def main() -> int:
                         f"retrieval ready: mode={search['mode']} "
                         f"top_page={search['hits'][0]['page_number']}"
                     )
+                    answer_response = client.post(
+                        f"{API_URL}/documents/{document_id}/questions",
+                        json={"question": "What is the maximum budget?"},
+                    )
+                    answer_response.raise_for_status()
+                    answer = answer_response.json()
+                    if not answer["grounded"] or not answer["citations"]:
+                        print("question answering returned no verified citation", file=sys.stderr)
+                        return 1
+                    if answer["citations"][0]["page_number"] != 2:
+                        print("question answering cited the wrong page", file=sys.stderr)
+                        return 1
+                    print(
+                        f"grounded answer ready: mode={answer['answer_mode']} "
+                        f"citation_page={answer['citations'][0]['page_number']}"
+                    )
                     return 0
                 if document["status"] == "failed":
                     print(

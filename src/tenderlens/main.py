@@ -15,11 +15,36 @@ from tenderlens.ingestion.chunking import PageAwareChunker
 from tenderlens.ingestion.extractor import PdfTextExtractor
 from tenderlens.ingestion.service import DocumentIngestionService
 from tenderlens.ingestion.storage import FileSystemDocumentStorage
+from tenderlens.qa.providers import (
+    AnswerProvider,
+    ExtractiveAnswerProvider,
+    OllamaAnswerProvider,
+    OpenAIAnswerProvider,
+)
+from tenderlens.qa.service import GroundedQuestionAnsweringService
 from tenderlens.retrieval.embeddings import FastEmbedEmbeddingProvider
 from tenderlens.retrieval.indexing import ChunkIndexingService
 from tenderlens.retrieval.service import HybridRetrievalService
 
 logger = structlog.get_logger(__name__)
+
+
+def build_answer_provider(settings: Settings) -> AnswerProvider:
+    if settings.llm_provider == "extractive":
+        return ExtractiveAnswerProvider()
+    if settings.llm_provider == "ollama":
+        return OllamaAnswerProvider(
+            str(settings.ollama_base_url),
+            settings.llm_model,
+            settings.llm_timeout_seconds,
+        )
+    if settings.openai_api_key is None or not settings.openai_api_key.get_secret_value():
+        raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai.")
+    return OpenAIAnswerProvider(
+        settings.openai_api_key,
+        settings.llm_model,
+        settings.llm_timeout_seconds,
+    )
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -64,9 +89,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             default_limit=resolved_settings.retrieval_final_k,
             rrf_k=resolved_settings.rrf_k,
         )
+        qa_service = GroundedQuestionAnsweringService(
+            retrieval_service,
+            build_answer_provider(resolved_settings),
+            evidence_limit=resolved_settings.qa_evidence_limit,
+            max_claims=resolved_settings.qa_max_claims,
+        )
         application.state.database = database
         application.state.ingestion_service = ingestion_service
         application.state.retrieval_service = retrieval_service
+        application.state.qa_service = qa_service
         logger.info("application_started", environment=resolved_settings.app_env)
         try:
             yield
