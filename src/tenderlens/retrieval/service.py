@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Any, cast
 from uuid import UUID
@@ -13,6 +14,30 @@ from tenderlens.retrieval.embeddings import EmbeddingError, EmbeddingProvider
 from tenderlens.retrieval.indexing import ChunkIndexingService
 
 logger = structlog.get_logger(__name__)
+
+SEMANTIC_QUERY_EXPANSIONS: tuple[tuple[str, str], ...] = (
+    (r"срок|дата", "deadline due date"),
+    (r"бюджет|цен", "budget contract price"),
+    (r"штраф|неустойк|пен[ияи]", "penalty fine liquidated damages"),
+    (r"требован", "requirements eligibility"),
+    (r"поставщик|участник", "supplier bidder"),
+    (r"документ", "documents evidence certificate"),
+    (r"опыт|проект", "experience completed projects"),
+    (r"оплат", "payment"),
+    (r"исполнен|контракт", "contract duration performance"),
+    (r"гаранти", "warranty"),
+)
+
+
+def expand_semantic_query(query: str) -> str:
+    expansions = [
+        expansion
+        for pattern, expansion in SEMANTIC_QUERY_EXPANSIONS
+        if re.search(pattern, query, flags=re.IGNORECASE)
+    ]
+    if not expansions:
+        return query
+    return f"{query} {' '.join(expansions)}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,7 +97,7 @@ class HybridRetrievalService:
         semantic_rows: list[tuple[DocumentChunk, float]] = []
         try:
             await self.indexing_service.index_missing(document_id)
-            query_vector = await self.embedding_provider.embed_query(query)
+            query_vector = await self.embedding_provider.embed_query(expand_semantic_query(query))
             semantic_rows = await self._semantic_search(document_id, query_vector)
         except EmbeddingError as exc:
             logger.warning(

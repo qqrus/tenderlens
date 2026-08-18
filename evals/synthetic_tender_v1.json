@@ -1,0 +1,78 @@
+{
+  "name": "synthetic-tender-v1",
+  "description": "Synthetic bilingual-query benchmark with no personal or confidential data.",
+  "pages": [
+    "Submission deadline: 20 August 2026 at 10:00 UTC. Applications received later will not be considered.",
+    "Maximum budget: 1 000 000 RUB including all taxes, delivery costs, and mandatory fees.",
+    "Penalty: 0.1% of the contract value for each day of delay, capped at 10% of the contract value.",
+    "Supplier must provide a valid ISO 9001 certificate and proof of three completed projects.",
+    "Payment is made within 30 calendar days after the customer signs the acceptance certificate.",
+    "Contract duration is 180 calendar days from the date of signing.",
+    "Warranty period: 36 months from the date the equipment is accepted by the customer.",
+    "Questions about the procurement must be submitted through the electronic procurement platform."
+  ],
+  "questions": [
+    {
+      "id": "deadline-en",
+      "language": "en",
+      "question": "What is the submission deadline?",
+      "expected_pages": [1],
+      "expected_quote_fragments": ["Submission deadline: 20 August 2026"]
+    },
+    {
+      "id": "deadline-ru",
+      "language": "ru",
+      "question": "Какой срок подачи заявок?",
+      "expected_pages": [1],
+      "expected_quote_fragments": ["Submission deadline: 20 August 2026"]
+    },
+    {
+      "id": "budget-en",
+      "language": "en",
+      "question": "What is the maximum budget including taxes?",
+      "expected_pages": [2],
+      "expected_quote_fragments": ["Maximum budget: 1 000 000 RUB"]
+    },
+    {
+      "id": "budget-ru",
+      "language": "ru",
+      "question": "Какой максимальный бюджет закупки?",
+      "expected_pages": [2],
+      "expected_quote_fragments": ["Maximum budget: 1 000 000 RUB"]
+    },
+    {
+      "id": "penalty-en",
+      "language": "en",
+      "question": "What penalty applies for each day of delay?",
+      "expected_pages": [3],
+      "expected_quote_fragments": ["Penalty: 0.1% of the contract value"]
+    },
+    {
+      "id": "requirement-ru",
+      "language": "ru",
+      "question": "Какие документы и опыт должен предоставить поставщик?",
+      "expected_pages": [4],
+      "expected_quote_fragments": ["Supplier must provide a valid ISO 9001 certificate"]
+    },
+    {
+      "id": "payment-en",
+      "language": "en",
+      "question": "When will payment be made?",
+      "expected_pages": [5],
+      "expected_quote_fragments": ["Payment is made within 30 calendar days"]
+    },
+    {
+      "id": "duration-ru",
+      "language": "ru",
+      "question": "Какой срок исполнения контракта?",
+      "expected_pages": [6],
+      "expected_quote_fragments": ["Contract duration is 180 calendar days"]
+    }
+  ],
+  "analysis_expectations": [
+    {"category": "deadline", "expected_pages": [1]},
+    {"category": "budget", "expected_pages": [2]},
+    {"category": "penalty", "expected_pages": [3]},
+    {"category": "requirement", "expected_pages": [4]}
+  ]
+}

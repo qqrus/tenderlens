@@ -1,0 +1,31 @@
+{
+  "dataset": "synthetic-tender-v1",
+  "question_count": 8,
+  "run_context": {
+    "backend": "Docker Compose, CPU",
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "answer_mode": "extractive",
+    "languages": ["en", "ru"]
+  },
+  "metrics": {
+    "retrieval_hit_rate_at_5": 1.0,
+    "retrieval_mrr": 1.0,
+    "citation_page_accuracy": 1.0,
+    "citation_quote_accuracy": 1.0,
+    "grounded_answer_rate": 1.0,
+    "search_latency_p50_ms": 67.14,
+    "search_latency_p95_ms": 94.23,
+    "answer_latency_p50_ms": 68.17,
+    "answer_latency_p95_ms": 81.15,
+    "cold_start_search_latency_ms": 2410.55,
+    "analysis_category_page_recall": 1.0,
+    "analysis_category_page_precision": 1.0,
+    "analysis_latency_ms": 421.23
+  },
+  "limitations": [
+    "The baseline uses one small synthetic PDF and is not a legal-domain benchmark.",
+    "Latency depends on hardware, model cache state, and concurrent system load.",
+    "The baseline evaluates the default extractive answer mode, not generative LLM quality.",
+    "Scanned PDFs and OCR quality are outside this dataset."
+  ]
+}

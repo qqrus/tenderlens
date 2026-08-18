@@ -59,6 +59,19 @@ def test_deduplicates_overlapping_retrieval_hits() -> None:
     assert conditions[0].summary == quote
 
 
+def test_budget_rejects_contract_value_mention_without_money() -> None:
+    text = "Penalty: 0.1% of the contract value for each day of delay."
+    extractor = RuleBasedConditionExtractor(max_items_per_category=5)
+
+    conditions = extractor.extract(
+        spec(ConditionCategory.BUDGET),
+        [make_hit(text, page=3)],
+        citation_start=1,
+    )
+
+    assert conditions == []
+
+
 def test_supports_russian_requirement_keywords() -> None:
     text = (
         "\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a "
