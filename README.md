@@ -98,6 +98,35 @@ With the Docker stack running, execute an end-to-end smoke test:
 uv run python scripts/smoke_ingestion.py
 ```
 
+## Evaluation baseline
+
+TenderLens includes a separate synthetic dataset with English and Russian questions. The
+evaluation creates a PDF at runtime and measures the real Docker API, retrieval, citations,
+structured analysis, and latency.
+
+```bash
+uv run python scripts/evaluate.py
+```
+
+Baseline from one local Docker CPU run:
+
+| Metric | Result |
+| --- | ---: |
+| Retrieval Hit@5 | 1.000 |
+| Retrieval MRR | 1.000 |
+| Citation page accuracy | 1.000 |
+| Citation quote accuracy | 1.000 |
+| Analysis category/page recall | 1.000 |
+| Analysis category/page precision | 1.000 |
+| Search latency p50 / p95 | 67.14 / 94.23 ms |
+| Answer latency p50 / p95 | 68.17 / 81.15 ms |
+| Cold-start search latency | 2410.55 ms |
+
+These results are regression baselines, not claims of legal accuracy. The current dataset is
+one small synthetic document, latency is hardware-dependent, generative LLM quality is not
+measured in the default extractive mode, and scanned PDFs remain unsupported. See
+[`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
+
 Windows helpers:
 
 ```powershell
