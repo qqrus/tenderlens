@@ -5,6 +5,7 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+import tenderlens.db.models  # noqa: F401
 from tenderlens.core.config import get_settings
 from tenderlens.db.base import Base
 

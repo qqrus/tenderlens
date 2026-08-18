@@ -11,6 +11,10 @@ from tenderlens.core.errors import register_error_handlers
 from tenderlens.core.logging import configure_logging
 from tenderlens.core.middleware import RequestContextMiddleware
 from tenderlens.db.session import Database
+from tenderlens.ingestion.chunking import PageAwareChunker
+from tenderlens.ingestion.extractor import PdfTextExtractor
+from tenderlens.ingestion.service import DocumentIngestionService
+from tenderlens.ingestion.storage import FileSystemDocumentStorage
 
 logger = structlog.get_logger(__name__)
 
@@ -25,7 +29,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         database = Database(resolved_settings.database_dsn)
+        storage = FileSystemDocumentStorage(
+            resolved_settings.upload_dir,
+            resolved_settings.max_upload_size_bytes,
+        )
+        await storage.ensure_ready()
+        ingestion_service = DocumentIngestionService(
+            database.session_factory,
+            storage,
+            PdfTextExtractor(resolved_settings.max_pdf_pages),
+            PageAwareChunker(
+                resolved_settings.chunk_size_chars,
+                resolved_settings.chunk_overlap_chars,
+            ),
+        )
         application.state.database = database
+        application.state.ingestion_service = ingestion_service
         logger.info("application_started", environment=resolved_settings.app_env)
         try:
             yield
