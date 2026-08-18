@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     ollama_base_url: AnyHttpUrl = AnyHttpUrl("http://localhost:11434")
     openai_api_key: SecretStr | None = None
     llm_timeout_seconds: float = Field(default=90.0, ge=1, le=300)
-    qa_evidence_limit: int = Field(default=5, ge=1, le=10)
+    qa_evidence_limit: int = Field(default=8, ge=1, le=10)
     qa_max_claims: int = Field(default=5, ge=1, le=10)
     analysis_retrieval_limit: int = Field(default=8, ge=1, le=20)
     analysis_max_items_per_category: int = Field(default=5, ge=1, le=10)

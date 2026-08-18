@@ -1,4 +1,7 @@
+# ruff: noqa: RUF001  # Cyrillic token ranges are intentional for bilingual extraction.
+
 import json
+import re
 from typing import Any, Protocol
 
 import httpx
@@ -36,17 +39,63 @@ def build_user_prompt(question: str, evidence: list[Evidence]) -> str:
 class ExtractiveAnswerProvider:
     name = "extractive"
 
-    async def generate(self, _question: str, evidence: list[Evidence]) -> AnswerDraft:
+    async def generate(self, question: str, evidence: list[Evidence]) -> AnswerDraft:
         if not evidence:
             return AnswerDraft(cannot_answer=True, claims=[])
-        item = evidence[0]
-        quote = item.hit.text.strip()[:800].rstrip()
+        item, quote = _best_extractive_quote(question, evidence)
         if not quote:
             return AnswerDraft(cannot_answer=True, claims=[])
         return AnswerDraft(
             cannot_answer=False,
             claims=[DraftClaim(text=quote, evidence_id=item.evidence_id, quote=quote)],
         )
+
+
+WORD_PATTERN = re.compile(r"[A-Za-zА-Яа-яЁё0-9]+")
+SEGMENT_PATTERN = re.compile(r".+?(?:[.!?;](?=\s|$)|$)", re.DOTALL)
+STOP_WORDS = {
+    "какой",
+    "какая",
+    "какие",
+    "что",
+    "где",
+    "когда",
+    "должен",
+    "the",
+    "what",
+    "which",
+    "when",
+    "where",
+    "does",
+    "document",
+}
+
+
+def _normalized_terms(value: str) -> set[str]:
+    terms: set[str] = set()
+    for token in WORD_PATTERN.findall(value.casefold()):
+        if len(token) < 3 or token in STOP_WORDS:
+            continue
+        terms.add(token[:6])
+    return terms
+
+
+def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evidence, str]:
+    question_terms = _normalized_terms(question)
+    candidates: list[tuple[int, int, int, Evidence, str]] = []
+    for evidence_rank, item in enumerate(evidence):
+        source = item.hit.text.strip()
+        segments = [match.group(0).strip() for match in SEGMENT_PATTERN.finditer(source)]
+        if not segments and source:
+            segments = [source]
+        for segment_rank, segment in enumerate(segments):
+            quote = segment[:800].rstrip()
+            overlap = len(question_terms & _normalized_terms(quote))
+            candidates.append((overlap, -evidence_rank, -segment_rank, item, quote))
+    if not candidates:
+        return evidence[0], ""
+    _, _, _, selected_item, selected_quote = max(candidates, key=lambda candidate: candidate[:3])
+    return selected_item, selected_quote
 
 
 class OllamaAnswerProvider:
