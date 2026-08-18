@@ -24,6 +24,16 @@ The upload endpoint returns `202 Accepted`. Use `GET /api/v1/documents/{document
 poll the processing status. At this stage digitally generated PDFs are supported; scanned
 documents return `no_extractable_text` until the OCR milestone is implemented.
 
+List documents and open the original PDF in a browser viewer:
+
+```bash
+curl "http://localhost:8000/api/v1/documents?limit=20&offset=0"
+curl http://localhost:8000/api/v1/documents/DOCUMENT_ID/file --output tender.pdf
+```
+
+The file endpoint uses an inline content disposition, supports the browser/PDF.js workflow,
+and disables shared caching of uploaded tender documents.
+
 Search within a processed document:
 
 ```bash

@@ -23,7 +23,7 @@ services:
       APP_ENV: ${APP_ENV:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       API_PREFIX: ${API_PREFIX:-/api/v1}
-      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:8501"]}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:5173"]}
       DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://tenderlens:tenderlens@postgres:5432/tenderlens}
       UPLOAD_DIR: ${UPLOAD_DIR:-data/uploads}
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-20}
