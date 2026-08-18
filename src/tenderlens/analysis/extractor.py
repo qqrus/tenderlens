@@ -14,6 +14,7 @@ class CategorySpec:
     queries: tuple[str, str]
     keyword_pattern: re.Pattern[str]
     value_pattern: re.Pattern[str] | None = None
+    requires_value: bool = False
 
 
 DATE_VALUE = re.compile(
@@ -55,6 +56,7 @@ CATEGORY_SPECS = (
             re.IGNORECASE,
         ),
         value_pattern=MONEY_VALUE,
+        requires_value=True,
     ),
     CategorySpec(
         category=ConditionCategory.PENALTY,
@@ -100,11 +102,14 @@ class RuleBasedConditionExtractor:
                 keyword_matches = list(spec.keyword_pattern.finditer(quote))
                 if not keyword_matches:
                     continue
+                value_match = spec.value_pattern.search(quote) if spec.value_pattern else None
+                if spec.requires_value and value_match is None:
+                    continue
                 normalized = " ".join(quote.casefold().split())
                 if normalized in seen:
                     continue
                 seen.add(normalized)
-                value_bonus = 0.2 if spec.value_pattern and spec.value_pattern.search(quote) else 0
+                value_bonus = 0.2 if value_match else 0
                 score = min(0.99, 0.55 + 0.08 * len(keyword_matches) + value_bonus)
                 candidates.append((score, hit, local_start, local_end))
 

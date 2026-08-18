@@ -14,7 +14,11 @@ from tenderlens.db.models.document import Document, DocumentChunk, DocumentPage
 from tenderlens.domain.documents import DocumentStatus
 from tenderlens.retrieval.embeddings import EmbeddingError
 from tenderlens.retrieval.indexing import ChunkIndexingService
-from tenderlens.retrieval.service import HybridRetrievalService, reciprocal_rank_fusion
+from tenderlens.retrieval.service import (
+    HybridRetrievalService,
+    expand_semantic_query,
+    reciprocal_rank_fusion,
+)
 
 
 class FakeEmbeddingProvider:
@@ -69,6 +73,21 @@ def test_reciprocal_rank_fusion_rewards_cross_list_matches() -> None:
 
     assert scores[second] > scores[first]
     assert scores[second] > scores[third]
+
+
+def test_semantic_query_expansion_adds_bilingual_tender_terms() -> None:
+    question = (
+        "\u041a\u0430\u043a\u0438\u0435 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u044b "
+        "\u0438 \u043e\u043f\u044b\u0442 \u0434\u043e\u043b\u0436\u0435\u043d "
+        "\u043f\u0440\u0435\u0434\u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c "
+        "\u043f\u043e\u0441\u0442\u0430\u0432\u0449\u0438\u043a?"
+    )
+    expanded = expand_semantic_query(question)
+
+    assert "supplier bidder" in expanded
+    assert "documents evidence certificate" in expanded
+    assert "experience completed projects" in expanded
+    assert expand_semantic_query("maximum budget") == "maximum budget"
 
 
 @pytest.mark.asyncio
