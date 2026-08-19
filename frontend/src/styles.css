@@ -2252,6 +2252,50 @@ textarea:focus-visible {
   flex: 1;
   flex-direction: column;
 }
+
+.pdf-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pdf-highlight-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  color: var(--blue-bright);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.pdf-highlight-status[data-found='false'] {
+  color: var(--amber);
+}
+
+.pdf-highlight-status svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.pdf-canvas .react-pdf__Page__textContent mark.pdf-citation-highlight {
+  color: transparent;
+  background: rgb(255 207 64 / 58%);
+  border-bottom: 2px solid rgb(210 132 0 / 92%);
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgb(255 207 64 / 18%);
+  animation: citation-highlight-in 700ms ease-out both;
+}
+
+@keyframes citation-highlight-in {
+  from {
+    background: rgb(43 111 211 / 18%);
+    box-shadow: 0 0 0 8px rgb(43 111 211 / 18%);
+  }
+  to {
+    background: rgb(255 207 64 / 58%);
+    box-shadow: 0 0 0 2px rgb(255 207 64 / 18%);
+  }
+}
 .pdf-toolbar {
   display: flex;
   min-height: 43px;

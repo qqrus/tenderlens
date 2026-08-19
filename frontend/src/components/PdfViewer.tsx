@@ -1,9 +1,18 @@
-import { ChevronLeft, ChevronRight, FileWarning, LoaderCircle, RotateCcw } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileWarning,
+  Highlighter,
+  LoaderCircle,
+  RotateCcw,
+} from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { Document, Page, pdfjs } from 'react-pdf'
+import type { TextContent } from 'pdfjs-dist/types/src/display/api'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
+import { escapeHtml, findCitationTextItems } from './citationHighlight'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `${new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -17,6 +26,7 @@ type Props = {
   sourceLoading?: boolean
   sourceError?: string | null
   onSourceRetry?: () => void
+  highlightQuote?: string | null
 }
 
 export function PdfViewer({
@@ -26,11 +36,25 @@ export function PdfViewer({
   sourceLoading,
   sourceError,
   onSourceRetry,
+  highlightQuote,
 }: Props) {
   const { pick } = useLocale()
   const frameRef = useRef<HTMLDivElement>(null)
+  const pageRef = useRef<HTMLDivElement>(null)
   const [pageCount, setPageCount] = useState(0)
   const [width, setWidth] = useState(520)
+  const highlightSignature = `${pageNumber}:${highlightQuote ?? ''}`
+  const [highlightMatch, setHighlightMatch] = useState<{
+    signature: string
+    items: Set<number>
+  }>({ signature: '', items: new Set() })
+  const [renderedTextSignature, setRenderedTextSignature] = useState('')
+  const highlightedItems = useMemo(
+    () =>
+      highlightMatch.signature === highlightSignature ? highlightMatch.items : new Set<number>(),
+    [highlightMatch, highlightSignature],
+  )
+  const textLayerReady = renderedTextSignature === highlightSignature
 
   useEffect(() => {
     const node = frameRef.current
@@ -45,6 +69,25 @@ export function PdfViewer({
   useEffect(() => {
     if (pageCount && pageNumber > pageCount) onPageChange(pageCount)
   }, [onPageChange, pageCount, pageNumber])
+
+  useEffect(() => {
+    if (!textLayerReady || !highlightedItems.size) return
+    const frame = pageRef.current
+    const firstHighlight = frame?.querySelector<HTMLElement>('.pdf-citation-highlight')
+    if (!firstHighlight) return
+    firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+  }, [highlightedItems, textLayerReady])
+
+  const handleTextContent = useCallback(
+    (content: TextContent) => {
+      const items = content.items.flatMap((item) => ('str' in item ? [{ str: item.str }] : []))
+      setHighlightMatch({
+        signature: highlightSignature,
+        items: highlightQuote ? findCitationTextItems(items, highlightQuote) : new Set(),
+      })
+    },
+    [highlightQuote, highlightSignature],
+  )
 
   if (!sourceUrl) {
     return (
@@ -78,28 +121,38 @@ export function PdfViewer({
   return (
     <div className="pdf-viewer" ref={frameRef}>
       <div className="pdf-toolbar">
-        <button
-          className="icon-button"
-          type="button"
-          onClick={() => onPageChange(Math.max(1, pageNumber - 1))}
-          disabled={pageNumber <= 1}
-          aria-label={pick('Предыдущая страница', 'Previous page')}
-        >
-          <ChevronLeft aria-hidden="true" />
-        </button>
-        <span>
-          <strong>{pageNumber}</strong>
-          {pageCount ? ` / ${pageCount}` : ''}
-        </span>
-        <button
-          className="icon-button"
-          type="button"
-          onClick={() => onPageChange(Math.min(pageCount || pageNumber + 1, pageNumber + 1))}
-          disabled={Boolean(pageCount && pageNumber >= pageCount)}
-          aria-label={pick('Следующая страница', 'Next page')}
-        >
-          <ChevronRight aria-hidden="true" />
-        </button>
+        <div className="pdf-page-controls">
+          <button
+            className="icon-button"
+            type="button"
+            onClick={() => onPageChange(Math.max(1, pageNumber - 1))}
+            disabled={pageNumber <= 1}
+            aria-label={pick('Предыдущая страница', 'Previous page')}
+          >
+            <ChevronLeft aria-hidden="true" />
+          </button>
+          <span>
+            <strong>{pageNumber}</strong>
+            {pageCount ? ` / ${pageCount}` : ''}
+          </span>
+          <button
+            className="icon-button"
+            type="button"
+            onClick={() => onPageChange(Math.min(pageCount || pageNumber + 1, pageNumber + 1))}
+            disabled={Boolean(pageCount && pageNumber >= pageCount)}
+            aria-label={pick('Следующая страница', 'Next page')}
+          >
+            <ChevronRight aria-hidden="true" />
+          </button>
+        </div>
+        {highlightQuote && textLayerReady && (
+          <span className="pdf-highlight-status" data-found={Boolean(highlightedItems.size)}>
+            <Highlighter aria-hidden="true" />
+            {highlightedItems.size
+              ? pick('Фрагмент выделен', 'Passage highlighted')
+              : pick('Фрагмент не сопоставлен', 'Passage not matched')}
+          </span>
+        )}
       </div>
       <div className="pdf-canvas">
         <Document
@@ -116,7 +169,22 @@ export function PdfViewer({
             </div>
           }
         >
-          <Page pageNumber={pageNumber} width={width} renderTextLayer renderAnnotationLayer />
+          <div ref={pageRef}>
+            <Page
+              pageNumber={pageNumber}
+              width={width}
+              renderTextLayer
+              renderAnnotationLayer
+              onGetTextSuccess={handleTextContent}
+              onRenderTextLayerSuccess={() => setRenderedTextSignature(highlightSignature)}
+              customTextRenderer={({ str, itemIndex }) => {
+                const safeText = escapeHtml(str)
+                return highlightedItems.has(itemIndex)
+                  ? `<mark class="pdf-citation-highlight">${safeText}</mark>`
+                  : safeText
+              }}
+            />
+          </div>
         </Document>
       </div>
     </div>
