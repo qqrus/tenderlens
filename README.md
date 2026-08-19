@@ -66,6 +66,8 @@ curl -X POST http://localhost:8000/api/v1/documents/DOCUMENT_ID/questions \
 The response contains an answer plus citations with the source page, chunk ID, exact quote,
 and page-relative character offsets. TenderLens accepts only quotes found in retrieved chunks;
 unknown evidence IDs and invented quotes are removed before the response is returned.
+In the web interface, the **Verify** action opens the cited page, highlights the exact quote
+in the PDF text layer, and reports when a visual match cannot be established.
 
 The zero-cost `extractive` answer mode works without a model or API key. For fluent generated
 answers, set one of these options in your local `.env` (never commit the key):
@@ -134,6 +136,8 @@ These results are regression baselines, not claims of legal accuracy. The curren
 one small synthetic document, latency is hardware-dependent, generative LLM quality is not
 measured in the default extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
+The full answer-quality audit and staged improvement plan are documented in
+[`docs/answer-quality-roadmap.md`](docs/answer-quality-roadmap.md).
 
 Windows helpers:
 
