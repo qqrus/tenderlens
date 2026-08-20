@@ -1,0 +1,38 @@
+{
+  "experiment": "tenderlens-reranker-v0",
+  "evaluated_at": "2026-08-20",
+  "base_model": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+  "dataset": "reranker_seed_v1",
+  "configuration": {
+    "epochs": 3,
+    "batch_size": 8,
+    "learning_rate": 0.00002,
+    "max_length": 384,
+    "seed": 42,
+    "device": "cpu"
+  },
+  "training": {
+    "runtime_seconds": 15.64,
+    "mean_train_loss": 0.2028,
+    "validation_loss_by_epoch": [0.1898, 0.117, 0.1315]
+  },
+  "before_training": {
+    "train_hit_at_1": 0.9375,
+    "validation_hit_at_1": 0.875,
+    "test_hit_at_1": 1.0
+  },
+  "after_training": {
+    "train_hit_at_1": 1.0,
+    "validation_hit_at_1": 0.875,
+    "test_hit_at_1": 1.0
+  },
+  "validation_error": {
+    "example_id": "medical-bid-security-ru",
+    "expected_concept": "bid security",
+    "confused_with": "performance security",
+    "base_positive_margin": -0.264473,
+    "trained_positive_margin": -0.581417
+  },
+  "decision": "do_not_deploy",
+  "reason": "Training fit improved, but held-out ranking did not improve and the hard-negative margin became worse. Expand and rebalance the dataset before another fine-tuning run."
+}

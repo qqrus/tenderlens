@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format typecheck frontend-check evaluate migrate compose-up compose-down
+.PHONY: install dev test lint format typecheck frontend-check evaluate ml-install ml-baseline ml-train-smoke migrate compose-up compose-down
 
 install:
 	uv sync --dev
@@ -25,6 +25,15 @@ frontend-check:
 
 evaluate:
 	uv run python scripts/evaluate.py
+
+ml-install:
+	uv sync --dev --extra ml
+
+ml-baseline:
+	uv run python scripts/evaluate_reranker.py
+
+ml-train-smoke:
+	uv run --extra ml python scripts/train_reranker.py --max-steps 1 --output-dir models/tenderlens-reranker-smoke
 
 migrate:
 	uv run alembic upgrade head

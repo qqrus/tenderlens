@@ -26,6 +26,13 @@ dependencies = [
   "uvicorn[standard]>=0.34,<1",
 ]
 
+[project.optional-dependencies]
+ml = [
+  "accelerate>=1.10,<2",
+  "datasets>=4.0,<5",
+  "sentence-transformers>=5.2,<6",
+]
+
 [dependency-groups]
 dev = [
   "aiosqlite>=0.21,<1",

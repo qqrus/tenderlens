@@ -135,6 +135,22 @@ one small synthetic document, latency is hardware-dependent, generative LLM qual
 measured in the default extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
 
+## Custom ML training
+
+TenderLens includes the first reproducible training pipeline for a domain-specific passage
+reranker. The checked-in RU/EN seed dataset uses document-level train/validation/test splits,
+hard negatives, lexical and pretrained-model baselines, ranking metrics, error details, and a
+CPU smoke-training command. Heavy model weights remain outside Git and the production image.
+
+```powershell
+uv run python scripts/evaluate_reranker.py
+.\scripts\train-reranker.ps1 -MaxSteps 1
+```
+
+See [`docs/ml/reranker-training.md`](docs/ml/reranker-training.md) for a plain-language
+explanation, current measurements, limitations, and the path from the seed dataset to a
+portfolio-ready trained model.
+
 Windows helpers:
 
 ```powershell

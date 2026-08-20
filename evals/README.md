@@ -44,3 +44,18 @@ This dataset is deliberately small and deterministic. It is useful for regressio
 not for claiming production legal accuracy. Future datasets should include varied real-world
 layouts that are licensed or generated for testing, negative/unanswerable questions, and OCR
 fixtures. No real tenders containing personal data should be committed.
+
+## Reranker training evaluation
+
+The separate [`reranker_seed_v1.jsonl`](reranker_seed_v1.jsonl) dataset validates the custom
+ML training path without using the Docker API:
+
+```bash
+uv run python scripts/evaluate_reranker.py
+```
+
+It contains document-level train/validation/test splits and hard negatives. Reviewed lexical
+and pretrained cross-encoder measurements are stored in
+[`reranker_baseline_v1.json`](reranker_baseline_v1.json). The first three-epoch fine-tuning
+run is stored in [`reranker_experiment_v0.json`](reranker_experiment_v0.json) with the honest
+decision `do_not_deploy`, because held-out ranking did not improve.
