@@ -45,6 +45,11 @@ not for claiming production legal accuracy. Future datasets should include varie
 layouts that are licensed or generated for testing, negative/unanswerable questions, and OCR
 fixtures. No real tenders containing personal data should be committed.
 
+The independent real-document protocol lives in [`real/README.md`](real/README.md). Real PDFs
+and the completed annotation manifest stay local and are ignored by Git. The checked-in validator
+requires a manual personal-data review, an immutable SHA-256, short gold quote fragments, and at
+least one unanswerable question per document before the holdout can be measured.
+
 ## Reranker training evaluation
 
 The deterministic [`reranker_dataset_v2.jsonl`](reranker_dataset_v2.jsonl) contains 576

@@ -66,6 +66,9 @@ curl -X POST http://localhost:8000/api/v1/documents/DOCUMENT_ID/questions \
 The response contains an answer plus citations with the source page, chunk ID, exact quote,
 and page-relative character offsets. TenderLens accepts only quotes found in retrieved chunks;
 unknown evidence IDs and invented quotes are removed before the response is returned.
+The React PDF viewer opens the cited page, highlights matching text-layer fragments, and scrolls
+the evidence into view. Highlighting uses the selectable PDF text layer and never changes the
+original uploaded file.
 
 The zero-cost `extractive` answer mode works without a model or API key. For fluent generated
 answers, set one of these options in your local `.env` (never commit the key):
@@ -148,6 +151,11 @@ These results are regression baselines, not claims of legal accuracy. The docume
 programmatically generated fixtures, latency is hardware-dependent, generative LLM quality is
 not measured in the default extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
+
+An independent real-document holdout protocol is scaffolded under [`evals/real`](evals/real).
+The source PDFs and completed annotations remain local and Git-ignored; validation requires
+manual personal-data review, SHA-256 checks, gold pages, short quote fragments, and unanswerable
+questions before results can be reported.
 
 ## Custom ML training
 
