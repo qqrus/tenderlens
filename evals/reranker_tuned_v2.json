@@ -1,0 +1,114 @@
+{
+  "dataset": "evals\\reranker_dataset_v2.jsonl",
+  "scorer": "model",
+  "model": "models/tenderlens-reranker-v1/final",
+  "summary": {
+    "query_count": 576,
+    "pair_count": 2304,
+    "document_count": 24,
+    "split_queries": {
+      "train": 384,
+      "validation": 96,
+      "test": 96
+    },
+    "languages": {
+      "ru": 384,
+      "en": 192
+    }
+  },
+  "splits": {
+    "train": {
+      "metrics": {
+        "query_count": 384,
+        "hit_at_1": 0.989583,
+        "hit_at_3": 1.0,
+        "mrr": 0.994792,
+        "ndcg_at_3": 0.996156,
+        "mean_positive_rank": 1.010417
+      },
+      "mistake_count": 4,
+      "mistakes": [
+        {
+          "example_id": "ru-catering-004-bid_security-q2",
+          "document_id": "ru-catering-004",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": -2.6596827507019043,
+          "top_passage": "Начальная максимальная цена контракта составляет 14 880 000 рублей, НДС не облагается. Сумма включает обязательные расходы.",
+          "top_score": -1.4351344108581543
+        },
+        {
+          "example_id": "ru-datacenter-008-bid_security-q2",
+          "document_id": "ru-datacenter-008",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": -2.9007985591888428,
+          "top_passage": "Начальная максимальная цена контракта составляет 31 700 000 рублей, включая НДС. Сумма включает обязательные расходы.",
+          "top_score": -1.0984065532684326
+        },
+        {
+          "example_id": "ru-fleet-009-bid_security-q2",
+          "document_id": "ru-fleet-009",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": -2.645700693130493,
+          "top_passage": "Начальная максимальная цена контракта составляет 23 440 000 рублей, включая НДС. Сумма включает обязательные расходы.",
+          "top_score": -1.2485440969467163
+        },
+        {
+          "example_id": "ru-solar-010-bid_security-q2",
+          "document_id": "ru-solar-010",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": -3.0838639736175537,
+          "top_passage": "Начальная максимальная цена контракта составляет 86 500 000 рублей, включая НДС. Сумма включает обязательные расходы.",
+          "top_score": -1.2082724571228027
+        }
+      ]
+    },
+    "validation": {
+      "metrics": {
+        "query_count": 96,
+        "hit_at_1": 0.989583,
+        "hit_at_3": 1.0,
+        "mrr": 0.994792,
+        "ndcg_at_3": 0.996156,
+        "mean_positive_rank": 1.010417
+      },
+      "mistake_count": 1,
+      "mistakes": [
+        {
+          "example_id": "ru-helpdesk-019-bid_security-q2",
+          "document_id": "ru-helpdesk-019",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": -2.998887062072754,
+          "top_passage": "Начальная максимальная цена контракта составляет 12 150 000 рублей, включая НДС. Сумма включает обязательные расходы.",
+          "top_score": -1.067901849746704
+        }
+      ]
+    },
+    "test": {
+      "metrics": {
+        "query_count": 96,
+        "hit_at_1": 0.989583,
+        "hit_at_3": 1.0,
+        "mrr": 0.993056,
+        "ndcg_at_3": 0.994792,
+        "mean_positive_rank": 1.020833
+      },
+      "mistake_count": 1,
+      "mistakes": [
+        {
+          "example_id": "en-cyber-024-delivery-q1",
+          "document_id": "en-cyber-024",
+          "category": "delivery",
+          "positive_rank": 3,
+          "positive_score": -5.186640739440918,
+          "top_passage": "The contractor provides a warranty of 15 months, calculated from final acceptance.",
+          "top_score": -4.605987071990967
+        }
+      ]
+    }
+  }
+}

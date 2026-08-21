@@ -28,6 +28,8 @@ class RerankerExample(BaseModel):
     positive: str = Field(min_length=3)
     negatives: list[str] = Field(min_length=2)
     category: str = Field(min_length=1)
+    source_page: int | None = Field(default=None, ge=1)
+    negative_categories: list[str] = Field(default_factory=list)
 
     @field_validator("id", "document_id", "query", "positive", "category")
     @classmethod
@@ -47,6 +49,8 @@ class RerankerExample(BaseModel):
             raise ValueError("positive passage must not be repeated as a negative")
         if len(normalized_negatives) != len(set(normalized_negatives)):
             raise ValueError("negative passages must be unique")
+        if self.negative_categories and len(self.negative_categories) != len(self.negatives):
+            raise ValueError("negative_categories must match the number of negative passages")
         return self
 
 

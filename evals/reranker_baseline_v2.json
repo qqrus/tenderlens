@@ -1,0 +1,735 @@
+{
+  "dataset": "evals\\reranker_dataset_v2.jsonl",
+  "scorer": "lexical",
+  "model": null,
+  "summary": {
+    "query_count": 576,
+    "pair_count": 2304,
+    "document_count": 24,
+    "split_queries": {
+      "train": 384,
+      "validation": 96,
+      "test": 96
+    },
+    "languages": {
+      "ru": 384,
+      "en": 192
+    }
+  },
+  "splits": {
+    "train": {
+      "metrics": {
+        "query_count": 384,
+        "hit_at_1": 0.523438,
+        "hit_at_3": 0.635417,
+        "mrr": 0.666233,
+        "ndcg_at_3": 0.590679,
+        "mean_positive_rank": 2.231771
+      },
+      "mistake_count": 183,
+      "mistakes": [
+        {
+          "example_id": "ru-servers-001-deadline-q2",
+          "document_id": "ru-servers-001",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель обязан завершить весь объем работ в течение 75 календарных дней с даты заключения контракта.",
+          "top_score": 0.12909944487358055
+        },
+        {
+          "example_id": "ru-servers-001-budget-q2",
+          "document_id": "ru-servers-001",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 1%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-servers-001-delivery-q1",
+          "document_id": "ru-servers-001",
+          "category": "delivery",
+          "positive_rank": 2,
+          "positive_score": 0.14433756729740646,
+          "top_passage": "Гарантийный срок составляет 36 месяцев. Он начинается после подписания итогового акта приемки.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-servers-001-delivery-q3",
+          "document_id": "ru-servers-001",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 18 сентября 2026 года в 11:00 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-servers-001-payment-q2",
+          "document_id": "ru-servers-001",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 18 400 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-servers-001-bid_security-q1",
+          "document_id": "ru-servers-001",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": 0.17677669529663687,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 5%.",
+          "top_score": 0.4082482904638631
+        },
+        {
+          "example_id": "ru-servers-001-bid_security-q2",
+          "document_id": "ru-servers-001",
+          "category": "bid_security",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 18 400 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.1091089451179962
+        },
+        {
+          "example_id": "ru-servers-001-penalty-q2",
+          "document_id": "ru-servers-001",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 1%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-servers-001-penalty-q3",
+          "document_id": "ru-servers-001",
+          "category": "penalty",
+          "positive_rank": 2,
+          "positive_score": 0.12309149097933272,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 5%.",
+          "top_score": 0.16666666666666666
+        },
+        {
+          "example_id": "ru-servers-001-warranty-q3",
+          "document_id": "ru-servers-001",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 18 сентября 2026 года в 11:00 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-deadline-q1",
+          "document_id": "ru-office-002",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены не позднее 120 календарных дней после передачи объекта.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-deadline-q2",
+          "document_id": "ru-office-002",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены не позднее 120 календарных дней после передачи объекта.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-deadline-q3",
+          "document_id": "ru-office-002",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены не позднее 120 календарных дней после передачи объекта.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-budget-q1",
+          "document_id": "ru-office-002",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,5% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-budget-q3",
+          "document_id": "ru-office-002",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,5% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-delivery-q1",
+          "document_id": "ru-office-002",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 22 сентября 2026 года в 09:30 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-delivery-q2",
+          "document_id": "ru-office-002",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 22 сентября 2026 года в 09:30 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-delivery-q3",
+          "document_id": "ru-office-002",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 22 сентября 2026 года в 09:30 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-office-002-payment-q1",
+          "document_id": "ru-office-002",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Предельный бюджет закупки установлен в размере 9 750 000 рублей, включая НДС, включая предусмотренные налоги.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-payment-q2",
+          "document_id": "ru-office-002",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Предельный бюджет закупки установлен в размере 9 750 000 рублей, включая НДС, включая предусмотренные налоги.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-performance_security-q3",
+          "document_id": "ru-office-002",
+          "category": "performance_security",
+          "positive_rank": 2,
+          "positive_score": 0.15811388300841897,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,5% от начальной цены.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-office-002-penalty-q1",
+          "document_id": "ru-office-002",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,5% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-office-002-warranty-q1",
+          "document_id": "ru-office-002",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 22 сентября 2026 года в 09:30 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-laboratory-003-deadline-q1",
+          "document_id": "ru-laboratory-003",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены в течение 45 календарных дней с даты подписания договора.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-laboratory-003-deadline-q2",
+          "document_id": "ru-laboratory-003",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены в течение 45 календарных дней с даты подписания договора.",
+          "top_score": 0.12909944487358055
+        }
+      ]
+    },
+    "validation": {
+      "metrics": {
+        "query_count": 96,
+        "hit_at_1": 0.572917,
+        "hit_at_3": 0.677083,
+        "mrr": 0.703993,
+        "ndcg_at_3": 0.637275,
+        "mean_positive_rank": 2.083333
+      },
+      "mistake_count": 41,
+      "mistakes": [
+        {
+          "example_id": "ru-transport-017-deadline-q2",
+          "document_id": "ru-transport-017",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель обязан завершить весь объем работ в течение 210 календарных дней с даты заключения контракта.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-transport-017-budget-q2",
+          "document_id": "ru-transport-017",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 5%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-transport-017-delivery-q1",
+          "document_id": "ru-transport-017",
+          "category": "delivery",
+          "positive_rank": 2,
+          "positive_score": 0.1386750490563073,
+          "top_passage": "Гарантийный срок составляет 60 месяцев. Он начинается после подписания итогового акта приемки.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-transport-017-delivery-q3",
+          "document_id": "ru-transport-017",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 30 октября 2026 года в 10:30 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-transport-017-payment-q2",
+          "document_id": "ru-transport-017",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 128 000 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-transport-017-bid_security-q1",
+          "document_id": "ru-transport-017",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": 0.17677669529663687,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 18%.",
+          "top_score": 0.4082482904638631
+        },
+        {
+          "example_id": "ru-transport-017-bid_security-q2",
+          "document_id": "ru-transport-017",
+          "category": "bid_security",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 128 000 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.1091089451179962
+        },
+        {
+          "example_id": "ru-transport-017-penalty-q2",
+          "document_id": "ru-transport-017",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 5%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-transport-017-penalty-q3",
+          "document_id": "ru-transport-017",
+          "category": "penalty",
+          "positive_rank": 2,
+          "positive_score": 0.11322770341445956,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 18%.",
+          "top_score": 0.16666666666666666
+        },
+        {
+          "example_id": "ru-transport-017-warranty-q3",
+          "document_id": "ru-transport-017",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 30 октября 2026 года в 10:30 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-cleaning-018-deadline-q2",
+          "document_id": "ru-cleaning-018",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель обязан завершить весь объем работ ежедневно в течение 300 календарных дней с даты начала услуг.",
+          "top_score": 0.11952286093343936
+        },
+        {
+          "example_id": "ru-cleaning-018-budget-q2",
+          "document_id": "ru-cleaning-018",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 0,8%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-cleaning-018-delivery-q1",
+          "document_id": "ru-cleaning-018",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Гарантийный срок составляет 4 месяца на устранение выявленных недостатков. Он начинается после подписания итогового акта приемки.",
+          "top_score": 0.1386750490563073
+        },
+        {
+          "example_id": "ru-cleaning-018-delivery-q3",
+          "document_id": "ru-cleaning-018",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 3 ноября 2026 года в 09:00 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-cleaning-018-payment-q2",
+          "document_id": "ru-cleaning-018",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 7 860 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-cleaning-018-bid_security-q1",
+          "document_id": "ru-cleaning-018",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": 0.17677669529663687,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 3%.",
+          "top_score": 0.4082482904638631
+        },
+        {
+          "example_id": "ru-cleaning-018-bid_security-q2",
+          "document_id": "ru-cleaning-018",
+          "category": "bid_security",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 7 860 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.1091089451179962
+        },
+        {
+          "example_id": "ru-cleaning-018-penalty-q2",
+          "document_id": "ru-cleaning-018",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 0,8%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-cleaning-018-penalty-q3",
+          "document_id": "ru-cleaning-018",
+          "category": "penalty",
+          "positive_rank": 2,
+          "positive_score": 0.11785113019775793,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 3%.",
+          "top_score": 0.16666666666666666
+        },
+        {
+          "example_id": "ru-cleaning-018-warranty-q3",
+          "document_id": "ru-cleaning-018",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 3 ноября 2026 года в 09:00 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-helpdesk-019-deadline-q1",
+          "document_id": "ru-helpdesk-019",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Установленный срок исполнения обязательств: в течение 365 календарных дней с даты запуска сервиса.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-helpdesk-019-deadline-q2",
+          "document_id": "ru-helpdesk-019",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель предоставляет гарантию 12 месяцев, исчисляемую с даты окончательной приемки.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-helpdesk-019-budget-q2",
+          "document_id": "ru-helpdesk-019",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Обеспечение заявки составляет 1,1%. Оно предоставляется до окончания срока подачи заявок.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-helpdesk-019-budget-q3",
+          "document_id": "ru-helpdesk-019",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Обеспечение заявки составляет 1,1%. Оно предоставляется до окончания срока подачи заявок.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-helpdesk-019-delivery-q2",
+          "document_id": "ru-helpdesk-019",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Последний срок подачи предложения: 6 ноября 2026 года в 17:30 по московскому времени. Опоздавшая заявка отклоняется.",
+          "top_score": 0.0
+        }
+      ]
+    },
+    "test": {
+      "metrics": {
+        "query_count": 96,
+        "hit_at_1": 0.59375,
+        "hit_at_3": 0.697917,
+        "mrr": 0.719618,
+        "ndcg_at_3": 0.658108,
+        "mean_positive_rank": 2.020833
+      },
+      "mistake_count": 39,
+      "mistakes": [
+        {
+          "example_id": "ru-fire-021-deadline-q2",
+          "document_id": "ru-fire-021",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель обязан завершить весь объем работ в течение 110 календарных дней после допуска на объект.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-fire-021-budget-q2",
+          "document_id": "ru-fire-021",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 2,2%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-fire-021-delivery-q1",
+          "document_id": "ru-fire-021",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Гарантийный срок составляет 42 месяца. Он начинается после подписания итогового акта приемки.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-fire-021-delivery-q3",
+          "document_id": "ru-fire-021",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 13 ноября 2026 года в 12:45 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-fire-021-payment-q2",
+          "document_id": "ru-fire-021",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 16 940 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-fire-021-bid_security-q1",
+          "document_id": "ru-fire-021",
+          "category": "bid_security",
+          "positive_rank": 2,
+          "positive_score": 0.17677669529663687,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 11%.",
+          "top_score": 0.4082482904638631
+        },
+        {
+          "example_id": "ru-fire-021-bid_security-q2",
+          "document_id": "ru-fire-021",
+          "category": "bid_security",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Цена предложения не может превышать 16 940 000 рублей, включая НДС. Превышение является основанием для отклонения.",
+          "top_score": 0.1091089451179962
+        },
+        {
+          "example_id": "ru-fire-021-penalty-q2",
+          "document_id": "ru-fire-021",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 2,2%. Без него заявка не допускается.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-fire-021-penalty-q3",
+          "document_id": "ru-fire-021",
+          "category": "penalty",
+          "positive_rank": 2,
+          "positive_score": 0.11322770341445956,
+          "top_passage": "Размер обеспечения надлежащего исполнения обязательств равен 11%.",
+          "top_score": 0.16666666666666666
+        },
+        {
+          "example_id": "ru-fire-021-warranty-q3",
+          "document_id": "ru-fire-021",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Прием заявок завершается 13 ноября 2026 года в 12:45 по московскому времени. Заявки после этого момента не рассматриваются.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-deadline-q1",
+          "document_id": "ru-bridge-022",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены в течение 80 календарных дней с даты предоставления исходных данных.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-deadline-q2",
+          "document_id": "ru-bridge-022",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены в течение 80 календарных дней с даты предоставления исходных данных.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-bridge-022-deadline-q3",
+          "document_id": "ru-bridge-022",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Поставка и ввод в эксплуатацию должны быть завершены в течение 80 календарных дней с даты предоставления исходных данных.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-budget-q1",
+          "document_id": "ru-bridge-022",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,6% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-budget-q3",
+          "document_id": "ru-bridge-022",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,6% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-delivery-q1",
+          "document_id": "ru-bridge-022",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 17 ноября 2026 года в 15:15 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-delivery-q2",
+          "document_id": "ru-bridge-022",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 17 ноября 2026 года в 15:15 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-delivery-q3",
+          "document_id": "ru-bridge-022",
+          "category": "delivery",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 17 ноября 2026 года в 15:15 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.12403473458920847
+        },
+        {
+          "example_id": "ru-bridge-022-payment-q1",
+          "document_id": "ru-bridge-022",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Предельный бюджет закупки установлен в размере 5 470 000 рублей, включая НДС, включая предусмотренные налоги.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-payment-q2",
+          "document_id": "ru-bridge-022",
+          "category": "payment",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Предельный бюджет закупки установлен в размере 5 470 000 рублей, включая НДС, включая предусмотренные налоги.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-performance_security-q3",
+          "document_id": "ru-bridge-022",
+          "category": "performance_security",
+          "positive_rank": 2,
+          "positive_score": 0.15811388300841897,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,6% от начальной цены.",
+          "top_score": 0.15811388300841897
+        },
+        {
+          "example_id": "ru-bridge-022-penalty-q1",
+          "document_id": "ru-bridge-022",
+          "category": "penalty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Для участия требуется обеспечение заявки в размере 0,6% от начальной цены.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-bridge-022-warranty-q1",
+          "document_id": "ru-bridge-022",
+          "category": "warranty",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник должен направить заявку не позднее 17 ноября 2026 года в 15:15 по московскому времени; перенос срока не предусмотрен.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-archive-023-deadline-q2",
+          "document_id": "ru-archive-023",
+          "category": "deadline",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Исполнитель обязан завершить весь объем работ в течение 160 календарных дней после подписания контракта.",
+          "top_score": 0.0
+        },
+        {
+          "example_id": "ru-archive-023-budget-q2",
+          "document_id": "ru-archive-023",
+          "category": "budget",
+          "positive_rank": 4,
+          "positive_score": 0.0,
+          "top_passage": "Участник вносит обеспечение заявки: 1,9%. Без него заявка не допускается.",
+          "top_score": 0.0
+        }
+      ]
+    }
+  }
+}

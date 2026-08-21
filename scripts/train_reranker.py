@@ -14,7 +14,7 @@ from tenderlens.ml.reranker import (
     summarize_dataset,
 )
 
-DEFAULT_DATASET = Path("evals/reranker_seed_v1.jsonl")
+DEFAULT_DATASET = Path("evals/reranker_dataset_v2.jsonl")
 DEFAULT_MODEL = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
 
 
@@ -130,6 +130,8 @@ def main() -> None:
     final_model_dir = args.output_dir / "final"
     model.save_pretrained(str(final_model_dir))
     tuned_scorer = model_scorer(model, args.batch_size)
+    after_validation = evaluate_ranking(validation_examples, tuned_scorer)
+    after_test = evaluate_ranking(test_examples, tuned_scorer)
     report = {
         "dataset": str(args.dataset),
         "dataset_summary": asdict(summarize_dataset(examples)),
@@ -148,8 +150,18 @@ def main() -> None:
             "test": base_test.as_dict(),
         },
         "after_training": {
-            "validation": evaluate_ranking(validation_examples, tuned_scorer).as_dict(),
-            "test": evaluate_ranking(test_examples, tuned_scorer).as_dict(),
+            "validation": after_validation.as_dict(),
+            "test": after_test.as_dict(),
+        },
+        "decision": {
+            "status": "research_candidate",
+            "synthetic_validation_improved": (after_validation.hit_at_1 > base_validation.hit_at_1),
+            "synthetic_test_improved": after_test.hit_at_1 > base_test.hit_at_1,
+            "production_deployment": False,
+            "reason": (
+                "Synthetic holdout improved, but an independently reviewed real-document "
+                "holdout is required before production integration."
+            ),
         },
     }
     report_path = args.output_dir / "training_report.json"

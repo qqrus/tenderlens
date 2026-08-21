@@ -74,6 +74,8 @@ ignore = ["B008"]
 
 [tool.ruff.lint.per-file-ignores]
 "alembic/versions/*.py" = ["E501"]
+"scripts/generate_synthetic_pdfs.py" = ["RUF001"]
+"src/tenderlens/ml/synthetic_corpus.py" = ["E501", "RUF001"]
 
 [tool.mypy]
 python_version = "3.12"

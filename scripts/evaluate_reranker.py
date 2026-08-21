@@ -15,7 +15,7 @@ from tenderlens.ml.reranker import (
     summarize_dataset,
 )
 
-DEFAULT_DATASET = Path("evals/reranker_seed_v1.jsonl")
+DEFAULT_DATASET = Path("evals/reranker_dataset_v2.jsonl")
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,6 +28,7 @@ def parse_args() -> argparse.Namespace:
         help="Hugging Face model ID or local trained model directory",
     )
     parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--mistakes-limit", type=int, default=50)
     parser.add_argument("--output", type=Path)
     return parser.parse_args()
 
@@ -75,7 +76,11 @@ def main() -> None:
             for prediction in rank_examples(split_examples, scorer)
             if prediction.positive_rank > 1
         ]
-        split_results[split.value] = {"metrics": metrics.as_dict(), "mistakes": mistakes}
+        split_results[split.value] = {
+            "metrics": metrics.as_dict(),
+            "mistake_count": len(mistakes),
+            "mistakes": mistakes[: args.mistakes_limit],
+        }
     report["splits"] = split_results
 
     rendered = json.dumps(report, ensure_ascii=False, indent=2)
