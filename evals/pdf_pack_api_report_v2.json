@@ -10,9 +10,9 @@
     "unanswerable_refusal_accuracy": 1.0,
     "file_endpoint_success": 1.0,
     "page_count_accuracy": 1.0,
-    "mean_ingestion_latency_ms": 47.8,
-    "mean_question_latency_ms": 81.74,
-    "max_question_latency_ms": 1862.87
+    "mean_ingestion_latency_ms": 41.42,
+    "mean_question_latency_ms": 83.42,
+    "max_question_latency_ms": 2187.75
   },
   "by_category": {
     "bid_security": {

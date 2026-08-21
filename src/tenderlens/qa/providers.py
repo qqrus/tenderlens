@@ -186,6 +186,12 @@ VALUE_PATTERN = re.compile(
     r"business days?|calendar days?|months?)",
     re.IGNORECASE,
 )
+PERCENTAGE_QUESTION_PATTERN = re.compile(r"процент|percentage|%", re.IGNORECASE)
+POLICY_NUMBER_QUESTION_PATTERN = re.compile(r"номер|number", re.IGNORECASE)
+POLICY_NUMBER_EVIDENCE_PATTERN = re.compile(
+    r"(?:полис|policy).{0,80}(?:номер|number|N|№|:)\s*[A-ZА-Я0-9][A-ZА-Я0-9-]{2,}",
+    re.IGNORECASE | re.DOTALL,
+)
 
 
 def _normalized_terms(value: str) -> set[str]:
@@ -226,6 +232,18 @@ def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evi
     best = max(candidates, key=lambda candidate: candidate[:5])
     category_match, _value_match, overlap, _, _, selected_item, selected_quote = best
     if question_category is not None and not category_match:
+        return selected_item, ""
+    if (
+        question_category == "subcontracting"
+        and PERCENTAGE_QUESTION_PATTERN.search(question)
+        and not re.search(r"\d+(?:[.,]\d+)?\s*%", selected_quote)
+    ):
+        return selected_item, ""
+    if (
+        question_category == "insurance"
+        and POLICY_NUMBER_QUESTION_PATTERN.search(question)
+        and not POLICY_NUMBER_EVIDENCE_PATTERN.search(selected_quote)
+    ):
         return selected_item, ""
     if question_category is None and not overlap:
         return selected_item, ""

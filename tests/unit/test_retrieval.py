@@ -16,7 +16,9 @@ from tenderlens.retrieval.embeddings import EmbeddingError
 from tenderlens.retrieval.indexing import ChunkIndexingService
 from tenderlens.retrieval.service import (
     HybridRetrievalService,
+    build_lexical_tsquery,
     expand_semantic_query,
+    intent_match_score,
     reciprocal_rank_fusion,
 )
 
@@ -88,6 +90,56 @@ def test_semantic_query_expansion_adds_bilingual_tender_terms() -> None:
     assert "documents evidence certificate" in expanded
     assert "experience completed projects" in expanded
     assert expand_semantic_query("maximum budget") == "maximum budget"
+
+
+def test_lexical_query_uses_informative_terms_with_or_semantics() -> None:
+    query = build_lexical_tsquery("Какова начальная максимальная цена?")
+
+    assert query == "начальная | максимальная | цена"
+
+
+def test_intent_score_prefers_value_bearing_budget_and_deadline_passages() -> None:
+    budget_question = "Какова начальная максимальная цена?"
+    budget_value = "Начальная цена: 42 600 000 рублей, включая НДС."
+    english_budget_value = "The procurement budget is capped at USD 280,000."
+    budget_explanation = "Обоснование начальной цены подготовлено рыночным методом."
+    deadline_question = "Когда заканчивается прием заявок?"
+    deadline_value = "Срок подачи заявок: 2 октября 2026 года в 12:00."
+    deadline_distractor = "Дата проекта 14 августа 2026 года не является сроком подачи заявок."
+
+    assert intent_match_score(budget_question, budget_value) == 1
+    assert intent_match_score("What is the budget cap?", english_budget_value) == 1
+    assert intent_match_score(budget_question, budget_explanation) == 0
+    assert intent_match_score(deadline_question, deadline_value) == 1
+    assert intent_match_score(deadline_question, deadline_distractor) == 0
+
+
+@pytest.mark.asyncio
+async def test_intent_reranker_promotes_exact_budget_clause(
+    session_factory: async_sessionmaker[Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    distractor = make_chunk(6, "Обоснование начальной цены подготовлено рыночным методом.")
+    answer = make_chunk(4, "Начальная цена: 42 600 000 рублей, включая НДС.")
+    service = HybridRetrievalService(
+        cast(Any, session_factory),
+        FakeEmbeddingProvider(),
+        cast(Any, FakeIndexer()),
+        dense_k=20,
+        lexical_k=20,
+        default_limit=5,
+        rrf_k=60,
+    )
+    monkeypatch.setattr(service, "_validate_document", AsyncMock())
+    monkeypatch.setattr(
+        service,
+        "_semantic_search",
+        AsyncMock(return_value=[(distractor, 0.9), (answer, 0.5)]),
+    )
+    monkeypatch.setattr(service, "_lexical_search", AsyncMock(return_value=[]))
+
+    result = await service.search(uuid4(), "Какова начальная максимальная цена?")
+
+    assert result.hits[0].chunk_id == answer.id
 
 
 @pytest.mark.asyncio

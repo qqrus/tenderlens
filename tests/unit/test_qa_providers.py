@@ -133,6 +133,18 @@ async def test_extractive_provider_answers_topic_when_matching_evidence_exists()
     assert draft.claims[0].quote == item.hit.text
 
 
+@pytest.mark.asyncio
+async def test_extractive_provider_refuses_subcontracting_without_percentage() -> None:
+    item = evidence("Subcontracting does not release responsibility to the customer.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "What minimum percentage of work must be subcontracted?", [item]
+    )
+
+    assert draft.cannot_answer is True
+    assert draft.claims == []
+
+
 def test_prompt_marks_evidence_and_page() -> None:
     prompt = build_user_prompt("What is the budget?", [evidence()])
 
