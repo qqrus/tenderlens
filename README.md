@@ -130,26 +130,39 @@ Baseline from one local Docker CPU run:
 | Answer latency p50 / p95 | 68.17 / 81.15 ms |
 | Cold-start search latency | 2410.55 ms |
 
-These results are regression baselines, not claims of legal accuracy. The current dataset is
-one small synthetic document, latency is hardware-dependent, generative LLM quality is not
-measured in the default extractive mode, and scanned PDFs remain unsupported. See
+An additional v2 pack contains 12 synthetic PDF files, 36 pages and 96 known answers across
+eight tender categories. After error-driven improvements to extractive sentence selection,
+the reviewed Docker run reached 1.0 citation-page and exact-value accuracy on this pack, with
+mean answer latency of 73.65 ms. Run it with:
+
+```bash
+uv run python scripts/verify_pdf_pack.py
+uv run python scripts/smoke_pdf_pack.py
+```
+
+These results are regression baselines, not claims of legal accuracy. Layouts are controlled,
+latency is hardware-dependent, generative LLM quality is not measured in the default
+extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
 
 ## Custom ML training
 
-TenderLens includes the first reproducible training pipeline for a domain-specific passage
-reranker. The checked-in RU/EN seed dataset uses document-level train/validation/test splits,
-hard negatives, lexical and pretrained-model baselines, ranking metrics, error details, and a
-CPU smoke-training command. Heavy model weights remain outside Git and the production image.
+TenderLens includes a reproducible training pipeline for a domain-specific passage reranker.
+The v2 corpus has 24 synthetic RU/EN documents, 576 questions and 2,304 labeled pairs with
+document-level splits and same-document hard negatives. Heavy model weights remain outside
+Git and the production image.
 
 ```powershell
+uv run python scripts/build_reranker_dataset.py --check
 uv run python scripts/evaluate_reranker.py
 .\scripts\train-reranker.ps1 -MaxSteps 1
 ```
 
-See [`docs/ml/reranker-training.md`](docs/ml/reranker-training.md) for a plain-language
-explanation, current measurements, limitations, and the path from the seed dataset to a
-portfolio-ready trained model.
+Fine-tuning improved synthetic holdout Hit@1 from 0.875000 to 0.989583 and test MRR from
+0.926215 to 0.993056. The model remains a `research_candidate`: it is not enabled in the API
+until a separately reviewed real-document holdout confirms the result. See
+[`docs/ml/reranker-training.md`](docs/ml/reranker-training.md) for the plain-language method,
+measurements, one remaining error, and limitations.
 
 Windows helpers:
 

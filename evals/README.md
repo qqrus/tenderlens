@@ -47,15 +47,31 @@ fixtures. No real tenders containing personal data should be committed.
 
 ## Reranker training evaluation
 
-The separate [`reranker_seed_v1.jsonl`](reranker_seed_v1.jsonl) dataset validates the custom
-ML training path without using the Docker API:
+The deterministic [`reranker_dataset_v2.jsonl`](reranker_dataset_v2.jsonl) contains 576
+queries and 2,304 labeled pairs from 24 synthetic RU/EN documents. Documents, not individual
+questions, are assigned to train/validation/test, and every query receives three same-document
+hard negatives:
 
 ```bash
 uv run python scripts/evaluate_reranker.py
+uv run python scripts/build_reranker_dataset.py --check
 ```
 
-It contains document-level train/validation/test splits and hard negatives. Reviewed lexical
-and pretrained cross-encoder measurements are stored in
-[`reranker_baseline_v1.json`](reranker_baseline_v1.json). The first three-epoch fine-tuning
-run is stored in [`reranker_experiment_v0.json`](reranker_experiment_v0.json) with the honest
-decision `do_not_deploy`, because held-out ranking did not improve.
+The tuned model improved test Hit@1 from 0.875 to 0.989583 on the synthetic holdout. It remains
+a `research_candidate` until independently reviewed real documents confirm the result. See
+[`reranker_experiment_v1.json`](reranker_experiment_v1.json) and
+[`docs/ml/reranker-training.md`](../docs/ml/reranker-training.md).
+
+## PDF pack evaluation
+
+Twelve generated three-page PDFs and their manifest live in
+[`output/pdf/tenderlens-eval-v2`](../output/pdf/tenderlens-eval-v2). The pack covers 96 known
+answers across eight categories. With Docker Compose running:
+
+```bash
+uv run python scripts/verify_pdf_pack.py
+uv run python scripts/smoke_pdf_pack.py
+```
+
+The reviewed run achieved 1.0 citation-page and exact-value accuracy on this synthetic
+regression pack. It does not measure arbitrary layouts, OCR, or legal correctness.
