@@ -130,19 +130,23 @@ Baseline from one local Docker CPU run:
 | Answer latency p50 / p95 | 68.17 / 81.15 ms |
 | Cold-start search latency | 2410.55 ms |
 
-An additional v2 pack contains 12 synthetic PDF files, 36 pages, 96 known answers and 24
-questions with no answer in the document. After error-driven improvements to extractive
-sentence selection, the reviewed Docker run reached 1.0 citation-page, exact-value and
-correct-refusal accuracy, with mean question latency of 81.74 ms. Run it with:
+An additional v2 pack contains 12 realistic synthetic procurement files: 240 pages, 96 known
+answers and 24 questions with no answer in the document. Russian is the primary language and
+four English files exercise multilingual retrieval. Each 20-page package includes a cover,
+contents, legal context, information sheet, price justification, technical requirements,
+acceptance, securities, liability, a condensed draft contract and annexes. The layout follows
+the current GOST R 7.0.97-2025 conventions where applicable and every page is visibly marked as
+synthetic. The reviewed Docker run reached 1.0 citation-page, exact-value and correct-refusal
+accuracy, with mean question latency of 83.42 ms. Run it with:
 
 ```bash
 uv run python scripts/verify_pdf_pack.py
 uv run python scripts/smoke_pdf_pack.py
 ```
 
-These results are regression baselines, not claims of legal accuracy. Layouts are controlled,
-latency is hardware-dependent, generative LLM quality is not measured in the default
-extractive mode, and scanned PDFs remain unsupported. See
+These results are regression baselines, not claims of legal accuracy. The documents are
+programmatically generated fixtures, latency is hardware-dependent, generative LLM quality is
+not measured in the default extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
 
 ## Custom ML training
