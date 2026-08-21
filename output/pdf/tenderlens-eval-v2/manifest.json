@@ -7,63 +7,76 @@
     "language": "ru",
     "split": "train",
     "profile": "goods",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "18 сентября 2026 года в 11:00 по московскому времени",
         "expected_quote": "Прием заявок завершается 18 сентября 2026 года в 11:00 по московскому времени. Заявки после этого момента не рассматриваются.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "18 400 000 рублей, включая НДС",
         "expected_quote": "Цена предложения не может превышать 18 400 000 рублей, включая НДС. Превышение является основанием для отклонения.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "в течение 75 календарных дней с даты заключения контракта",
         "expected_quote": "Исполнитель обязан завершить весь объем работ в течение 75 календарных дней с даты заключения контракта.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 12 рабочих дней после подписания акта приемки",
         "expected_quote": "Заказчик перечисляет оплату в течение 12 рабочих дней после подписания акта приемки; основанием служит подписанный документ о приемке.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "1%",
         "expected_quote": "Участник вносит обеспечение заявки: 1%. Без него заявка не допускается.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "5%",
         "expected_quote": "Размер обеспечения надлежащего исполнения обязательств равен 5%.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,1% цены просроченного обязательства",
         "expected_quote": "За просрочку начисляется пеня 0,1% цены просроченного обязательства. Общий размер пени ограничен 10% цены контракта.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "36 месяцев",
         "expected_quote": "Гарантийный срок составляет 36 месяцев. Он начинается после подписания итогового акта приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -79,63 +92,76 @@
     "language": "ru",
     "split": "train",
     "profile": "works",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "22 сентября 2026 года в 09:30 по московскому времени",
         "expected_quote": "Участник должен направить заявку не позднее 22 сентября 2026 года в 09:30 по московскому времени; перенос срока не предусмотрен.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "9 750 000 рублей, включая НДС",
         "expected_quote": "Предельный бюджет закупки установлен в размере 9 750 000 рублей, включая НДС, включая предусмотренные налоги.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "не позднее 120 календарных дней после передачи объекта",
         "expected_quote": "Поставка и ввод в эксплуатацию должны быть завершены не позднее 120 календарных дней после передачи объекта.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 15 рабочих дней после приемки каждого этапа",
         "expected_quote": "Оплата производится в течение 15 рабочих дней после приемки каждого этапа. Авансовый платеж не предусмотрен.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "0,5%",
         "expected_quote": "Для участия требуется обеспечение заявки в размере 0,5% от начальной цены.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "7%",
         "expected_quote": "До подписания договора победитель предоставляет обеспечение исполнения: 7% от цены контракта.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,05% стоимости невыполненных работ",
         "expected_quote": "При нарушении срока заказчик удерживает неустойку 0,05% стоимости невыполненных работ за каждый календарный день просрочки.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "48 месяцев",
         "expected_quote": "На результат закупки действует гарантия продолжительностью 48 месяцев после приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -151,63 +177,76 @@
     "language": "ru",
     "split": "train",
     "profile": "works",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "2 октября 2026 года в 12:00 по московскому времени",
         "expected_quote": "Участник должен направить заявку не позднее 2 октября 2026 года в 12:00 по московскому времени; перенос срока не предусмотрен.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "42 600 000 рублей, включая НДС",
         "expected_quote": "Предельный бюджет закупки установлен в размере 42 600 000 рублей, включая НДС, включая предусмотренные налоги.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "до 30 июня 2027 года с даты открытия строительной площадки",
         "expected_quote": "Поставка и ввод в эксплуатацию должны быть завершены до 30 июня 2027 года с даты открытия строительной площадки.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 20 рабочих дней после приемки выполненного этапа",
         "expected_quote": "Оплата производится в течение 20 рабочих дней после приемки выполненного этапа. Авансовый платеж не предусмотрен.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "3%",
         "expected_quote": "Для участия требуется обеспечение заявки в размере 3% от начальной цены.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "15%",
         "expected_quote": "До подписания договора победитель предоставляет обеспечение исполнения: 15% от цены контракта.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,03% стоимости просроченного этапа",
         "expected_quote": "При нарушении срока заказчик удерживает неустойку 0,03% стоимости просроченного этапа за каждый календарный день просрочки.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "60 месяцев",
         "expected_quote": "На результат закупки действует гарантия продолжительностью 60 месяцев после приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -223,63 +262,76 @@
     "language": "ru",
     "split": "train",
     "profile": "it",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "9 октября 2026 года в 13:30 по московскому времени",
         "expected_quote": "Последний срок подачи предложения: 9 октября 2026 года в 13:30 по московскому времени. Опоздавшая заявка отклоняется.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "31 700 000 рублей, включая НДС",
         "expected_quote": "Начальная максимальная цена контракта составляет 31 700 000 рублей, включая НДС. Сумма включает обязательные расходы.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "не позднее 150 календарных дней после подписания контракта",
         "expected_quote": "Установленный срок исполнения обязательств: не позднее 150 календарных дней после подписания контракта.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 18 рабочих дней после итоговых испытаний",
         "expected_quote": "Расчет с исполнителем выполняется в течение 18 рабочих дней после итоговых испытаний. До приемки оплата не производится.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "2,5%",
         "expected_quote": "Обеспечение заявки составляет 2,5%. Оно предоставляется до окончания срока подачи заявок.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "12%",
         "expected_quote": "Обеспечение исполнения контракта установлено в размере 12%. Оно предоставляется победителем.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,04% цены незавершенных работ",
         "expected_quote": "Ответственность исполнителя за каждый день задержки: 0,04% цены незавершенных работ, но не более 10% цены договора.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "36 месяцев",
         "expected_quote": "Исполнитель предоставляет гарантию 36 месяцев, исчисляемую с даты окончательной приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -295,63 +347,76 @@
     "language": "en",
     "split": "train",
     "profile": "it",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "When is the proposal deadline?",
         "expected_answer": "21 September 2026 at 17:00 UTC",
         "expected_quote": "The bidder shall submit its offer no later than 21 September 2026 at 17:00 UTC. No deadline extension is planned.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "What is the maximum contract value?",
         "expected_answer": "USD 280,000 including all taxes",
         "expected_quote": "The procurement budget is capped at USD 280,000 including all taxes, inclusive of applicable taxes.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "What is the contract delivery period?",
         "expected_answer": "within 30 calendar days after contract signature",
         "expected_quote": "Delivery and commissioning must be completed within 30 calendar days after contract signature.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "When will the customer pay after acceptance?",
         "expected_answer": "within 15 business days after monthly acceptance",
         "expected_quote": "Payment will be made within 15 business days after monthly acceptance. No advance payment is available.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "What is the bid security amount?",
         "expected_answer": "1%",
         "expected_quote": "Participation requires bid security equal to 1% of the maximum contract value.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "What is the performance security amount?",
         "expected_answer": "5%",
         "expected_quote": "Before signature, the winner shall provide performance security of 5% of the contract price.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "What penalty applies to late performance?",
         "expected_answer": "0.1% of the delayed monthly service value",
         "expected_quote": "If a deadline is missed, liquidated damages of 0.1% of the delayed monthly service value are charged for each calendar day.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "What warranty period is required?",
         "expected_answer": "12 months",
         "expected_quote": "The procurement result is covered by a 12 months warranty after acceptance.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -367,63 +432,76 @@
     "language": "en",
     "split": "train",
     "profile": "goods",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "When is the proposal deadline?",
         "expected_answer": "29 September 2026 at 12:00 UTC",
         "expected_quote": "Proposals must be received by 29 September 2026 at 12:00 UTC. Late submissions will not be considered.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "What is the maximum contract value?",
         "expected_answer": "EUR 740,000 excluding VAT",
         "expected_quote": "A financial offer must not exceed EUR 740,000 excluding VAT. Any excess makes the offer non-compliant.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "What is the contract delivery period?",
         "expected_answer": "within 105 calendar days from the notice to proceed",
         "expected_quote": "The contractor shall complete the entire scope within 105 calendar days from the notice to proceed.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "When will the customer pay after acceptance?",
         "expected_answer": "within 20 business days after final acceptance",
         "expected_quote": "The customer pays within 20 business days after final acceptance, based on the signed acceptance certificate.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "What is the bid security amount?",
         "expected_answer": "2%",
         "expected_quote": "Each bidder shall lodge bid security of 2%; an unsecured bid is inadmissible.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "What is the performance security amount?",
         "expected_answer": "8%",
         "expected_quote": "Security for proper contract performance equals 8%.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "What penalty applies to late performance?",
         "expected_answer": "0.05% of the undelivered equipment value",
         "expected_quote": "A delay penalty of 0.05% of the undelivered equipment value applies. Total delay penalties are capped at 10% of contract value.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "What warranty period is required?",
         "expected_answer": "36 months",
         "expected_quote": "The warranty period is 36 months. It starts when the final acceptance certificate is signed.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -439,63 +517,76 @@
     "language": "ru",
     "split": "validation",
     "profile": "goods",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "30 октября 2026 года в 10:30 по московскому времени",
         "expected_quote": "Прием заявок завершается 30 октября 2026 года в 10:30 по московскому времени. Заявки после этого момента не рассматриваются.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "128 000 000 рублей, включая НДС",
         "expected_quote": "Цена предложения не может превышать 128 000 000 рублей, включая НДС. Превышение является основанием для отклонения.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "в течение 210 календарных дней с даты заключения контракта",
         "expected_quote": "Исполнитель обязан завершить весь объем работ в течение 210 календарных дней с даты заключения контракта.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 22 рабочих дней после приемки каждой единицы",
         "expected_quote": "Заказчик перечисляет оплату в течение 22 рабочих дней после приемки каждой единицы; основанием служит подписанный документ о приемке.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "5%",
         "expected_quote": "Участник вносит обеспечение заявки: 5%. Без него заявка не допускается.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "18%",
         "expected_quote": "Размер обеспечения надлежащего исполнения обязательств равен 18%.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,025% стоимости просроченной единицы",
         "expected_quote": "За просрочку начисляется пеня 0,025% стоимости просроченной единицы. Общий размер пени ограничен 10% цены контракта.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "60 месяцев",
         "expected_quote": "Гарантийный срок составляет 60 месяцев. Он начинается после подписания итогового акта приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -511,63 +602,76 @@
     "language": "ru",
     "split": "validation",
     "profile": "it",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "6 ноября 2026 года в 17:30 по московскому времени",
         "expected_quote": "Последний срок подачи предложения: 6 ноября 2026 года в 17:30 по московскому времени. Опоздавшая заявка отклоняется.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "12 150 000 рублей, включая НДС",
         "expected_quote": "Начальная максимальная цена контракта составляет 12 150 000 рублей, включая НДС. Сумма включает обязательные расходы.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "в течение 365 календарных дней с даты запуска сервиса",
         "expected_quote": "Установленный срок исполнения обязательств: в течение 365 календарных дней с даты запуска сервиса.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 9 рабочих дней после подписания ежемесячного акта",
         "expected_quote": "Расчет с исполнителем выполняется в течение 9 рабочих дней после подписания ежемесячного акта. До приемки оплата не производится.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "1,1%",
         "expected_quote": "Обеспечение заявки составляет 1,1%. Оно предоставляется до окончания срока подачи заявок.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "5,5%",
         "expected_quote": "Обеспечение исполнения контракта установлено в размере 5,5%. Оно предоставляется победителем.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,18% стоимости услуг за отчетный месяц",
         "expected_quote": "Ответственность исполнителя за каждый день задержки: 0,18% стоимости услуг за отчетный месяц, но не более 10% цены договора.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "12 месяцев",
         "expected_quote": "Исполнитель предоставляет гарантию 12 месяцев, исчисляемую с даты окончательной приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -583,63 +687,76 @@
     "language": "en",
     "split": "validation",
     "profile": "goods",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "When is the proposal deadline?",
         "expected_answer": "10 November 2026 at 13:00 UTC",
         "expected_quote": "The bidder shall submit its offer no later than 10 November 2026 at 13:00 UTC. No deadline extension is planned.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "What is the maximum contract value?",
         "expected_answer": "USD 635,000 including taxes",
         "expected_quote": "The procurement budget is capped at USD 635,000 including taxes, inclusive of applicable taxes.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "What is the contract delivery period?",
         "expected_answer": "within 135 calendar days after contract execution",
         "expected_quote": "Delivery and commissioning must be completed within 135 calendar days after contract execution.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "When will the customer pay after acceptance?",
         "expected_answer": "within 17 business days after installation acceptance",
         "expected_quote": "Payment will be made within 17 business days after installation acceptance. No advance payment is available.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "What is the bid security amount?",
         "expected_answer": "1.75%",
         "expected_quote": "Participation requires bid security equal to 1.75% of the maximum contract value.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "What is the performance security amount?",
         "expected_answer": "7.5%",
         "expected_quote": "Before signature, the winner shall provide performance security of 7.5% of the contract price.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "What penalty applies to late performance?",
         "expected_answer": "0.07% of the uninstalled equipment value",
         "expected_quote": "If a deadline is missed, liquidated damages of 0.07% of the uninstalled equipment value are charged for each calendar day.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "What warranty period is required?",
         "expected_answer": "30 months",
         "expected_quote": "The procurement result is covered by a 30 months warranty after acceptance.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -655,63 +772,76 @@
     "language": "ru",
     "split": "test",
     "profile": "works",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "13 ноября 2026 года в 12:45 по московскому времени",
         "expected_quote": "Прием заявок завершается 13 ноября 2026 года в 12:45 по московскому времени. Заявки после этого момента не рассматриваются.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "16 940 000 рублей, включая НДС",
         "expected_quote": "Цена предложения не может превышать 16 940 000 рублей, включая НДС. Превышение является основанием для отклонения.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "в течение 110 календарных дней после допуска на объект",
         "expected_quote": "Исполнитель обязан завершить весь объем работ в течение 110 календарных дней после допуска на объект.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 16 рабочих дней после итоговой приемки",
         "expected_quote": "Заказчик перечисляет оплату в течение 16 рабочих дней после итоговой приемки; основанием служит подписанный документ о приемке.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "2,2%",
         "expected_quote": "Участник вносит обеспечение заявки: 2,2%. Без него заявка не допускается.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "11%",
         "expected_quote": "Размер обеспечения надлежащего исполнения обязательств равен 11%.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,055% стоимости незавершенных работ",
         "expected_quote": "За просрочку начисляется пеня 0,055% стоимости незавершенных работ. Общий размер пени ограничен 10% цены контракта.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "42 месяца",
         "expected_quote": "Гарантийный срок составляет 42 месяца. Он начинается после подписания итогового акта приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -727,63 +857,76 @@
     "language": "ru",
     "split": "test",
     "profile": "it",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "Когда заканчивается прием заявок?",
         "expected_answer": "20 ноября 2026 года в 11:20 по московскому времени",
         "expected_quote": "Прием заявок завершается 20 ноября 2026 года в 11:20 по московскому времени. Заявки после этого момента не рассматриваются.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "Какова начальная максимальная цена?",
         "expected_answer": "21 300 000 рублей, включая НДС",
         "expected_quote": "Цена предложения не может превышать 21 300 000 рублей, включая НДС. Превышение является основанием для отклонения.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "Какой срок исполнения контракта?",
         "expected_answer": "в течение 160 календарных дней после подписания контракта",
         "expected_quote": "Исполнитель обязан завершить весь объем работ в течение 160 календарных дней после подписания контракта.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "В какой срок заказчик оплачивает результат?",
         "expected_answer": "в течение 19 рабочих дней после приемки каждой очереди",
         "expected_quote": "Заказчик перечисляет оплату в течение 19 рабочих дней после приемки каждой очереди; основанием служит подписанный документ о приемке.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "Каков размер обеспечения заявки?",
         "expected_answer": "1,9%",
         "expected_quote": "Участник вносит обеспечение заявки: 1,9%. Без него заявка не допускается.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "Каков размер обеспечения исполнения контракта?",
         "expected_answer": "9,5%",
         "expected_quote": "Размер обеспечения надлежащего исполнения обязательств равен 9,5%.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "Какая пеня начисляется за просрочку?",
         "expected_answer": "0,065% стоимости просроченной очереди",
         "expected_quote": "За просрочку начисляется пеня 0,065% стоимости просроченной очереди. Общий размер пени ограничен 10% цены контракта.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "Какой гарантийный срок установлен?",
         "expected_answer": "28 месяцев",
         "expected_quote": "Гарантийный срок составляет 28 месяцев. Он начинается после подписания итогового акта приемки.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
@@ -799,63 +942,76 @@
     "language": "en",
     "split": "test",
     "profile": "it",
-    "page_count": 3,
+    "page_count": 20,
+    "format_version": "realistic-procurement-v1",
+    "layout_reference": "GOST R 7.0.97-2025",
+    "synthetic": true,
+    "legal_basis": [
+      {
+        "title": "Федеральный закон от 05.04.2013 N 44-ФЗ",
+        "url": "https://publication.pravo.gov.ru/Document/View/0001201304080023"
+      },
+      {
+        "title": "ГОСТ Р 7.0.97-2025 (действует с 18.08.2025)",
+        "url": "https://protect.gost.ru/gost/details/360994e3-9a70-47b9-ab3a-cf21809e26ed"
+      }
+    ],
     "questions": [
       {
         "category": "deadline",
         "question": "When is the proposal deadline?",
         "expected_answer": "24 November 2026 at 15:00 UTC",
         "expected_quote": "The final proposal submission deadline is 24 November 2026 at 15:00 UTC; any late bid will be rejected.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "budget",
         "question": "What is the maximum contract value?",
         "expected_answer": "USD 390,000 excluding taxes",
         "expected_quote": "The maximum contract value is USD 390,000 excluding taxes. This amount includes all mandatory supplier costs.",
-        "expected_page": 1
+        "expected_page": 4
       },
       {
         "category": "delivery",
         "question": "What is the contract delivery period?",
         "expected_answer": "within 70 calendar days after the kick-off meeting",
         "expected_quote": "The required performance period is within 70 calendar days after the kick-off meeting.",
-        "expected_page": 2
+        "expected_page": 9
       },
       {
         "category": "payment",
         "question": "When will the customer pay after acceptance?",
         "expected_answer": "within 21 business days after final report acceptance",
         "expected_quote": "The supplier will receive payment within 21 business days after final report acceptance. Nothing is payable before acceptance.",
-        "expected_page": 2
+        "expected_page": 11
       },
       {
         "category": "bid_security",
         "question": "What is the bid security amount?",
         "expected_answer": "1.2%",
         "expected_quote": "Bid security is 1.2%. It must be provided before the proposal deadline.",
-        "expected_page": 3
+        "expected_page": 15
       },
       {
         "category": "performance_security",
         "question": "What is the performance security amount?",
         "expected_answer": "6.5%",
         "expected_quote": "Performance security is set at 6.5%. The successful bidder must provide it.",
-        "expected_page": 3
+        "expected_page": 16
       },
       {
         "category": "penalty",
         "question": "What penalty applies to late performance?",
         "expected_answer": "0.09% of the overdue assessment value",
         "expected_quote": "For every day of delay, the contractor is liable for 0.09% of the overdue assessment value, up to 10% of the contract price.",
-        "expected_page": 3
+        "expected_page": 17
       },
       {
         "category": "warranty",
         "question": "What warranty period is required?",
         "expected_answer": "15 months",
         "expected_quote": "The contractor provides a warranty of 15 months, calculated from final acceptance.",
-        "expected_page": 2
+        "expected_page": 18
       }
     ],
     "unanswerable_questions": [
