@@ -130,10 +130,10 @@ Baseline from one local Docker CPU run:
 | Answer latency p50 / p95 | 68.17 / 81.15 ms |
 | Cold-start search latency | 2410.55 ms |
 
-An additional v2 pack contains 12 synthetic PDF files, 36 pages and 96 known answers across
-eight tender categories. After error-driven improvements to extractive sentence selection,
-the reviewed Docker run reached 1.0 citation-page and exact-value accuracy on this pack, with
-mean answer latency of 73.65 ms. Run it with:
+An additional v2 pack contains 12 synthetic PDF files, 36 pages, 96 known answers and 24
+questions with no answer in the document. After error-driven improvements to extractive
+sentence selection, the reviewed Docker run reached 1.0 citation-page, exact-value and
+correct-refusal accuracy, with mean question latency of 81.74 ms. Run it with:
 
 ```bash
 uv run python scripts/verify_pdf_pack.py

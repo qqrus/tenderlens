@@ -44,6 +44,16 @@ RU_PROFILE_NAMES = {
     "it": "информационные технологии",
     "energy": "энергетика",
 }
+UNANSWERABLE_QUESTIONS = {
+    "ru": (
+        "Какой номер страхового полиса указан для поставщика?",
+        "Какой минимальный процент работ нужно передать субподрядчикам?",
+    ),
+    "en": (
+        "What supplier insurance policy number is specified?",
+        "What minimum percentage of work must be subcontracted?",
+    ),
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -177,6 +187,7 @@ def build_pdf(scenario: TenderScenario, output_path: Path) -> dict[str, Any]:
             }
             for fact in facts
         ],
+        "unanswerable_questions": list(UNANSWERABLE_QUESTIONS[scenario.language]),
     }
 
 

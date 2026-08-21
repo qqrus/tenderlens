@@ -72,6 +72,16 @@ STOP_WORDS = {
 
 CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
     (
+        "insurance",
+        re.compile(r"страхов|полис|insurance|policy", re.IGNORECASE),
+        re.compile(r"страхов|полис|insurance|policy", re.IGNORECASE),
+    ),
+    (
+        "subcontracting",
+        re.compile(r"субподряд|subcontract", re.IGNORECASE),
+        re.compile(r"субподряд|subcontract", re.IGNORECASE),
+    ),
+    (
         "performance_security",
         re.compile(
             r"обеспеч\w*\s+(?:надлежащ\w+\s+)?исполн|гарант\w+\s+исполн|"
@@ -213,9 +223,12 @@ def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evi
             )
     if not candidates:
         return evidence[0], ""
-    _, _, _, _, _, selected_item, selected_quote = max(
-        candidates, key=lambda candidate: candidate[:5]
-    )
+    best = max(candidates, key=lambda candidate: candidate[:5])
+    category_match, _value_match, overlap, _, _, selected_item, selected_quote = best
+    if question_category is not None and not category_match:
+        return selected_item, ""
+    if question_category is None and not overlap:
+        return selected_item, ""
     return selected_item, selected_quote
 
 

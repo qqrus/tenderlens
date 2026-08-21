@@ -66,12 +66,13 @@ a `research_candidate` until independently reviewed real documents confirm the r
 
 Twelve generated three-page PDFs and their manifest live in
 [`output/pdf/tenderlens-eval-v2`](../output/pdf/tenderlens-eval-v2). The pack covers 96 known
-answers across eight categories. With Docker Compose running:
+answers across eight categories plus 24 questions whose topics are absent. With Docker Compose
+running:
 
 ```bash
 uv run python scripts/verify_pdf_pack.py
 uv run python scripts/smoke_pdf_pack.py
 ```
 
-The reviewed run achieved 1.0 citation-page and exact-value accuracy on this synthetic
-regression pack. It does not measure arbitrary layouts, OCR, or legal correctness.
+The reviewed run achieved 1.0 citation-page, exact-value, and correct-refusal accuracy on this
+synthetic regression pack. It does not measure arbitrary layouts, OCR, or legal correctness.

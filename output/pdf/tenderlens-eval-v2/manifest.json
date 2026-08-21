@@ -65,6 +65,10 @@
         "expected_quote": "Гарантийный срок составляет 36 месяцев. Он начинается после подписания итогового акта приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -133,6 +137,10 @@
         "expected_quote": "На результат закупки действует гарантия продолжительностью 48 месяцев после приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -201,6 +209,10 @@
         "expected_quote": "На результат закупки действует гарантия продолжительностью 60 месяцев после приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -269,6 +281,10 @@
         "expected_quote": "Исполнитель предоставляет гарантию 36 месяцев, исчисляемую с даты окончательной приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -337,6 +353,10 @@
         "expected_quote": "The procurement result is covered by a 12 months warranty after acceptance.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "What supplier insurance policy number is specified?",
+      "What minimum percentage of work must be subcontracted?"
     ]
   },
   {
@@ -405,6 +425,10 @@
         "expected_quote": "The warranty period is 36 months. It starts when the final acceptance certificate is signed.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "What supplier insurance policy number is specified?",
+      "What minimum percentage of work must be subcontracted?"
     ]
   },
   {
@@ -473,6 +497,10 @@
         "expected_quote": "Гарантийный срок составляет 60 месяцев. Он начинается после подписания итогового акта приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -541,6 +569,10 @@
         "expected_quote": "Исполнитель предоставляет гарантию 12 месяцев, исчисляемую с даты окончательной приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -609,6 +641,10 @@
         "expected_quote": "The procurement result is covered by a 30 months warranty after acceptance.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "What supplier insurance policy number is specified?",
+      "What minimum percentage of work must be subcontracted?"
     ]
   },
   {
@@ -677,6 +713,10 @@
         "expected_quote": "Гарантийный срок составляет 42 месяца. Он начинается после подписания итогового акта приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -745,6 +785,10 @@
         "expected_quote": "Гарантийный срок составляет 28 месяцев. Он начинается после подписания итогового акта приемки.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "Какой номер страхового полиса указан для поставщика?",
+      "Какой минимальный процент работ нужно передать субподрядчикам?"
     ]
   },
   {
@@ -813,6 +857,10 @@
         "expected_quote": "The contractor provides a warranty of 15 months, calculated from final acceptance.",
         "expected_page": 2
       }
+    ],
+    "unanswerable_questions": [
+      "What supplier insurance policy number is specified?",
+      "What minimum percentage of work must be subcontracted?"
     ]
   }
 ]

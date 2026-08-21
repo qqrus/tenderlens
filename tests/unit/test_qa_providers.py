@@ -109,6 +109,30 @@ async def test_extractive_provider_distinguishes_delivery_from_warranty_and_pena
     assert draft.claims[0].quote == "Срок исполнения обязательств: 110 календарных дней."
 
 
+@pytest.mark.asyncio
+async def test_extractive_provider_refuses_when_evidence_is_unrelated() -> None:
+    item = evidence("Поставка выполняется в течение 60 календарных дней.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какой номер страхового полиса указан?", [item]
+    )
+
+    assert draft.cannot_answer is True
+    assert draft.claims == []
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_answers_topic_when_matching_evidence_exists() -> None:
+    item = evidence("Номер страхового полиса поставщика: TL-TEST-42.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какой номер страхового полиса указан?", [item]
+    )
+
+    assert draft.cannot_answer is False
+    assert draft.claims[0].quote == item.hit.text
+
+
 def test_prompt_marks_evidence_and_page() -> None:
     prompt = build_user_prompt("What is the budget?", [evidence()])
 

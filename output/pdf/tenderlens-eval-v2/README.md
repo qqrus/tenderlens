@@ -6,7 +6,8 @@ TenderLens locally or used in screenshots and demos.
 
 Each PDF has three pages and eight known conditions: submission deadline, budget, delivery,
 payment, bid security, performance security, delay penalty, and warranty. `manifest.json`
-contains the expected answer value, verbatim source fragment, and page for 96 questions.
+contains the expected answer value, verbatim source fragment, and page for 96 questions plus
+24 questions that must produce an evidence-insufficient refusal.
 
 Recommended first manual checks:
 

@@ -49,6 +49,7 @@ def main() -> int:
     results: list[dict[str, Any]] = []
     ingestion_latencies: list[float] = []
     question_latencies: list[float] = []
+    refusal_results: list[dict[str, Any]] = []
 
     with httpx.Client(timeout=240, trust_env=False) as client:
         for index, expected_document in enumerate(manifest, start=1):
@@ -115,6 +116,26 @@ def main() -> int:
                         "latency_ms": round(latency_ms, 2),
                     }
                 )
+            for question in expected_document["unanswerable_questions"]:
+                question_started = time.perf_counter()
+                response = client.post(
+                    f"{args.api_url}/documents/{document_id}/questions",
+                    json={"question": question},
+                )
+                latency_ms = (time.perf_counter() - question_started) * 1_000
+                question_latencies.append(latency_ms)
+                response.raise_for_status()
+                answer = response.json()
+                refusal_results.append(
+                    {
+                        "document_id": expected_document["document_id"],
+                        "language": expected_document["language"],
+                        "question": question,
+                        "correct_refusal": not answer["grounded"] and not answer["citations"],
+                        "answer": answer["answer"],
+                        "latency_ms": round(latency_ms, 2),
+                    }
+                )
 
     question_count = len(results)
     category_results: dict[str, dict[str, float | int]] = {}
@@ -133,6 +154,7 @@ def main() -> int:
         "corpus": "synthetic_tender_corpus_v2",
         "documents": len(manifest),
         "questions": question_count,
+        "unanswerable_questions": len(refusal_results),
         "metrics": {
             "grounded_rate": round(fmean(float(item["grounded"]) for item in results), 6),
             "citation_page_accuracy": round(
@@ -140,6 +162,9 @@ def main() -> int:
             ),
             "answer_value_accuracy": round(
                 fmean(float(item["answer_contains_expected"]) for item in results), 6
+            ),
+            "unanswerable_refusal_accuracy": round(
+                fmean(float(item["correct_refusal"]) for item in refusal_results), 6
             ),
             "file_endpoint_success": round(fmean(float(item["file_ok"]) for item in results), 6),
             "page_count_accuracy": round(
@@ -163,6 +188,7 @@ def main() -> int:
                 )
             )
         ],
+        "refusal_failures": [item for item in refusal_results if not item["correct_refusal"]],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
