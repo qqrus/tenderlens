@@ -71,6 +71,7 @@ export function CitationDrawer({
         sourceLoading={sourceLoading}
         sourceError={sourceError}
         onSourceRetry={onSourceRetry}
+        highlightQuote={citation?.quote}
       />
     </aside>
   )

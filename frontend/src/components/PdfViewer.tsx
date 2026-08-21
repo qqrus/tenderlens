@@ -4,6 +4,7 @@ import { useLocale } from '../i18n/LocaleContext'
 import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
+import { renderHighlightedPdfText } from './pdfHighlight'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `${new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -17,6 +18,7 @@ type Props = {
   sourceLoading?: boolean
   sourceError?: string | null
   onSourceRetry?: () => void
+  highlightQuote?: string | null
 }
 
 export function PdfViewer({
@@ -26,6 +28,7 @@ export function PdfViewer({
   sourceLoading,
   sourceError,
   onSourceRetry,
+  highlightQuote = null,
 }: Props) {
   const { pick } = useLocale()
   const frameRef = useRef<HTMLDivElement>(null)
@@ -116,7 +119,18 @@ export function PdfViewer({
             </div>
           }
         >
-          <Page pageNumber={pageNumber} width={width} renderTextLayer renderAnnotationLayer />
+          <Page
+            pageNumber={pageNumber}
+            width={width}
+            renderTextLayer
+            renderAnnotationLayer
+            customTextRenderer={({ str }) => renderHighlightedPdfText(str, highlightQuote)}
+            onRenderTextLayerSuccess={() => {
+              frameRef.current
+                ?.querySelector('.pdf-citation-highlight')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }}
+          />
         </Document>
       </div>
     </div>
