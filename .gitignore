@@ -18,3 +18,4 @@ data/models/
 /models/
 *.log
 evals/reports/
+/tmp/
