@@ -70,6 +70,129 @@ STOP_WORDS = {
     "document",
 }
 
+CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
+    (
+        "insurance",
+        re.compile(r"страхов|полис|insurance|policy", re.IGNORECASE),
+        re.compile(r"страхов|полис|insurance|policy", re.IGNORECASE),
+    ),
+    (
+        "subcontracting",
+        re.compile(r"субподряд|subcontract", re.IGNORECASE),
+        re.compile(r"субподряд|subcontract", re.IGNORECASE),
+    ),
+    (
+        "performance_security",
+        re.compile(
+            r"обеспеч\w*\s+(?:надлежащ\w+\s+)?исполн|гарант\w+\s+исполн|"
+            r"победител\w+.*обеспеч|performance security|contract security|"
+            r"security.*proper performance",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"обеспеч\w*.*исполн|победител\w+.*обеспеч|performance security|"
+            r"security.*contract performance|successful bidder.*security",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "bid_security",
+        re.compile(
+            r"обеспеч\w*.*заяв|внести.*участи|обеспеч\w*.*подач|"
+            r"bid security|security.*participat|security.*bid",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"обеспеч\w*\s+заяв|для участи\w+.*обеспеч|bid security|"
+            r"participation requires.*security|bidder.*lodge.*security",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "deadline",
+        re.compile(
+            r"прием\w*\s+заяв|подат\w*\s+(?:заяв|предлож)|дедлайн.*подач|"
+            r"proposal deadline|bid.*submit|submission cutoff",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"прием\w*\s+заяв|последн\w+\s+срок\w*\s+подач|"
+            r"направ\w+\s+заявк\w+\s+не позднее|заявк\w+.*отклон|"
+            r"proposals? must be received|proposal submission deadline is|"
+            r"submit.*offer no later|late (?:bid|submission)",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "budget",
+        re.compile(
+            r"начальн\w+.*цен|предельн\w+\s+бюджет|сумм\w+.*предлож|"
+            r"maximum contract value|budget cap|offer not exceed",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"начальн\w+\s+(?:максимальн\w+\s+)?цен\w+\s+контракт|"
+            r"предельн\w+\s+бюджет|цен\w+\s+предлож|"
+            r"maximum contract value\s+(?:is|equals)|procurement budget|"
+            r"offer must not exceed",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "payment",
+        re.compile(
+            r"оплат|оплач|расчет|перечисл|payment|customer pay|receive payment",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"оплат|расчет\w*.*исполнител|перечисл|payment|customer pays|receive payment",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "penalty",
+        re.compile(
+            r"пен[яеи]|неустой|штраф|просроч|задерж|penalty|liquidated damages|delay",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"пен[яеи]|неустой|штраф|просроч|задерж|penalty|liquidated damages|delay",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "warranty",
+        re.compile(r"гарантийн\w+\s+срок|гаранти\w+.*после прием|warranty", re.IGNORECASE),
+        re.compile(r"гарантийн\w+\s+срок|предоставл\w+\s+гаранти|warranty", re.IGNORECASE),
+    ),
+    (
+        "delivery",
+        re.compile(
+            r"срок\w*[ \t]+исполнени\w*|\bзаверш\w+.*(?:постав|работ)|"
+            r"выполн\w+\s+обязатель|"
+            r"delivery period|delivery.*completed|allowed for performance",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"срок\w*[ \t]+исполнени\w*|постав\w+.*\bзаверш|\bзаверш\w+.*работ|"
+            r"delivery.*completed|required performance period|complete.*scope",
+            re.IGNORECASE,
+        ),
+    ),
+)
+
+VALUE_PATTERN = re.compile(
+    r"\d+(?:[.,]\d+)?\s*(?:%|руб|дн|дней|дня|месяц|час|usd|eur|gbp|"
+    r"business days?|calendar days?|months?)",
+    re.IGNORECASE,
+)
+PERCENTAGE_QUESTION_PATTERN = re.compile(r"процент|percentage|%", re.IGNORECASE)
+POLICY_NUMBER_QUESTION_PATTERN = re.compile(r"номер|number", re.IGNORECASE)
+POLICY_NUMBER_EVIDENCE_PATTERN = re.compile(
+    r"(?:полис|policy).{0,80}(?:номер|number|N|№|:)\s*[A-ZА-Я0-9][A-ZА-Я0-9-]{2,}",
+    re.IGNORECASE | re.DOTALL,
+)
+
 
 def _normalized_terms(value: str) -> set[str]:
     terms: set[str] = set()
@@ -82,7 +205,8 @@ def _normalized_terms(value: str) -> set[str]:
 
 def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evidence, str]:
     question_terms = _normalized_terms(question)
-    candidates: list[tuple[int, int, int, Evidence, str]] = []
+    question_category = _question_category(question)
+    candidates: list[tuple[int, int, int, int, int, Evidence, str]] = []
     for evidence_rank, item in enumerate(evidence):
         source = item.hit.text.strip()
         segments = [match.group(0).strip() for match in SEGMENT_PATTERN.finditer(source)]
@@ -91,11 +215,55 @@ def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evi
         for segment_rank, segment in enumerate(segments):
             quote = segment[:800].rstrip()
             overlap = len(question_terms & _normalized_terms(quote))
-            candidates.append((overlap, -evidence_rank, -segment_rank, item, quote))
+            category_match = _category_match(question_category, quote)
+            candidates.append(
+                (
+                    category_match,
+                    int(bool(category_match and VALUE_PATTERN.search(quote))),
+                    overlap,
+                    -evidence_rank,
+                    -segment_rank,
+                    item,
+                    quote,
+                )
+            )
     if not candidates:
         return evidence[0], ""
-    _, _, _, selected_item, selected_quote = max(candidates, key=lambda candidate: candidate[:3])
+    best = max(candidates, key=lambda candidate: candidate[:5])
+    category_match, _value_match, overlap, _, _, selected_item, selected_quote = best
+    if question_category is not None and not category_match:
+        return selected_item, ""
+    if (
+        question_category == "subcontracting"
+        and PERCENTAGE_QUESTION_PATTERN.search(question)
+        and not re.search(r"\d+(?:[.,]\d+)?\s*%", selected_quote)
+    ):
+        return selected_item, ""
+    if (
+        question_category == "insurance"
+        and POLICY_NUMBER_QUESTION_PATTERN.search(question)
+        and not POLICY_NUMBER_EVIDENCE_PATTERN.search(selected_quote)
+    ):
+        return selected_item, ""
+    if question_category is None and not overlap:
+        return selected_item, ""
     return selected_item, selected_quote
+
+
+def _question_category(question: str) -> str | None:
+    for category, question_pattern, _evidence_pattern in CATEGORY_PATTERNS:
+        if question_pattern.search(question):
+            return category
+    return None
+
+
+def _category_match(category: str | None, passage: str) -> int:
+    if category is None:
+        return 0
+    for candidate, _question_pattern, evidence_pattern in CATEGORY_PATTERNS:
+        if candidate == category:
+            return int(bool(evidence_pattern.search(passage)))
+    return 0
 
 
 class OllamaAnswerProvider:

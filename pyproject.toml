@@ -26,6 +26,13 @@ dependencies = [
   "uvicorn[standard]>=0.34,<1",
 ]
 
+[project.optional-dependencies]
+ml = [
+  "accelerate>=1.10,<2",
+  "datasets>=4.0,<5",
+  "sentence-transformers>=5.2,<6",
+]
+
 [dependency-groups]
 dev = [
   "aiosqlite>=0.21,<1",
@@ -67,6 +74,8 @@ ignore = ["B008"]
 
 [tool.ruff.lint.per-file-ignores]
 "alembic/versions/*.py" = ["E501"]
+"scripts/generate_synthetic_pdfs.py" = ["RUF001"]
+"src/tenderlens/ml/synthetic_corpus.py" = ["E501", "RUF001"]
 
 [tool.mypy]
 python_version = "3.12"

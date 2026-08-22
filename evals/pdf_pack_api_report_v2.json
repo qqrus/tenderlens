@@ -1,0 +1,61 @@
+{
+  "corpus": "synthetic_tender_corpus_v2",
+  "documents": 12,
+  "questions": 96,
+  "unanswerable_questions": 24,
+  "metrics": {
+    "grounded_rate": 1.0,
+    "citation_page_accuracy": 1.0,
+    "answer_value_accuracy": 1.0,
+    "unanswerable_refusal_accuracy": 1.0,
+    "file_endpoint_success": 1.0,
+    "page_count_accuracy": 1.0,
+    "mean_ingestion_latency_ms": 41.42,
+    "mean_question_latency_ms": 83.42,
+    "max_question_latency_ms": 2187.75
+  },
+  "by_category": {
+    "bid_security": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "budget": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "deadline": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "delivery": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "payment": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "penalty": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "performance_security": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    },
+    "warranty": {
+      "questions": 12,
+      "citation_page_accuracy": 1.0,
+      "answer_value_accuracy": 1.0
+    }
+  },
+  "failures": [],
+  "refusal_failures": []
+}

@@ -44,3 +44,43 @@ This dataset is deliberately small and deterministic. It is useful for regressio
 not for claiming production legal accuracy. Future datasets should include varied real-world
 layouts that are licensed or generated for testing, negative/unanswerable questions, and OCR
 fixtures. No real tenders containing personal data should be committed.
+
+The independent real-document protocol lives in [`real/README.md`](real/README.md). Real PDFs
+and the completed annotation manifest stay local and are ignored by Git. The checked-in validator
+requires a manual personal-data review, an immutable SHA-256, short gold quote fragments, and at
+least one unanswerable question per document before the holdout can be measured.
+
+## Reranker training evaluation
+
+The deterministic [`reranker_dataset_v2.jsonl`](reranker_dataset_v2.jsonl) contains 576
+queries and 2,304 labeled pairs from 24 synthetic RU/EN documents. Documents, not individual
+questions, are assigned to train/validation/test, and every query receives three same-document
+hard negatives:
+
+```bash
+uv run python scripts/evaluate_reranker.py
+uv run python scripts/build_reranker_dataset.py --check
+```
+
+The tuned model improved test Hit@1 from 0.875 to 0.989583 on the synthetic holdout. It remains
+a `research_candidate` until independently reviewed real documents confirm the result. See
+[`reranker_experiment_v1.json`](reranker_experiment_v1.json) and
+[`docs/ml/reranker-training.md`](../docs/ml/reranker-training.md).
+
+## PDF pack evaluation
+
+Twelve generated 20-page procurement packages and their manifest live in
+[`output/pdf/tenderlens-eval-v2`](../output/pdf/tenderlens-eval-v2). The 240-page pack covers 96
+known answers across eight categories plus 24 questions whose topics are absent. Russian is the
+primary language and four English packages test multilingual retrieval. Each document includes
+legal boilerplate, similar dates and percentages, technical requirements, a draft contract and
+annexes; every page is marked as synthetic. With Docker Compose running:
+
+```bash
+uv run python scripts/verify_pdf_pack.py
+uv run python scripts/smoke_pdf_pack.py
+```
+
+The reviewed run achieved 1.0 citation-page, exact-value, and correct-refusal accuracy on this
+synthetic regression pack, with 83.42 ms mean question latency after warm-up. It does not measure
+arbitrary layouts, OCR, or legal correctness.

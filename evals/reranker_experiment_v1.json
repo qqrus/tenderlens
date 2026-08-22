@@ -1,0 +1,70 @@
+{
+  "dataset": "evals\\reranker_dataset_v2.jsonl",
+  "dataset_summary": {
+    "query_count": 576,
+    "pair_count": 2304,
+    "document_count": 24,
+    "split_queries": {
+      "train": 384,
+      "validation": 96,
+      "test": 96
+    },
+    "languages": {
+      "ru": 384,
+      "en": 192
+    }
+  },
+  "base_model": "models/mmarco-mMiniLMv2-L12-H384-v1",
+  "final_model": "models\\tenderlens-reranker-v1\\final",
+  "training": {
+    "epochs": 2.0,
+    "max_steps": -1,
+    "batch_size": 16,
+    "learning_rate": 1e-05,
+    "max_length": 192,
+    "seed": 42
+  },
+  "before_training": {
+    "validation": {
+      "query_count": 96,
+      "hit_at_1": 0.875,
+      "hit_at_3": 0.979167,
+      "mrr": 0.925347,
+      "ndcg_at_3": 0.935266,
+      "mean_positive_rank": 1.208333
+    },
+    "test": {
+      "query_count": 96,
+      "hit_at_1": 0.875,
+      "hit_at_3": 0.96875,
+      "mrr": 0.926215,
+      "ndcg_at_3": 0.931422,
+      "mean_positive_rank": 1.208333
+    }
+  },
+  "after_training": {
+    "validation": {
+      "query_count": 96,
+      "hit_at_1": 0.989583,
+      "hit_at_3": 1.0,
+      "mrr": 0.994792,
+      "ndcg_at_3": 0.996156,
+      "mean_positive_rank": 1.010417
+    },
+    "test": {
+      "query_count": 96,
+      "hit_at_1": 0.989583,
+      "hit_at_3": 1.0,
+      "mrr": 0.993056,
+      "ndcg_at_3": 0.994792,
+      "mean_positive_rank": 1.020833
+    }
+  },
+  "decision": {
+    "status": "research_candidate",
+    "synthetic_validation_improved": true,
+    "synthetic_test_improved": true,
+    "production_deployment": false,
+    "reason": "Synthetic holdout improved, but an independently reviewed real-document holdout is required before production integration."
+  }
+}

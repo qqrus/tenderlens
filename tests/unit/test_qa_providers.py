@@ -1,3 +1,5 @@
+# ruff: noqa: RUF001  # Cyrillic test fixtures are intentional.
+
 from uuid import uuid4
 
 import pytest
@@ -59,6 +61,88 @@ async def test_extractive_provider_selects_relevant_sentence_across_evidence() -
 
     assert draft.claims[0].evidence_id == "C2"
     assert draft.claims[0].quote == "Участник должен предоставить сертификат и подтвердить опыт."
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_distinguishes_payment_from_other_periods() -> None:
+    item = evidence(
+        "Поставка выполняется в течение 60 дней. "
+        "Оплата производится в течение 12 рабочих дней после приемки. "
+        "Гарантийный срок составляет 36 месяцев."
+    )
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "В какой срок заказчик оплачивает результат?", [item]
+    )
+
+    assert draft.claims[0].quote == ("Оплата производится в течение 12 рабочих дней после приемки.")
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_distinguishes_bid_and_performance_security() -> None:
+    bid = evidence_with_id("Обеспечение заявки составляет 1%.", "C1")
+    performance = evidence_with_id(
+        "Обеспечение исполнения контракта установлено в размере 5%.", "C2"
+    )
+
+    bid_draft = await ExtractiveAnswerProvider().generate(
+        "Каков размер обеспечения заявки?", [performance, bid]
+    )
+    performance_draft = await ExtractiveAnswerProvider().generate(
+        "Каков размер обеспечения исполнения контракта?", [bid, performance]
+    )
+
+    assert bid_draft.claims[0].evidence_id == "C1"
+    assert performance_draft.claims[0].evidence_id == "C2"
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_distinguishes_delivery_from_warranty_and_penalty() -> None:
+    item = evidence(
+        "Срок исполнения обязательств: 110 календарных дней. "
+        "Гарантийный срок Исполнитель предоставляет гарантию 36 месяцев. "
+        "Пеня составляет 0,05% стоимости незавершенных работ."
+    )
+
+    draft = await ExtractiveAnswerProvider().generate("Какой срок исполнения контракта?", [item])
+
+    assert draft.claims[0].quote == "Срок исполнения обязательств: 110 календарных дней."
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_refuses_when_evidence_is_unrelated() -> None:
+    item = evidence("Поставка выполняется в течение 60 календарных дней.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какой номер страхового полиса указан?", [item]
+    )
+
+    assert draft.cannot_answer is True
+    assert draft.claims == []
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_answers_topic_when_matching_evidence_exists() -> None:
+    item = evidence("Номер страхового полиса поставщика: TL-TEST-42.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какой номер страхового полиса указан?", [item]
+    )
+
+    assert draft.cannot_answer is False
+    assert draft.claims[0].quote == item.hit.text
+
+
+@pytest.mark.asyncio
+async def test_extractive_provider_refuses_subcontracting_without_percentage() -> None:
+    item = evidence("Subcontracting does not release responsibility to the customer.")
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "What minimum percentage of work must be subcontracted?", [item]
+    )
+
+    assert draft.cannot_answer is True
+    assert draft.claims == []
 
 
 def test_prompt_marks_evidence_and_page() -> None:

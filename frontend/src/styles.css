@@ -523,51 +523,28 @@ textarea:focus-visible {
   top: 212px;
   right: 10%;
 }
-.atlas-line {
+.atlas-connectors {
   position: absolute;
   z-index: 3;
-  height: 1px;
-  background: linear-gradient(90deg, #3479ff, #6c62ff);
-  transform-origin: left center;
-  box-shadow: 0 0 8px rgb(66 120 255 / 50%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.atlas-connectors path {
+  fill: none;
+  stroke: url('#atlas-connector-gradient');
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgb(66 120 255 / 45%));
   animation: trace-line 700ms 250ms ease both;
 }
-.atlas-line::after {
-  position: absolute;
-  top: -3px;
-  right: -1px;
-  width: 7px;
-  height: 7px;
-  border: 1px solid #63a1ff;
-  border-radius: 50%;
-  background: #101724;
-  content: '';
-}
-.atlas-line-a {
-  top: 94px;
-  left: calc(10% + 172px);
-  width: calc(40% - 172px);
-  transform: rotate(8deg);
-}
-.atlas-line-b {
-  top: 94px;
-  right: calc(10% + 172px);
-  width: calc(40% - 172px);
-  transform: rotate(172deg);
-  transform-origin: right center;
-}
-.atlas-line-c {
-  top: 240px;
-  left: calc(10% + 172px);
-  width: calc(40% - 172px);
-  transform: rotate(-8deg);
-}
-.atlas-line-d {
-  top: 240px;
-  right: calc(10% + 172px);
-  width: calc(40% - 172px);
-  transform: rotate(188deg);
-  transform-origin: right center;
+.atlas-connectors circle {
+  fill: #101724;
+  stroke: #63a1ff;
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
 }
 .atlas-footnote {
   position: absolute;
@@ -593,11 +570,13 @@ textarea:focus-visible {
 @keyframes trace-line {
   from {
     opacity: 0;
-    clip-path: inset(0 100% 0 0);
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
   }
   to {
     opacity: 1;
-    clip-path: inset(0);
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -2270,6 +2249,15 @@ textarea:focus-visible {
   padding: 14px;
   background: #1b2330;
 }
+.pdf-citation-highlight {
+  margin: 0 -1px;
+  padding: 1px;
+  border-bottom: 1px solid #78a9ff;
+  border-radius: 2px;
+  color: inherit;
+  background: rgb(47 116 255 / 38%);
+  box-shadow: 0 0 0 1px rgb(88 151 255 / 18%);
+}
 .pdf-canvas .react-pdf__Document {
   display: flex;
   justify-content: center;
@@ -2352,15 +2340,8 @@ textarea:focus-visible {
   .atlas-node-requirement {
     right: 5%;
   }
-  .atlas-line-a,
-  .atlas-line-c {
-    left: calc(5% + 172px);
-    width: calc(45% - 172px);
-  }
-  .atlas-line-b,
-  .atlas-line-d {
-    right: calc(5% + 172px);
-    width: calc(45% - 172px);
+  .atlas-connectors {
+    transform: scaleX(1.08);
   }
   .document-table-head,
   .document-row {
@@ -2430,7 +2411,7 @@ textarea:focus-visible {
     top: 314px;
     right: 4%;
   }
-  .atlas-line {
+  .atlas-connectors {
     display: none;
   }
   .history-heading {

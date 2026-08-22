@@ -18,3 +18,7 @@ data/models/
 /models/
 *.log
 evals/reports/
+evals/real/documents/
+evals/real/manifest.local.json
+evals/real/reports/
+/tmp/

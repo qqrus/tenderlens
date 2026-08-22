@@ -1,3 +1,5 @@
+# ruff: noqa: RUF001  # Cyrillic intent and token patterns are intentional.
+
 import re
 from dataclasses import dataclass
 from typing import Any, cast
@@ -28,6 +30,62 @@ SEMANTIC_QUERY_EXPANSIONS: tuple[tuple[str, str], ...] = (
     (r"гаранти", "warranty"),
 )
 
+LEXICAL_TOKEN_PATTERN = re.compile(r"[A-Za-zА-Яа-яЁё0-9]+")
+LEXICAL_STOP_WORDS = {
+    "a",
+    "an",
+    "does",
+    "is",
+    "the",
+    "what",
+    "when",
+    "which",
+    "в",
+    "где",
+    "для",
+    "до",
+    "как",
+    "какая",
+    "какие",
+    "каков",
+    "какова",
+    "какой",
+    "когда",
+    "на",
+    "у",
+    "что",
+}
+
+INTENT_RULES: tuple[tuple[re.Pattern[str], re.Pattern[str]], ...] = (
+    (
+        re.compile(
+            r"начальн\w+.*цен|предельн\w+\s+бюджет|сумм\w+.*предлож|"
+            r"maximum contract value|budget cap|offer not exceed",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(?:начальн\w+.*цен|предельн\w+\s+бюджет|цен\w+\s+предлож|"
+            r"maximum (?:contract )?value|procurement budget|financial offer)"
+            r".{0,260}(?:(?:руб|₽|RUB|USD|EUR|GBP)\s*\d[\d\s.,]*|"
+            r"\d[\d\s.,]*\s*(?:руб|₽|RUB|USD|EUR|GBP))",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    ),
+    (
+        re.compile(
+            r"прием\w*\s+заяв|подат\w*\s+(?:заяв|предлож)|дедлайн.*подач|"
+            r"proposal deadline|bid.*submit|submission cutoff",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(?:прием\w*\s+заяв|срок\w*\s+подач|направ\w+\s+заявк|"
+            r"proposal deadline|proposals? must be received|submit.*offer no later)"
+            r".{0,260}(?:\d{1,2}[:.]\d{2}|\d{1,2}\s+[A-Za-zА-Яа-яЁё]+\s+20\d{2})",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    ),
+)
+
 
 def expand_semantic_query(query: str) -> str:
     expansions = [
@@ -38,6 +96,25 @@ def expand_semantic_query(query: str) -> str:
     if not expansions:
         return query
     return f"{query} {' '.join(expansions)}"
+
+
+def build_lexical_tsquery(query: str) -> str:
+    """Build a safe OR query so one conversational word cannot suppress all matches."""
+    tokens = [
+        token.casefold()
+        for token in LEXICAL_TOKEN_PATTERN.findall(query)
+        if len(token) >= 3 and token.casefold() not in LEXICAL_STOP_WORDS
+    ]
+    unique_tokens = list(dict.fromkeys(tokens))
+    return " | ".join(unique_tokens)
+
+
+def intent_match_score(query: str, passage: str) -> int:
+    """Return a cheap high-precision reranking signal for common tender questions."""
+    for question_pattern, evidence_pattern in INTENT_RULES:
+        if question_pattern.search(query):
+            return int(bool(evidence_pattern.search(passage)))
+    return 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -114,13 +191,16 @@ class HybridRetrievalService:
             rrf_k=self.rrf_k,
         )
         final_limit = limit or self.default_limit
+        chunks = {chunk.id: chunk for chunk, _score in [*semantic_rows, *lexical_rows]}
+        intent_scores = {
+            chunk_id: intent_match_score(query, chunk.text) for chunk_id, chunk in chunks.items()
+        }
         ranked_ids = sorted(
             fused_scores,
-            key=lambda chunk_id: fused_scores[chunk_id],
+            key=lambda chunk_id: (intent_scores[chunk_id], fused_scores[chunk_id]),
             reverse=True,
         )[:final_limit]
 
-        chunks = {chunk.id: chunk for chunk, _score in [*semantic_rows, *lexical_rows]}
         semantic_scores = {chunk.id: score for chunk, score in semantic_rows}
         lexical_scores = {chunk.id: score for chunk, score in lexical_rows}
         hits = [
@@ -181,7 +261,10 @@ class HybridRetrievalService:
         document_id: UUID,
         query: str,
     ) -> list[tuple[DocumentChunk, float]]:
-        ts_query = func.plainto_tsquery("simple", query)
+        lexical_query = build_lexical_tsquery(query)
+        if not lexical_query:
+            return []
+        ts_query = func.to_tsquery("simple", lexical_query)
         search_vector = func.to_tsvector("simple", func.coalesce(DocumentChunk.text, ""))
         rank = func.ts_rank_cd(search_vector, ts_query).label("rank")
         async with self.session_factory() as session:

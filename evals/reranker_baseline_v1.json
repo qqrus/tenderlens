@@ -1,0 +1,51 @@
+{
+  "dataset": "reranker_seed_v1",
+  "evaluated_at": "2026-08-20",
+  "query_count": 32,
+  "pair_count": 128,
+  "document_count": 8,
+  "notes": [
+    "All documents and passages are synthetic and contain no personal data.",
+    "Documents never occur in more than one split.",
+    "The seed test split is too small to claim production quality or a fine-tuning gain."
+  ],
+  "lexical_overlap": {
+    "validation": {
+      "hit_at_1": 0.375,
+      "hit_at_3": 0.75,
+      "mrr": 0.604167,
+      "ndcg_at_3": 0.595232,
+      "mean_positive_rank": 2.25
+    },
+    "test": {
+      "hit_at_1": 0.625,
+      "hit_at_3": 1.0,
+      "mrr": 0.770833,
+      "ndcg_at_3": 0.828866,
+      "mean_positive_rank": 1.625
+    }
+  },
+  "pretrained_cross_encoder": {
+    "model": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+    "validation": {
+      "hit_at_1": 0.875,
+      "hit_at_3": 1.0,
+      "mrr": 0.9375,
+      "ndcg_at_3": 0.953866,
+      "mean_positive_rank": 1.125
+    },
+    "test": {
+      "hit_at_1": 1.0,
+      "hit_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 1.0,
+      "mean_positive_rank": 1.0
+    }
+  },
+  "one_step_smoke_training": {
+    "purpose": "Validate gradients, optimizer step, model serialization, and post-training evaluation.",
+    "loss": 0.4252,
+    "train_runtime_seconds": 1.483,
+    "quality_claim": false
+  }
+}

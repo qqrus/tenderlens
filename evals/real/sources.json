@@ -1,0 +1,34 @@
+[
+  {
+    "id": "candidate-meteorf-vessel-control",
+    "publisher": "ФГБУ Арктический и антарктический научно-исследовательский институт",
+    "url": "https://www.meteorf.gov.ru/upload/iblock/656/8ea.pdf",
+    "document_type": "procurement_documentation",
+    "review_status": "rejected_personal_data",
+    "review_note": "Contains named contact people and direct contact details."
+  },
+  {
+    "id": "candidate-rosstat-souvenirs",
+    "publisher": "Федеральная служба государственной статистики",
+    "url": "https://rosstat.gov.ru/storage/mediabank/ad-9ea-19.pdf",
+    "document_type": "procurement_documentation",
+    "review_status": "unavailable_tls",
+    "review_note": "The official host did not provide a locally verifiable certificate chain."
+  },
+  {
+    "id": "candidate-russian-archives-services",
+    "publisher": "Федеральное архивное агентство",
+    "url": "https://archives.gov.ru/sites/all/modules/formfcp/files/tz_20181089.pdf",
+    "document_type": "technical_specification",
+    "review_status": "unavailable_tls",
+    "review_note": "The official host did not provide a locally verifiable certificate chain."
+  },
+  {
+    "id": "candidate-fns-procurement-plan",
+    "publisher": "Федеральная налоговая служба",
+    "url": "https://www.nalog.gov.ru/html/sites/www.rn18.nalog.ru/udm_planGraphik/z050718.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "rejected_personal_data",
+    "review_note": "Contains full names of responsible officials."
+  }
+]

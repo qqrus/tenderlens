@@ -335,10 +335,27 @@ function EvidenceAtlas() {
             </div>
           </div>
         ))}
-        <div className="atlas-line atlas-line-a" aria-hidden="true" />
-        <div className="atlas-line atlas-line-b" aria-hidden="true" />
-        <div className="atlas-line atlas-line-c" aria-hidden="true" />
-        <div className="atlas-line atlas-line-d" aria-hidden="true" />
+        <svg
+          className="atlas-connectors"
+          viewBox="0 0 1000 390"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="atlas-connector-gradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#3479ff" />
+              <stop offset="1" stopColor="#6c62ff" />
+            </linearGradient>
+          </defs>
+          <path pathLength="1" d="M 228 94 L 434 128" />
+          <path pathLength="1" d="M 566 128 L 772 94" />
+          <path pathLength="1" d="M 228 240 L 434 206" />
+          <path pathLength="1" d="M 566 206 L 772 240" />
+          <circle cx="434" cy="128" r="3" />
+          <circle cx="566" cy="128" r="3" />
+          <circle cx="434" cy="206" r="3" />
+          <circle cx="566" cy="206" r="3" />
+        </svg>
         <div className="atlas-document" aria-hidden="true">
           <span className="document-fold" />
           <span className="document-label">{pick('Тендерный PDF', 'Tender PDF')}</span>

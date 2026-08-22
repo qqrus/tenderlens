@@ -66,6 +66,9 @@ curl -X POST http://localhost:8000/api/v1/documents/DOCUMENT_ID/questions \
 The response contains an answer plus citations with the source page, chunk ID, exact quote,
 and page-relative character offsets. TenderLens accepts only quotes found in retrieved chunks;
 unknown evidence IDs and invented quotes are removed before the response is returned.
+The React PDF viewer opens the cited page, highlights matching text-layer fragments, and scrolls
+the evidence into view. Highlighting uses the selectable PDF text layer and never changes the
+original uploaded file.
 
 The zero-cost `extractive` answer mode works without a model or API key. For fluent generated
 answers, set one of these options in your local `.env` (never commit the key):
@@ -130,10 +133,48 @@ Baseline from one local Docker CPU run:
 | Answer latency p50 / p95 | 68.17 / 81.15 ms |
 | Cold-start search latency | 2410.55 ms |
 
-These results are regression baselines, not claims of legal accuracy. The current dataset is
-one small synthetic document, latency is hardware-dependent, generative LLM quality is not
-measured in the default extractive mode, and scanned PDFs remain unsupported. See
+An additional v2 pack contains 12 realistic synthetic procurement files: 240 pages, 96 known
+answers and 24 questions with no answer in the document. Russian is the primary language and
+four English files exercise multilingual retrieval. Each 20-page package includes a cover,
+contents, legal context, information sheet, price justification, technical requirements,
+acceptance, securities, liability, a condensed draft contract and annexes. The layout follows
+the current GOST R 7.0.97-2025 conventions where applicable and every page is visibly marked as
+synthetic. The reviewed Docker run reached 1.0 citation-page, exact-value and correct-refusal
+accuracy, with mean question latency of 83.42 ms. Run it with:
+
+```bash
+uv run python scripts/verify_pdf_pack.py
+uv run python scripts/smoke_pdf_pack.py
+```
+
+These results are regression baselines, not claims of legal accuracy. The documents are
+programmatically generated fixtures, latency is hardware-dependent, generative LLM quality is
+not measured in the default extractive mode, and scanned PDFs remain unsupported. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
+
+An independent real-document holdout protocol is scaffolded under [`evals/real`](evals/real).
+The source PDFs and completed annotations remain local and Git-ignored; validation requires
+manual personal-data review, SHA-256 checks, gold pages, short quote fragments, and unanswerable
+questions before results can be reported.
+
+## Custom ML training
+
+TenderLens includes a reproducible training pipeline for a domain-specific passage reranker.
+The v2 corpus has 24 synthetic RU/EN documents, 576 questions and 2,304 labeled pairs with
+document-level splits and same-document hard negatives. Heavy model weights remain outside
+Git and the production image.
+
+```powershell
+uv run python scripts/build_reranker_dataset.py --check
+uv run python scripts/evaluate_reranker.py
+.\scripts\train-reranker.ps1 -MaxSteps 1
+```
+
+Fine-tuning improved synthetic holdout Hit@1 from 0.875000 to 0.989583 and test MRR from
+0.926215 to 0.993056. The model remains a `research_candidate`: it is not enabled in the API
+until a separately reviewed real-document holdout confirms the result. See
+[`docs/ml/reranker-training.md`](docs/ml/reranker-training.md) for the plain-language method,
+measurements, one remaining error, and limitations.
 
 Windows helpers:
 
