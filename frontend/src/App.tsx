@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { FileSessionProvider } from './context/FileSessionContext'
 import { LocaleProvider } from './i18n/LocaleContext'
 import { LandingPage } from './pages/LandingPage'
+import { MlReportPage } from './pages/MlReportPage'
 import { WorkspacePage } from './pages/WorkspacePage'
 
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ export function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/ml-report" element={<MlReportPage />} />
               <Route path="/documents/:documentId" element={<WorkspacePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
