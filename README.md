@@ -174,6 +174,7 @@ Fine-tuning improved synthetic holdout Hit@1 from 0.875000 to 0.989583 and test 
 0.926215 to 0.993056. The model remains a `research_candidate`: it is not enabled in the API
 until a separately reviewed real-document holdout confirms the result. See
 [`docs/ml/reranker-training.md`](docs/ml/reranker-training.md) for the plain-language method,
+and [`docs/ml/progress-report.md`](docs/ml/progress-report.md) for the current metric report,
 measurements, one remaining error, and limitations.
 
 Windows helpers:
