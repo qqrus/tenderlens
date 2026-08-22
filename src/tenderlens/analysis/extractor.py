@@ -11,7 +11,7 @@ from tenderlens.retrieval.service import RetrievalHit
 @dataclass(frozen=True, slots=True)
 class CategorySpec:
     category: ConditionCategory
-    queries: tuple[str, str]
+    queries: tuple[str, ...]
     keyword_pattern: re.Pattern[str]
     value_pattern: re.Pattern[str] | None = None
     requires_value: bool = False
@@ -44,16 +44,26 @@ PENALTY_VALUE = re.compile(
     r"\b\d[\d\s.,]*\s*(?:₽|руб(?:\.|лей|ля|ль)?|RUB|USD|EUR)\b)",
     re.IGNORECASE,
 )
+ACTIONABLE_REQUIREMENT = re.compile(
+    r"(?:(?:участник|поставщик|исполнитель)\s+(?:должен|обязан)|"
+    r"(?:bidder|supplier|contractor)\s+(?:must|shall))",
+    re.IGNORECASE,
+)
 
 CATEGORY_SPECS = (
     CategorySpec(
         category=ConditionCategory.DEADLINE,
-        queries=("submission deadline due date", "срок подачи дата окончания"),
+        queries=(
+            "submission deadline due date",
+            "прием заявок завершается московскому времени",
+            "срок исполнения в течение календарных дней",
+        ),
         keyword_pattern=re.compile(
             r"(?:deadline|due\s+date|submission\s+date|"
             r"срок(?:и|а|ом)?\s+(?:подачи|предоставления|окончания)|"
             r"дата\s+(?:подачи|окончания)|"
-            r"подач\w*\s+заявк\w*|направ\w*\s+заявк\w*)",
+            r"подач\w*\s+заявк\w*|направ\w*\s+заявк\w*|"
+            r"при[её]м\w*\s+заявок\s+заверша\w*)",
             re.IGNORECASE,
         ),
         value_pattern=DEADLINE_VALUE,
@@ -64,7 +74,8 @@ CATEGORY_SPECS = (
         queries=("maximum budget contract price", "бюджет начальная максимальная цена"),
         keyword_pattern=re.compile(
             r"(?:maximum\s+budget|budget|contract\s+(?:price|value)|"
-            r"бюджет|начальн\w*\s+максимальн\w*\s+цен\w*|нмцк|цена\s+контракта)",
+            r"бюджет|начальн\w*\s+максимальн\w*\s+цен\w*|нмцк|"
+            r"цена\s+(?:контракта|предложен\w*))",
             re.IGNORECASE,
         ),
         value_pattern=MONEY_VALUE,
@@ -79,6 +90,7 @@ CATEGORY_SPECS = (
             re.IGNORECASE,
         ),
         value_pattern=PENALTY_VALUE,
+        requires_value=True,
     ),
     CategorySpec(
         category=ConditionCategory.REQUIREMENT,
@@ -111,6 +123,12 @@ class RuleBasedConditionExtractor:
         for hit in hits:
             for local_start, local_end in _segments(hit.text):
                 quote = hit.text[local_start:local_end]
+                if (
+                    spec.category == ConditionCategory.REQUIREMENT
+                    and len(quote.split()) < 7
+                    and ACTIONABLE_REQUIREMENT.search(quote) is None
+                ):
+                    continue
                 keyword_matches = list(spec.keyword_pattern.finditer(quote))
                 if not keyword_matches:
                     continue
