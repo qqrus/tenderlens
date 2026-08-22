@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowLeft,
+  BarChart3,
   FileCheck2,
   LayoutDashboard,
   MessageSquareText,
@@ -60,6 +61,9 @@ export function AppShell({ activeTab, onTabChange, filename }: Props) {
 
       <Link className="new-document-link" to="/?upload=1">
         <Plus aria-hidden="true" /> {pick('Новый PDF', 'New PDF')}
+      </Link>
+      <Link className="ml-report-link" to="/ml-report">
+        <BarChart3 aria-hidden="true" /> {pick('ML-метрики', 'ML metrics')}
       </Link>
       <LanguageToggle />
     </aside>

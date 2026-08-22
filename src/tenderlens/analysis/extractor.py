@@ -11,18 +11,28 @@ from tenderlens.retrieval.service import RetrievalHit
 @dataclass(frozen=True, slots=True)
 class CategorySpec:
     category: ConditionCategory
-    queries: tuple[str, str]
+    queries: tuple[str, ...]
     keyword_pattern: re.Pattern[str]
     value_pattern: re.Pattern[str] | None = None
     requires_value: bool = False
 
 
-DATE_VALUE = re.compile(
-    r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
-    r"\b\d{1,2}\s+(?:january|february|march|april|may|june|july|august|"
-    r"september|october|november|december)\s+\d{4}\b|"
-    r"\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|"
-    r"сентября|октября|ноября|декабря)\s+\d{4}\b)",
+DEADLINE_VALUE = re.compile(
+    r"(?:"
+    r"\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b"
+    r"(?:\s*(?:г(?:ода)?\.?)?\s*(?:до|в|at)?\s*\d{1,2}[:.]\d{2})?"
+    r"|\b\d{1,2}\s+(?:january|february|march|april|may|june|july|august|"
+    r"september|october|november|december)\s+\d{4}"
+    r"(?:\s+at\s+\d{1,2}:\d{2})?\b"
+    r"|\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|"
+    r"сентября|октября|ноября|декабря)\s+\d{4}(?:\s+года)?"
+    r"(?:\s+(?:до|в)\s+\d{1,2}:\d{2})?"
+    r"(?:\s+по\s+(?:московскому|местному)\s+времени)?"
+    r"|\b(?:в\s+течение|не\s+позднее|within|no\s+later\s+than)\s+"
+    r"\d+(?:\s*\([^)]*\))?\s+"
+    r"(?:календарн(?:ого|ых|ые)?\s+|рабоч(?:его|их|ие)?\s+)?"
+    r"(?:дн(?:я|ей|и)|час(?:а|ов)?|месяц(?:а|ев)?|days?|hours?|months?)\b"
+    r")",
     re.IGNORECASE,
 )
 MONEY_VALUE = re.compile(
@@ -34,25 +44,38 @@ PENALTY_VALUE = re.compile(
     r"\b\d[\d\s.,]*\s*(?:₽|руб(?:\.|лей|ля|ль)?|RUB|USD|EUR)\b)",
     re.IGNORECASE,
 )
+ACTIONABLE_REQUIREMENT = re.compile(
+    r"(?:(?:участник|поставщик|исполнитель)\s+(?:должен|обязан)|"
+    r"(?:bidder|supplier|contractor)\s+(?:must|shall))",
+    re.IGNORECASE,
+)
 
 CATEGORY_SPECS = (
     CategorySpec(
         category=ConditionCategory.DEADLINE,
-        queries=("submission deadline due date", "срок подачи дата окончания"),
+        queries=(
+            "submission deadline due date",
+            "прием заявок завершается московскому времени",
+            "срок исполнения в течение календарных дней",
+        ),
         keyword_pattern=re.compile(
             r"(?:deadline|due\s+date|submission\s+date|"
             r"срок(?:и|а|ом)?\s+(?:подачи|предоставления|окончания)|"
-            r"дата\s+(?:подачи|окончания))",
+            r"дата\s+(?:подачи|окончания)|"
+            r"подач\w*\s+заявк\w*|направ\w*\s+заявк\w*|"
+            r"при[её]м\w*\s+заявок\s+заверша\w*)",
             re.IGNORECASE,
         ),
-        value_pattern=DATE_VALUE,
+        value_pattern=DEADLINE_VALUE,
+        requires_value=True,
     ),
     CategorySpec(
         category=ConditionCategory.BUDGET,
         queries=("maximum budget contract price", "бюджет начальная максимальная цена"),
         keyword_pattern=re.compile(
             r"(?:maximum\s+budget|budget|contract\s+(?:price|value)|"
-            r"бюджет|начальн\w*\s+максимальн\w*\s+цен\w*|нмцк|цена\s+контракта)",
+            r"бюджет|начальн\w*\s+максимальн\w*\s+цен\w*|нмцк|"
+            r"цена\s+(?:контракта|предложен\w*))",
             re.IGNORECASE,
         ),
         value_pattern=MONEY_VALUE,
@@ -67,6 +90,7 @@ CATEGORY_SPECS = (
             re.IGNORECASE,
         ),
         value_pattern=PENALTY_VALUE,
+        requires_value=True,
     ),
     CategorySpec(
         category=ConditionCategory.REQUIREMENT,
@@ -99,6 +123,12 @@ class RuleBasedConditionExtractor:
         for hit in hits:
             for local_start, local_end in _segments(hit.text):
                 quote = hit.text[local_start:local_end]
+                if (
+                    spec.category == ConditionCategory.REQUIREMENT
+                    and len(quote.split()) < 7
+                    and ACTIONABLE_REQUIREMENT.search(quote) is None
+                ):
+                    continue
                 keyword_matches = list(spec.keyword_pattern.finditer(quote))
                 if not keyword_matches:
                     continue
@@ -130,12 +160,22 @@ class RuleBasedConditionExtractor:
             conditions.append(
                 ExtractedCondition(
                     category=spec.category,
+                    value=_display_value(spec, quote),
                     summary=quote,
                     match_score=score,
                     citation=citation,
                 )
             )
         return conditions
+
+
+def _display_value(spec: CategorySpec, quote: str) -> str | None:
+    if spec.value_pattern is None:
+        return None
+    match = spec.value_pattern.search(quote)
+    if match is None:
+        return None
+    return " ".join(match.group(0).strip(" .,:;").split())
 
 
 def _segments(text: str) -> list[tuple[int, int]]:

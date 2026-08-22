@@ -269,6 +269,7 @@ function EvidenceNode({
           </small>
         </div>
       </header>
+      {primary?.value && <strong className="evidence-value">{primary.value}</strong>}
       <p>
         {primary?.summary ??
           pick(
