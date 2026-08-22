@@ -17,12 +17,22 @@ class CategorySpec:
     requires_value: bool = False
 
 
-DATE_VALUE = re.compile(
-    r"(?:\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|"
-    r"\b\d{1,2}\s+(?:january|february|march|april|may|june|july|august|"
-    r"september|october|november|december)\s+\d{4}\b|"
-    r"\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|"
-    r"сентября|октября|ноября|декабря)\s+\d{4}\b)",
+DEADLINE_VALUE = re.compile(
+    r"(?:"
+    r"\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b"
+    r"(?:\s*(?:г(?:ода)?\.?)?\s*(?:до|в|at)?\s*\d{1,2}[:.]\d{2})?"
+    r"|\b\d{1,2}\s+(?:january|february|march|april|may|june|july|august|"
+    r"september|october|november|december)\s+\d{4}"
+    r"(?:\s+at\s+\d{1,2}:\d{2})?\b"
+    r"|\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|"
+    r"сентября|октября|ноября|декабря)\s+\d{4}(?:\s+года)?"
+    r"(?:\s+(?:до|в)\s+\d{1,2}:\d{2})?"
+    r"(?:\s+по\s+(?:московскому|местному)\s+времени)?"
+    r"|\b(?:в\s+течение|не\s+позднее|within|no\s+later\s+than)\s+"
+    r"\d+(?:\s*\([^)]*\))?\s+"
+    r"(?:календарн(?:ого|ых|ые)?\s+|рабоч(?:его|их|ие)?\s+)?"
+    r"(?:дн(?:я|ей|и)|час(?:а|ов)?|месяц(?:а|ев)?|days?|hours?|months?)\b"
+    r")",
     re.IGNORECASE,
 )
 MONEY_VALUE = re.compile(
@@ -42,10 +52,12 @@ CATEGORY_SPECS = (
         keyword_pattern=re.compile(
             r"(?:deadline|due\s+date|submission\s+date|"
             r"срок(?:и|а|ом)?\s+(?:подачи|предоставления|окончания)|"
-            r"дата\s+(?:подачи|окончания))",
+            r"дата\s+(?:подачи|окончания)|"
+            r"подач\w*\s+заявк\w*|направ\w*\s+заявк\w*)",
             re.IGNORECASE,
         ),
-        value_pattern=DATE_VALUE,
+        value_pattern=DEADLINE_VALUE,
+        requires_value=True,
     ),
     CategorySpec(
         category=ConditionCategory.BUDGET,
@@ -130,12 +142,22 @@ class RuleBasedConditionExtractor:
             conditions.append(
                 ExtractedCondition(
                     category=spec.category,
+                    value=_display_value(spec, quote),
                     summary=quote,
                     match_score=score,
                     citation=citation,
                 )
             )
         return conditions
+
+
+def _display_value(spec: CategorySpec, quote: str) -> str | None:
+    if spec.value_pattern is None:
+        return None
+    match = spec.value_pattern.search(quote)
+    if match is None:
+        return None
+    return " ".join(match.group(0).strip(" .,:;").split())
 
 
 def _segments(text: str) -> list[tuple[int, int]]:

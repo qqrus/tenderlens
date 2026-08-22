@@ -36,6 +36,7 @@ def test_extracts_budget_with_exact_page_offsets() -> None:
     assert len(conditions) == 1
     condition = conditions[0]
     assert condition.category == ConditionCategory.BUDGET
+    assert condition.value == "1 000 000 RUB"
     assert condition.summary == "Maximum budget: 1 000 000 RUB."
     assert condition.citation.number == 4
     assert condition.citation.page_number == 2
@@ -57,6 +58,7 @@ def test_deduplicates_overlapping_retrieval_hits() -> None:
 
     assert len(conditions) == 1
     assert conditions[0].summary == quote
+    assert conditions[0].value == "0.1%"
 
 
 def test_budget_rejects_contract_value_mention_without_money() -> None:
@@ -88,3 +90,33 @@ def test_supports_russian_requirement_keywords() -> None:
     )
 
     assert conditions[0].summary == text
+    assert conditions[0].value is None
+
+
+def test_extracts_russian_deadline_with_date_and_time() -> None:
+    text = (
+        "Участник должен направить заявку не позднее 17 ноября 2026 года "
+        "в 15:15 по московскому времени."
+    )
+    extractor = RuleBasedConditionExtractor(max_items_per_category=5)
+
+    conditions = extractor.extract(
+        spec(ConditionCategory.DEADLINE),
+        [make_hit(text)],
+        citation_start=1,
+    )
+
+    assert conditions[0].value == "17 ноября 2026 года в 15:15 по московскому времени"
+
+
+def test_deadline_rejects_generic_mention_without_date_or_duration() -> None:
+    text = "Срок подачи заявки определяется положениями извещения."
+    extractor = RuleBasedConditionExtractor(max_items_per_category=5)
+
+    conditions = extractor.extract(
+        spec(ConditionCategory.DEADLINE),
+        [make_hit(text)],
+        citation_start=1,
+    )
+
+    assert conditions == []
