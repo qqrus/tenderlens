@@ -25,9 +25,10 @@ export function ConditionCard({ condition, onCitationOpen }: Props) {
     requirement: 'Requirement',
   }
   const label = pick(russianLabel, englishLabels[condition.category])
+  const hasProminentValue = Boolean(condition.value)
 
   return (
-    <article className="condition-card">
+    <article className="condition-card" data-category={condition.category}>
       <header>
         <span className="condition-icon">
           <Icon aria-hidden="true" />
@@ -43,9 +44,18 @@ export function ConditionCard({ condition, onCitationOpen }: Props) {
           {pick('Правило', 'Rule')} {Math.round(condition.match_score * 100)}%
         </span>
       </header>
-      <p>{condition.summary}</p>
+      <div className="condition-answer">
+        <span>{pick('Извлечённое значение', 'Extracted value')}</span>
+        <strong data-long={!hasProminentValue}>{condition.value ?? condition.summary}</strong>
+      </div>
+      {hasProminentValue && (
+        <blockquote>
+          <span>{pick('Контекст из документа', 'Document context')}</span>
+          <p>{condition.summary}</p>
+        </blockquote>
+      )}
       <footer>
-        <span>{pick('Источник подтверждён', 'Source verified')}</span>
+        <span>{pick('Проверено по PDF', 'Verified in PDF')}</span>
         <CitationLink citation={condition.citation} onOpen={onCitationOpen} />
       </footer>
     </article>

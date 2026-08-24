@@ -31,6 +31,7 @@ class FakeAnalysisService:
             conditions=[
                 ExtractedCondition(
                     category=ConditionCategory.BUDGET,
+                    value="1 000 000 RUB",
                     summary=citation.quote,
                     match_score=0.91,
                     citation=citation,
@@ -68,5 +69,6 @@ def test_analysis_endpoint_returns_conditions_and_risks() -> None:
     assert response.status_code == 200
     assert response.json()["document_id"] == str(document_id)
     assert response.json()["conditions"][0]["category"] == "budget"
+    assert response.json()["conditions"][0]["value"] == "1 000 000 RUB"
     assert response.json()["risks"][0]["citation"]["page_number"] == 2
     assert response.json()["coverage"]["missing_categories"] == ["deadline"]

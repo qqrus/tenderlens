@@ -63,7 +63,15 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
       contentType: 'application/json',
       body: JSON.stringify({
         document_id: documentId,
-        conditions: [{ category: 'budget', summary: citation.quote, match_score: 0.91, citation }],
+        conditions: [
+          {
+            category: 'budget',
+            value: '1 000 000 RUB',
+            summary: citation.quote,
+            match_score: 0.91,
+            citation,
+          },
+        ],
         risks: [],
         coverage: {
           found_categories: ['budget'],

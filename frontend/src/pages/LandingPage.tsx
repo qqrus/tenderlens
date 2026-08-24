@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowRight,
+  BarChart3,
   Banknote,
   CalendarClock,
   FileCheck2,
@@ -105,6 +106,10 @@ export function LandingPage() {
             <Plus aria-hidden="true" />
             <span>{pick('Новый анализ', 'New analysis')}</span>
           </button>
+          <Link to="/ml-report">
+            <BarChart3 aria-hidden="true" />
+            <span>{pick('ML-метрики', 'ML metrics')}</span>
+          </Link>
         </nav>
 
         <div className="sidebar-system-note">

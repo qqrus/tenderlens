@@ -20,6 +20,7 @@ class RiskSeverity(StrEnum):
 @dataclass(frozen=True, slots=True)
 class ExtractedCondition:
     category: ConditionCategory
+    value: str | None
     summary: str
     match_score: float
     citation: VerifiedCitation

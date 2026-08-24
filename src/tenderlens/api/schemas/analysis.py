@@ -8,6 +8,7 @@ from tenderlens.api.schemas.questions import CitationResponse
 
 class ExtractedConditionResponse(BaseModel):
     category: ConditionCategory
+    value: str | None
     summary: str
     match_score: float
     citation: CitationResponse

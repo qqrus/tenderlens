@@ -271,6 +271,8 @@ export interface components {
         /** ExtractedConditionResponse */
         ExtractedConditionResponse: {
             category: components["schemas"]["ConditionCategory"];
+            /** Value */
+            value: string | null;
             /** Summary */
             summary: string;
             /** Match Score */
