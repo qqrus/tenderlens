@@ -57,6 +57,8 @@ def make_document() -> Document:
         page_count=None,
         error_code=None,
         error_message=None,
+        extraction_method=None,
+        ocr_page_count=0,
         created_at=now,
         updated_at=now,
     )
@@ -82,6 +84,7 @@ def test_upload_schedules_processing() -> None:
 
     assert response.status_code == 202
     assert response.json()["document"]["id"] == str(document.id)
+    assert response.json()["document"]["ocr_page_count"] == 0
     assert service.processed == [document.id]
 
 

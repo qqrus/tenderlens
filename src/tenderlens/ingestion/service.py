@@ -84,21 +84,29 @@ class DocumentIngestionService:
             await session.commit()
 
         try:
-            pages = await self.extractor.extract(self.storage.source_path(document_id))
-            chunks = self.chunker.chunk_pages(pages)
+            extraction = await self.extractor.extract(self.storage.source_path(document_id))
+            chunks = self.chunker.chunk_pages(extraction.pages)
             async with self.session_factory() as session:
                 repository = DocumentRepository(session)
                 document = await repository.get(document_id)
                 if document is None:
                     logger.warning("document_processing_skipped", document_id=str(document_id))
                     return
-                await repository.save_extraction(document, pages, chunks)
+                await repository.save_extraction(
+                    document,
+                    extraction.pages,
+                    chunks,
+                    extraction_method=extraction.method,
+                    ocr_page_count=extraction.ocr_page_count,
+                )
                 await session.commit()
             logger.info(
                 "document_processed",
                 document_id=str(document_id),
-                page_count=len(pages),
+                page_count=len(extraction.pages),
                 chunk_count=len(chunks),
+                extraction_method=extraction.method.value,
+                ocr_page_count=extraction.ocr_page_count,
             )
         except PdfExtractionError as exc:
             await self._mark_failed(document_id, exc.code, exc.message)
