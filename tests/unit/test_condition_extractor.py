@@ -1,3 +1,5 @@
+# ruff: noqa: RUF001  # Cyrillic test fixtures are intentional.
+
 from uuid import uuid4
 
 from tenderlens.analysis.extractor import CATEGORY_SPECS, RuleBasedConditionExtractor
@@ -161,8 +163,38 @@ def test_penalty_requires_a_numeric_value() -> None:
     assert conditions == []
 
 
+def test_extracts_accusative_penalty_from_ocr_line() -> None:
+    text = (
+        "За каждый день просрочки поставщик уплачивает пеню в размере 0,2% стоимости "
+        "просроченного\nобязательства."
+    )
+    extractor = RuleBasedConditionExtractor(max_items_per_category=5)
+
+    conditions = extractor.extract(
+        spec(ConditionCategory.PENALTY),
+        [make_hit(text, page=6)],
+        citation_start=1,
+    )
+
+    assert conditions[0].value == "0,2%"
+    assert conditions[0].citation.page_number == 6
+
+
 def test_requirement_ignores_short_section_heading() -> None:
     text = "Требования к участникам закупки."
+    extractor = RuleBasedConditionExtractor(max_items_per_category=5)
+
+    conditions = extractor.extract(
+        spec(ConditionCategory.REQUIREMENT),
+        [make_hit(text)],
+        citation_start=1,
+    )
+
+    assert conditions == []
+
+
+def test_requirement_ignores_customer_notice_phrase() -> None:
+    text = "Основание начисления фиксируется в требовании заказчика об уплате неустойки."
     extractor = RuleBasedConditionExtractor(max_items_per_category=5)
 
     conditions = extractor.extract(
