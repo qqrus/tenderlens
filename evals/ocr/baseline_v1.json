@@ -1,0 +1,182 @@
+{
+  "dataset": "tenderlens-ocr-fixture-v1",
+  "version": "1.0",
+  "document": "output/pdf/tenderlens-eval-ocr/ru-scanned-tender-001.pdf",
+  "document_id": "72385949-86fa-4926-aa38-9416e11a9a3f",
+  "extraction": {
+    "method": "ocr",
+    "page_count": 6,
+    "native_text_pages": 0,
+    "ocr_page_count": 6,
+    "ocr_page_ratio": 1.0,
+    "deduplicated": false,
+    "ingestion_latency_ms": 6404.28
+  },
+  "metrics": {
+    "retrieval_hit_rate_at_5": 1.0,
+    "retrieval_mrr": 1.0,
+    "citation_page_accuracy": 1.0,
+    "citation_quote_accuracy": 1.0,
+    "unanswerable_refusal_accuracy": 1.0,
+    "analysis_category_page_recall": 1.0,
+    "search_latency_p50_ms": 71.77,
+    "search_latency_p95_ms": 87.01,
+    "answer_latency_p50_ms": 81.33,
+    "answer_latency_p95_ms": 3058.29,
+    "analysis_latency_ms": 487.2
+  },
+  "failures": [],
+  "analysis_failures": [],
+  "analysis": [
+    {
+      "category": "deadline",
+      "expected_pages": [
+        3
+      ],
+      "extracted_pages": [
+        3
+      ],
+      "correct": true
+    },
+    {
+      "category": "budget",
+      "expected_pages": [
+        3
+      ],
+      "extracted_pages": [
+        3
+      ],
+      "correct": true
+    },
+    {
+      "category": "penalty",
+      "expected_pages": [
+        6
+      ],
+      "extracted_pages": [
+        6
+      ],
+      "correct": true
+    },
+    {
+      "category": "requirement",
+      "expected_pages": [
+        4
+      ],
+      "extracted_pages": [
+        2,
+        4,
+        5
+      ],
+      "correct": true
+    }
+  ],
+  "observations": [
+    {
+      "id": "ocr-deadline",
+      "question": "Когда заканчивается прием заявок?",
+      "answerable": true,
+      "answer": "Срок подачи заявок\n\nПрием заявок завершается 24 октября 2026 года в 14:30 по московскому времени. [1]",
+      "grounded": true,
+      "citation_pages": [
+        3
+      ],
+      "answer_latency_ms": 3792.13,
+      "retrieved_pages": [
+        3,
+        5,
+        4,
+        6,
+        2
+      ],
+      "retrieval_mode": "hybrid",
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "citation_page_correct": true,
+      "citation_quote_correct": true,
+      "search_latency_ms": 89.29
+    },
+    {
+      "id": "ocr-budget",
+      "question": "Какова начальная максимальная цена контракта?",
+      "answerable": true,
+      "answer": "Начальная максимальная цена\n\nНачальная максимальная цена контракта составляет 12 750 000 рублей, включая НДС. [1]",
+      "grounded": true,
+      "citation_pages": [
+        3
+      ],
+      "answer_latency_ms": 72.28,
+      "retrieved_pages": [
+        3,
+        5,
+        6,
+        4,
+        2
+      ],
+      "retrieval_mode": "hybrid",
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "citation_page_correct": true,
+      "citation_quote_correct": true,
+      "search_latency_ms": 69.45
+    },
+    {
+      "id": "ocr-delivery",
+      "question": "Какой срок поставки и монтажа?",
+      "answerable": true,
+      "answer": "Поставка\n\nПоставщик обязан завершить поставку и монтаж в течение 60 календарных дней с даты\nзаключения контракта. [1]",
+      "grounded": true,
+      "citation_pages": [
+        5
+      ],
+      "answer_latency_ms": 122.95,
+      "retrieved_pages": [
+        5,
+        3,
+        4,
+        6,
+        1
+      ],
+      "retrieval_mode": "hybrid",
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "citation_page_correct": true,
+      "citation_quote_correct": true,
+      "search_latency_ms": 74.09
+    },
+    {
+      "id": "ocr-penalty",
+      "question": "Какая пеня начисляется за просрочку?",
+      "answerable": true,
+      "answer": "Пеня за просрочку\n\nЗа каждый день просрочки поставщик уплачивает пеню в размере 0,2% стоимости просроченного\nобязательства, но не более 10% цены контракта. [1]",
+      "grounded": true,
+      "citation_pages": [
+        6
+      ],
+      "answer_latency_ms": 50.32,
+      "retrieved_pages": [
+        6,
+        2,
+        3,
+        4,
+        5
+      ],
+      "retrieval_mode": "hybrid",
+      "hit_at_5": true,
+      "reciprocal_rank": 1.0,
+      "citation_page_correct": true,
+      "citation_quote_correct": true,
+      "search_latency_ms": 57.29
+    },
+    {
+      "id": "ocr-unanswerable",
+      "question": "Какой номер страхового полиса указан?",
+      "answerable": false,
+      "answer": "В найденных фрагментах документа недостаточно данных для точного ответа.",
+      "grounded": false,
+      "citation_pages": [],
+      "answer_latency_ms": 81.33,
+      "correct_refusal": true
+    }
+  ]
+}

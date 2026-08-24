@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format typecheck frontend-check evaluate ml-install ml-dataset ml-baseline ml-train-smoke pdf-test-pack migrate compose-up compose-down
+.PHONY: install dev test lint format typecheck frontend-check evaluate ocr-fixture ocr-evaluate ml-install ml-dataset ml-baseline ml-train-smoke pdf-test-pack migrate compose-up compose-down
 
 install:
 	uv sync --dev
@@ -25,6 +25,12 @@ frontend-check:
 
 evaluate:
 	uv run python scripts/evaluate.py
+
+ocr-fixture:
+	uv run python scripts/generate_ocr_fixture.py
+
+ocr-evaluate:
+	uv run python scripts/evaluate_ocr.py
 
 ml-install:
 	uv sync --dev --extra ml
