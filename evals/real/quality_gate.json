@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "minimum_dataset": {
+    "documents": 7,
+    "questions": 26
+  },
+  "baseline": {
+    "retrieval_hit_rate_at_5": 0.75,
+    "citation_page_accuracy": 0.7,
+    "citation_quote_accuracy": 0.65,
+    "unanswerable_refusal_accuracy": 0.7,
+    "ocr_success_rate": 0.5,
+    "answer_latency_p95_ms_max": 5000.0
+  },
+  "reranker_promotion": {
+    "minimum_mrr_improvement": 0.02,
+    "allow_hit_rate_at_5_regression": false,
+    "latency_p95_ms_max": 1500.0
+  }
+}

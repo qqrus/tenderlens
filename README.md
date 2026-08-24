@@ -171,10 +171,12 @@ that ingestion latency measures real OCR rather than a cached result. See
 [`evals/ocr/README.md`](evals/ocr/README.md) and
 [`evals/ocr/baseline_v1.json`](evals/ocr/baseline_v1.json).
 
-An independent real-document holdout protocol is scaffolded under [`evals/real`](evals/real).
-The source PDFs and completed annotations remain local and Git-ignored; validation requires
-manual personal-data review, SHA-256 checks, gold pages, short quote fragments, and unanswerable
-questions before results can be reported.
+An independent real-document holdout lives under [`evals/real`](evals/real). Its five official
+source PDFs remain local, while the reviewed source registry, SHA-256 checks, 26 safe manual
+annotations, two deterministic OCR stress variants, aggregate metrics, and promotion thresholds
+are reproducible from Git. The first real holdout run improved retrieval Hit@1 from 0.736842 to
+0.894737, but citation accuracy failed the end-to-end gate, so the reranker remains disabled by
+default. See [`docs/ml/real-holdout-report.md`](docs/ml/real-holdout-report.md).
 
 ## Custom ML training
 

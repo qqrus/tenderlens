@@ -10,7 +10,11 @@
       "source_url": "https://official-publisher.example/document.pdf",
       "sha256": "replace-with-64-character-lowercase-sha256",
       "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
       "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
       "questions": [
         {
           "id": "replace-budget-question",

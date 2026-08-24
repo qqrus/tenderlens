@@ -7,7 +7,7 @@ from tenderlens.evaluation.real_dataset import (
     validate_real_evaluation_files,
 )
 
-DEFAULT_MANIFEST = Path("evals/real/manifest.local.json")
+DEFAULT_MANIFEST = Path("evals/real/holdout.json")
 DEFAULT_DOCUMENTS = Path("evals/real/documents")
 
 
