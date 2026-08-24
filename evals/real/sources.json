@@ -1,11 +1,75 @@
 [
   {
+    "id": "wb-georgia-p175629",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099080323062524970/pdf/P175629057ebf30160a00e0ef0b2fc536ed.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "accepted_holdout",
+    "review_note": "All pages reviewed; no personal data, signatures, credentials, or direct contacts found."
+  },
+  {
+    "id": "wb-kenya-p176725",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099061125062012102/pdf/P176725-d74e1852-266d-42ac-86ed-4e734ba7d146.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "accepted_holdout",
+    "review_note": "All pages reviewed; no personal data, signatures, credentials, or direct contacts found."
+  },
+  {
+    "id": "wb-nepal-p505226",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099082825132575384/pdf/P505226-1e326351-bd29-448f-96d1-95c8faea95ff.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "accepted_holdout",
+    "review_note": "All pages reviewed; no personal data, signatures, credentials, or direct contacts found."
+  },
+  {
+    "id": "wb-srilanka-p178973",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099102725061020185/pdf/P178973-b8a4c375-474a-45f7-81ca-f055bfc9bb64.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "accepted_holdout",
+    "review_note": "All pages reviewed; no personal data, signatures, credentials, or direct contacts found."
+  },
+  {
+    "id": "wb-turkey-p175011",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099121224101042454/pdf/P175011-19159096-ce23-4e3a-a21a-bacdf2ce90af.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "accepted_holdout",
+    "review_note": "All pages reviewed; no personal data, signatures, credentials, or direct contacts found."
+  },
+  {
+    "id": "wb-drc-p145554",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/308751597057397761/pdf/Congo-Democratic-Republic-of-AFRICA-EAST-P145554-DRC-Financial-Infrastructure-and-Markets-Procurement-Plan.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "rejected_personal_data",
+    "review_note": "A named individual appears in an activity description."
+  },
+  {
+    "id": "wb-brazil-p181511",
+    "publisher": "World Bank",
+    "url": "https://documents1.worldbank.org/curated/en/099103124112520798/pdf/P18151117cf99e04a187201d149cf5fcc90.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "rejected_source_quality",
+    "review_note": "The first page contains unfilled template placeholders, making the gold interpretation ambiguous."
+  },
+  {
     "id": "candidate-meteorf-vessel-control",
     "publisher": "ФГБУ Арктический и антарктический научно-исследовательский институт",
     "url": "https://www.meteorf.gov.ru/upload/iblock/656/8ea.pdf",
     "document_type": "procurement_documentation",
     "review_status": "rejected_personal_data",
     "review_note": "Contains named contact people and direct contact details."
+  },
+  {
+    "id": "candidate-fns-procurement-plan",
+    "publisher": "Федеральная налоговая служба",
+    "url": "https://www.nalog.gov.ru/html/sites/www.rn18.nalog.ru/udm_planGraphik/z050718.pdf",
+    "document_type": "procurement_plan",
+    "review_status": "rejected_personal_data",
+    "review_note": "Contains full names and direct contact details of responsible officials."
   },
   {
     "id": "candidate-rosstat-souvenirs",
@@ -22,13 +86,5 @@
     "document_type": "technical_specification",
     "review_status": "unavailable_tls",
     "review_note": "The official host did not provide a locally verifiable certificate chain."
-  },
-  {
-    "id": "candidate-fns-procurement-plan",
-    "publisher": "Федеральная налоговая служба",
-    "url": "https://www.nalog.gov.ru/html/sites/www.rn18.nalog.ru/udm_planGraphik/z050718.pdf",
-    "document_type": "procurement_plan",
-    "review_status": "rejected_personal_data",
-    "review_note": "Contains full names of responsible officials."
   }
 ]

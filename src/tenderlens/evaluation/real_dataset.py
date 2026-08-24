@@ -3,6 +3,7 @@ from pathlib import Path, PurePath
 from typing import Literal, Self
 
 from pydantic import BaseModel, Field, HttpUrl, model_validator
+from pypdf import PdfReader
 
 
 class RealEvaluationQuestion(BaseModel):
@@ -31,7 +32,15 @@ class RealEvaluationDocument(BaseModel):
     source_url: HttpUrl
     sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     personal_data_reviewed: Literal[True]
+    privacy_review_status: Literal["no_personal_data_found"]
+    privacy_review_scope: Literal["all_pages"] = "all_pages"
     redistribution: Literal["local_only", "permitted"] = "local_only"
+    document_type: Literal["procurement_plan"] = "procurement_plan"
+    extraction_profile: Literal["native", "skewed_scan", "rotated_scan"] = "native"
+    source_document_id: str | None = Field(
+        default=None,
+        pattern=r"^[a-z0-9][a-z0-9-]{2,80}$",
+    )
     questions: list[RealEvaluationQuestion] = Field(min_length=2)
 
     @model_validator(mode="after")
@@ -45,6 +54,10 @@ class RealEvaluationDocument(BaseModel):
         question_ids = [question.id for question in self.questions]
         if len(question_ids) != len(set(question_ids)):
             raise ValueError("question ids must be unique within a document")
+        if self.extraction_profile == "native" and self.source_document_id is not None:
+            raise ValueError("native documents cannot reference a source_document_id")
+        if self.extraction_profile != "native" and self.source_document_id is None:
+            raise ValueError("scan variants require a source_document_id")
         return self
 
 
@@ -65,6 +78,13 @@ class RealEvaluationManifest(BaseModel):
             raise ValueError("document filenames must be unique")
         if len(hashes) != len(set(hashes)):
             raise ValueError("document hashes must be unique")
+        known_ids = set(document_ids)
+        for document in self.documents:
+            if document.source_document_id is not None:
+                if document.source_document_id not in known_ids:
+                    raise ValueError(f"unknown source_document_id: {document.source_document_id}")
+                if document.source_document_id == document.id:
+                    raise ValueError("a document cannot reference itself as its source")
         return self
 
 
@@ -86,6 +106,12 @@ def validate_real_evaluation_files(
         digest = sha256_file(path)
         if digest != document.sha256:
             raise ValueError(f"SHA-256 mismatch for evaluation document: {document.filename}")
+        page_count = len(PdfReader(path).pages)
+        expected_pages = {
+            page for question in document.questions for page in question.expected_pages
+        }
+        if expected_pages and max(expected_pages) > page_count:
+            raise ValueError(f"ground-truth page exceeds PDF page count for: {document.filename}")
         total_bytes += path.stat().st_size
 
     questions = [question for document in manifest.documents for question in document.questions]
