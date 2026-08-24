@@ -110,6 +110,22 @@ async def test_extractive_provider_distinguishes_delivery_from_warranty_and_pena
 
 
 @pytest.mark.asyncio
+async def test_extractive_provider_selects_delivery_term_instead_of_subject() -> None:
+    subject = evidence_with_id("Предмет: поставка 24 серверов и монтажного комплекта.", "C1")
+    delivery = evidence_with_id(
+        "Поставщик обязан завершить поставку и монтаж в течение 60 календарных дней.",
+        "C2",
+    )
+
+    draft = await ExtractiveAnswerProvider().generate(
+        "Какой срок поставки и монтажа?", [subject, delivery]
+    )
+
+    assert draft.claims[0].evidence_id == "C2"
+    assert "60 календарных дней" in draft.claims[0].quote
+
+
+@pytest.mark.asyncio
 async def test_extractive_provider_refuses_when_evidence_is_unrelated() -> None:
     item = evidence("Поставка выполняется в течение 60 календарных дней.")
 

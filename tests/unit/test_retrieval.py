@@ -114,6 +114,17 @@ def test_intent_score_prefers_value_bearing_budget_and_deadline_passages() -> No
     assert intent_match_score(deadline_question, deadline_distractor) == 0
 
 
+def test_intent_score_prefers_delivery_period_over_procurement_subject() -> None:
+    question = "Какой срок поставки и монтажа?"
+    subject = "Предмет закупки: поставка 24 серверов и монтажного комплекта."
+    delivery = "Поставщик завершает поставку и монтаж в течение 60 календарных дней."
+
+    assert intent_match_score(question, delivery) == 1
+    assert intent_match_score(question, subject) == 0
+    assert "delivery period" in expand_semantic_query(question)
+    assert "deadline due date" not in expand_semantic_query(question)
+
+
 @pytest.mark.asyncio
 async def test_intent_reranker_promotes_exact_budget_clause(
     session_factory: async_sessionmaker[Any], monkeypatch: pytest.MonkeyPatch

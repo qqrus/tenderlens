@@ -32,6 +32,8 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
           page_count: null,
           error_code: null,
           error_message: null,
+          extraction_method: null,
+          ocr_page_count: 0,
           created_at: '2026-08-18T12:00:00Z',
           updated_at: '2026-08-18T12:00:00Z',
         },
@@ -52,6 +54,8 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
         page_count: 20,
         error_code: null,
         error_message: null,
+        extraction_method: 'ocr',
+        ocr_page_count: 20,
         created_at: '2026-08-18T12:00:00Z',
         updated_at: '2026-08-18T12:00:05Z',
       }),
@@ -108,6 +112,7 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
 
   await expect(page).toHaveURL(new RegExp(`/documents/${documentId}`))
   await expect(page.getByRole('heading', { name: 'portfolio-tender.pdf' })).toBeVisible()
+  await expect(page.getByText('OCR 20 стр.')).toBeVisible()
   await expect(page.getByText(citation.quote).first()).toBeVisible()
 
   await page

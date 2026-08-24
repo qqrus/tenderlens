@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "dataset": "tenderlens-ocr-fixture-v1",
+  "document": "output/pdf/tenderlens-eval-ocr/ru-scanned-tender-001.pdf",
+  "language": "ru",
+  "pages": 6,
+  "analysis_expectations": [
+    {"category": "deadline", "expected_pages": [3]},
+    {"category": "budget", "expected_pages": [3]},
+    {"category": "penalty", "expected_pages": [6]},
+    {"category": "requirement", "expected_pages": [4]}
+  ],
+  "questions": [
+    {
+      "id": "ocr-deadline",
+      "question": "Когда заканчивается прием заявок?",
+      "answerable": true,
+      "expected_pages": [3],
+      "expected_fragments": ["24 октября 2026 года", "14:30"]
+    },
+    {
+      "id": "ocr-budget",
+      "question": "Какова начальная максимальная цена контракта?",
+      "answerable": true,
+      "expected_pages": [3],
+      "expected_fragments": ["12 750 000 рублей"]
+    },
+    {
+      "id": "ocr-delivery",
+      "question": "Какой срок поставки и монтажа?",
+      "answerable": true,
+      "expected_pages": [5],
+      "expected_fragments": ["60 календарных дней"]
+    },
+    {
+      "id": "ocr-penalty",
+      "question": "Какая пеня начисляется за просрочку?",
+      "answerable": true,
+      "expected_pages": [6],
+      "expected_fragments": ["0,2%"]
+    },
+    {
+      "id": "ocr-unanswerable",
+      "question": "Какой номер страхового полиса указан?",
+      "answerable": false,
+      "expected_pages": [],
+      "expected_fragments": []
+    }
+  ]
+}

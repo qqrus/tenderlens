@@ -168,7 +168,8 @@ CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
     (
         "delivery",
         re.compile(
-            r"срок\w*[ \t]+исполнени\w*|\bзаверш\w+.*(?:постав|работ)|"
+            r"срок\w*[ \t]+(?:исполнени|поставк|монтаж)\w*|"
+            r"\bзаверш\w+.*(?:постав|работ)|"
             r"выполн\w+\s+обязатель|"
             r"delivery period|delivery.*completed|allowed for performance",
             re.IGNORECASE,

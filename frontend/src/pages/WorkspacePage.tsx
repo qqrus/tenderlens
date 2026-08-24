@@ -107,6 +107,9 @@ export function WorkspacePage() {
                   ? pick('Анализ завершён', 'Analysis complete')
                   : pick('Документ обрабатывается', 'Document is processing')}
                 {document.page_count ? ` · ${document.page_count} ${pick('стр.', 'pages')}` : ''}
+                {document.ocr_page_count
+                  ? ` · OCR ${document.ocr_page_count} ${pick('стр.', 'pages')}`
+                  : ''}
               </span>
             </div>
           </div>
@@ -127,18 +130,7 @@ export function WorkspacePage() {
           {document.status === 'failed' ? (
             <ErrorState
               title={pick('Документ не обработан', 'Document was not processed')}
-              message={
-                document.error_code === 'no_extractable_text'
-                  ? pick(
-                      'В PDF не найден извлекаемый текст. Сейчас TenderLens поддерживает текстовые PDF без OCR.',
-                      'No extractable text was found. TenderLens currently supports text PDFs without OCR.',
-                    )
-                  : (document.error_message ??
-                    pick(
-                      'Backend не смог обработать PDF.',
-                      'The backend could not process the PDF.',
-                    ))
-              }
+              message={documentFailureMessage(document, pick)}
             />
           ) : document.status !== 'ready' ? (
             <DocumentStatus status={document.status} />
@@ -297,4 +289,41 @@ function formatWorkspaceDate(value: string, locale: 'ru' | 'en') {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value))
+}
+
+function documentFailureMessage(
+  document: DocumentResponse,
+  pick: (ru: string, en: string) => string,
+) {
+  const knownErrors: Record<string, string> = {
+    no_extractable_text: pick(
+      'Не удалось извлечь или распознать текст. Проверьте качество страниц PDF.',
+      'No text could be extracted or recognized. Check the PDF page quality.',
+    ),
+    ocr_unavailable: pick(
+      'Модуль OCR недоступен. Перезапустите проект через Docker Compose.',
+      'The OCR engine is unavailable. Restart the project with Docker Compose.',
+    ),
+    ocr_timeout: pick(
+      'Распознавание одной из страниц заняло слишком много времени.',
+      'Recognition timed out on one of the pages.',
+    ),
+    ocr_page_limit_exceeded: pick(
+      'В документе слишком много страниц, требующих OCR.',
+      'Too many pages in this document require OCR.',
+    ),
+    ocr_failed: pick(
+      'Не удалось распознать одну из страниц PDF.',
+      'One of the PDF pages could not be recognized.',
+    ),
+    ocr_render_failed: pick(
+      'Не удалось подготовить страницу PDF для распознавания.',
+      'A PDF page could not be rendered for recognition.',
+    ),
+  }
+  return (
+    (document.error_code ? knownErrors[document.error_code] : undefined) ??
+    document.error_message ??
+    pick('Backend не смог обработать PDF.', 'The backend could not process the PDF.')
+  )
 }
