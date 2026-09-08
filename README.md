@@ -7,6 +7,19 @@ The project is under active development. The current version provides a producti
 FastAPI and PostgreSQL/pgvector foundation, a React interface, hybrid retrieval, verified
 citations, and local OCR for Russian and English scans.
 
+## Release plan and current status
+
+The canonical plan is [ROADMAP.md](ROADMAP.md) (Russian). See the
+[2026-09-08 audit](docs/release-audit-2026-09-08.md) for tested capabilities,
+known correctness issues, and the distinction between historical ML results and
+current checks. The project is an experimental MVP, not yet a validated v1.0 release.
+
+Proposed interface directions, pending selection:
+[A — light document workspace](docs/design/reference-a.html) ·
+[B — graphite analysis workspace](docs/design/reference-b.html).
+These standalone mockups use fictional data; they are not the implemented frontend.
+Preview images: [A](docs/design/reference-a.png) · [B](docs/design/reference-b.png).
+
 ## Quick start
 
 1. Copy `.env.example` to `.env`.
