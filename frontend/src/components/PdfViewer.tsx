@@ -39,11 +39,11 @@ export function PdfViewer({
     const node = frameRef.current
     if (!node) return
     const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWidth(Math.max(280, Math.min(760, entry.contentRect.width - 28)))
+      if (entry) setWidth(Math.max(160, Math.min(900, entry.contentRect.width - 32)))
     })
     observer.observe(node)
     return () => observer.disconnect()
-  }, [])
+  }, [sourceUrl])
 
   useEffect(() => {
     if (pageCount && pageNumber > pageCount) onPageChange(pageCount)
@@ -126,9 +126,17 @@ export function PdfViewer({
             renderAnnotationLayer
             customTextRenderer={({ str }) => renderHighlightedPdfText(str, highlightQuote)}
             onRenderTextLayerSuccess={() => {
-              frameRef.current
-                ?.querySelector('.pdf-citation-highlight')
-                ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              const canvas = frameRef.current?.querySelector('.pdf-canvas')
+              const target = canvas?.querySelector('.pdf-citation-highlight')
+              if (!canvas || !target) return
+              // Scroll only the PDF viewport, never the page or the panel header.
+              canvas.scrollBy({
+                top:
+                  target.getBoundingClientRect().top -
+                  canvas.getBoundingClientRect().top -
+                  canvas.clientHeight / 2,
+                behavior: 'instant',
+              })
             }}
           />
         </Document>

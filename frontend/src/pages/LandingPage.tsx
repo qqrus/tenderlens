@@ -2,12 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowRight,
   BarChart3,
-  Banknote,
-  CalendarClock,
   FileCheck2,
   FileText,
-  Gavel,
-  LayoutGrid,
   ListFilter,
   Plus,
   Search,
@@ -15,7 +11,7 @@ import {
   Upload,
   X,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { humanizeError, listDocuments, uploadDocument } from '../api/client'
 import type { DocumentResponse, DocumentStatusValue } from '../api/types'
@@ -25,6 +21,7 @@ import { LoadingSkeleton } from '../components/LoadingSkeleton'
 import { UploadDropzone } from '../components/UploadDropzone'
 import { useFileSession } from '../context/FileSessionContext'
 import { useLocale } from '../i18n/LocaleContext'
+import { useDialogFocus } from '../components/useDialogFocus'
 
 type StatusFilter = 'all' | DocumentStatusValue
 
@@ -38,10 +35,11 @@ export function LandingPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [uploadOpen, setUploadOpen] = useState(searchParams.get('upload') === '1')
+  const uploadRef = useRef<HTMLElement>(null)
   const statusLabels: Record<DocumentStatusValue, string> = {
     uploaded: pick('Загружен', 'Uploaded'),
     processing: pick('Анализируется', 'Processing'),
-    ready: pick('Анализ завершён', 'Analysis complete'),
+    ready: pick('Готов к анализу', 'Ready for analysis'),
     failed: pick('Ошибка обработки', 'Processing failed'),
   }
 
@@ -58,9 +56,9 @@ export function LandingPage() {
 
   const upload = useMutation({
     mutationFn: uploadDocument,
-    onSuccess: async ({ document }) => {
-      if (selectedFile) fileSession.setFile(selectedFile)
-      await queryClient.invalidateQueries({ queryKey: ['documents'] })
+    onSuccess: ({ document }) => {
+      if (selectedFile) fileSession.setFile(selectedFile, document.id)
+      void queryClient.invalidateQueries({ queryKey: ['documents'] })
       navigate(`/documents/${document.id}`)
     },
   })
@@ -85,6 +83,8 @@ export function LandingPage() {
       setSearchParams(searchParams, { replace: true })
     }
   }
+
+  useDialogFocus(uploadRef, uploadOpen, closeUpload)
 
   return (
     <main className="library-shell">
@@ -147,7 +147,17 @@ export function LandingPage() {
           </button>
         </header>
 
-        <EvidenceAtlas />
+        <section className="library-guide" aria-label={pick('Как пользоваться', 'How it works')}>
+          <span>
+            <b>01</b> {pick('Загрузите PDF', 'Upload a PDF')}
+          </span>
+          <span>
+            <b>02</b> {pick('Изучите условия', 'Review conditions')}
+          </span>
+          <span>
+            <b>03</b> {pick('Проверьте цитату', 'Check the source')}
+          </span>
+        </section>
 
         <section className="history-section" aria-labelledby="history-heading">
           <div className="history-heading">
@@ -246,6 +256,8 @@ export function LandingPage() {
         >
           <section
             className="upload-dialog"
+            ref={uploadRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="upload-title"
@@ -285,101 +297,6 @@ export function LandingPage() {
         </div>
       )}
     </main>
-  )
-}
-
-function EvidenceAtlas() {
-  const { pick } = useLocale()
-  const nodes = [
-    {
-      id: 'deadline',
-      label: pick('Сроки', 'Deadlines'),
-      note: pick('даты и этапы', 'dates and stages'),
-      icon: CalendarClock,
-    },
-    {
-      id: 'budget',
-      label: pick('Бюджет', 'Budget'),
-      note: pick('суммы и валюта', 'amounts and currency'),
-      icon: Banknote,
-    },
-    {
-      id: 'penalty',
-      label: pick('Штрафы', 'Penalties'),
-      note: pick('санкции и пени', 'fines and damages'),
-      icon: Gavel,
-    },
-    {
-      id: 'requirement',
-      label: pick('Требования', 'Requirements'),
-      note: pick('допуски и опыт', 'eligibility and experience'),
-      icon: FileCheck2,
-    },
-  ] as const
-
-  return (
-    <section className="atlas-panel" aria-labelledby="atlas-title">
-      <div className="atlas-caption">
-        <span className="page-kicker">
-          {pick('Документ · атлас доказательств', 'Document · evidence atlas')}
-        </span>
-        <h2 id="atlas-title">
-          {pick('От условия — к странице первоисточника', 'From condition to source page')}
-        </h2>
-      </div>
-      <div className="atlas-stage">
-        <div className="atlas-grid" aria-hidden="true" />
-        {nodes.map(({ id, label, note, icon: Icon }) => (
-          <div className={`atlas-node atlas-node-${id}`} key={id}>
-            <span>
-              <Icon aria-hidden="true" />
-            </span>
-            <div>
-              <strong>{label}</strong>
-              <small>{note}</small>
-            </div>
-          </div>
-        ))}
-        <svg
-          className="atlas-connectors"
-          viewBox="0 0 1000 390"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="atlas-connector-gradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#3479ff" />
-              <stop offset="1" stopColor="#6c62ff" />
-            </linearGradient>
-          </defs>
-          <path pathLength="1" d="M 228 94 L 434 128" />
-          <path pathLength="1" d="M 566 128 L 772 94" />
-          <path pathLength="1" d="M 228 240 L 434 206" />
-          <path pathLength="1" d="M 566 206 L 772 240" />
-          <circle cx="434" cy="128" r="3" />
-          <circle cx="566" cy="128" r="3" />
-          <circle cx="434" cy="206" r="3" />
-          <circle cx="566" cy="206" r="3" />
-        </svg>
-        <div className="atlas-document" aria-hidden="true">
-          <span className="document-fold" />
-          <span className="document-label">{pick('Тендерный PDF', 'Tender PDF')}</span>
-          <span className="document-line document-line-1" />
-          <span className="document-line document-line-2" />
-          <span className="document-line document-line-3" />
-          <span className="document-table" />
-          <span className="document-line document-line-4" />
-          <span className="document-line document-line-5" />
-        </div>
-        <div className="atlas-footnote">
-          <LayoutGrid aria-hidden="true" />{' '}
-          {pick(
-            '4 категории · точные цитаты · страницы PDF',
-            '4 categories · exact quotes · PDF pages',
-          )}
-        </div>
-      </div>
-    </section>
   )
 }
 
@@ -423,7 +340,9 @@ function DocumentTable({
               {formatDate(document.created_at, locale)}
             </span>
             <span className="document-cell mono-cell">{document.page_count ?? '—'}</span>
-            <span className="document-cell mono-cell">{formatBytes(document.size_bytes)}</span>
+            <span className="document-cell mono-cell">
+              {formatBytes(document.size_bytes, locale)}
+            </span>
             <span className="document-cell row-action">
               {pick('Открыть', 'Open')} <ArrowRight aria-hidden="true" />
             </span>
@@ -448,7 +367,7 @@ function formatDate(value: string, locale: 'ru' | 'en') {
   }).format(new Date(value))
 }
 
-function formatBytes(bytes: number) {
-  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} КБ`
-  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`
+function formatBytes(bytes: number, locale: 'ru' | 'en') {
+  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} ${locale === 'ru' ? 'КБ' : 'KB'}`
+  return `${(bytes / 1024 / 1024).toFixed(1)} ${locale === 'ru' ? 'МБ' : 'MB'}`
 }
