@@ -11,7 +11,8 @@ const citation = {
 }
 
 test('upload, analysis, citation and question flow', async ({ page }) => {
-  await page.route('**/api/v1/documents', async (route) => {
+  // The list request includes pagination; it must not escape the API mock.
+  await page.route(/\/api\/v1\/documents(?:\?.*)?$/, async (route) => {
     if (route.request().method() === 'GET') {
       await route.fulfill({
         contentType: 'application/json',
