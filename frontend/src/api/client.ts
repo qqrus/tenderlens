@@ -118,8 +118,8 @@ export function humanizeError(error: unknown, locale: 'ru' | 'en' = 'ru'): strin
   if (error instanceof ApiError) {
     if (error.code === 'no_extractable_text') {
       return pick(
-        'В PDF не найден извлекаемый текст. Сейчас TenderLens поддерживает текстовые PDF без OCR.',
-        'No extractable text was found. TenderLens currently supports text PDFs without OCR.',
+        'Не удалось извлечь или распознать текст. Проверьте качество страниц PDF.',
+        'Text could not be extracted or recognized. Check the PDF page quality.',
       )
     }
     if (error.code === 'file_too_large') {

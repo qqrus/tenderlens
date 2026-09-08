@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test'
+import { resolve } from 'node:path'
 
 const documentId = '2f75d3fa-33f4-4a32-8e14-e153e1799a31'
 const citation = {
   number: 1,
   chunk_id: '0f092554-5a79-4d9f-bb30-c1a1c9a1e3af',
-  page_number: 12,
-  quote: 'Максимальный бюджет составляет 1 000 000 рублей.',
+  page_number: 4,
+  quote: 'Цена предложения не может превышать 18 400 000 рублей, включая НДС.',
   start_char: 10,
   end_char: 58,
 }
@@ -55,8 +56,8 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
         page_count: 20,
         error_code: null,
         error_message: null,
-        extraction_method: 'ocr',
-        ocr_page_count: 20,
+        extraction_method: 'native',
+        ocr_page_count: 0,
         created_at: '2026-08-18T12:00:00Z',
         updated_at: '2026-08-18T12:00:05Z',
       }),
@@ -71,7 +72,7 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
         conditions: [
           {
             category: 'budget',
-            value: '1 000 000 RUB',
+            value: '18 400 000 RUB',
             summary: citation.quote,
             match_score: 0.91,
             citation,
@@ -92,7 +93,7 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
     route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
-        answer: 'Бюджет составляет 1 000 000 рублей. [1]',
+        answer: 'Бюджет составляет 18 400 000 рублей. [1]',
         citations: [citation],
         answer_mode: 'extractive',
         retrieval_mode: 'hybrid',
@@ -104,24 +105,22 @@ test('upload, analysis, citation and question flow', async ({ page }) => {
 
   await page.goto('/')
   await page.getByRole('button', { name: 'Загрузить PDF' }).click()
-  await page.getByLabel('Выбрать PDF-файл').setInputFiles({
-    name: 'portfolio-tender.pdf',
-    mimeType: 'application/pdf',
-    buffer: Buffer.from('%PDF-1.4'),
-  })
+  await page
+    .getByLabel('Выбрать PDF-файл')
+    .setInputFiles(resolve('../output/pdf/tenderlens-eval-v2/ru-servers-001.pdf'))
   await page.getByRole('button', { name: 'Начать анализ' }).click()
 
   await expect(page).toHaveURL(new RegExp(`/documents/${documentId}`))
   await expect(page.getByRole('heading', { name: 'portfolio-tender.pdf' })).toBeVisible()
-  await expect(page.getByText('OCR 20 стр.')).toBeVisible()
+  await expect(page.locator('.react-pdf__Page__textContent')).toContainText('TL-RU-2026-001')
   await expect(page.getByText(citation.quote).first()).toBeVisible()
 
-  await page
-    .getByRole('button', { name: /Источник · стр. 12/ })
-    .first()
-    .click()
-  await expect(page.getByText('Документ · стр. 12')).toBeVisible()
-  await page.getByRole('button', { name: 'Закрыть источник' }).first().click()
+  await page.getByRole('button', { name: 'Страница 4', exact: true }).first().click()
+  await expect(page.getByText('Документ · стр. 4')).toBeVisible()
+  await expect(page.locator('.pdf-citation-highlight').first()).toBeVisible()
+  await page.getByRole('button', { name: 'Следующая страница' }).click()
+  await expect(page.locator('.react-pdf__Page[data-page-number="5"]')).toBeVisible()
+  await expect(page.locator('.pdf-citation-highlight')).toHaveCount(0)
 
   await page.getByRole('button', { name: 'Вопросы' }).click()
   await page.getByLabel('Вопрос по документу').fill('Какой максимальный бюджет?')
