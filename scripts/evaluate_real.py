@@ -1,12 +1,19 @@
 import argparse
 import json
+import math
 import time
 from collections.abc import Callable, Sequence
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import httpx
 
+from tenderlens.evaluation.evidence import (
+    evidence_matches,
+    joint_answer_correct,
+    span_reciprocal_rank,
+)
 from tenderlens.evaluation.metrics import (
     hit_at_k,
     mean,
@@ -17,6 +24,7 @@ from tenderlens.evaluation.metrics import (
 from tenderlens.evaluation.real_dataset import (
     RealEvaluationDocument,
     load_real_evaluation_manifest,
+    sha256_file,
     validate_real_evaluation_files,
 )
 
@@ -118,10 +126,14 @@ def rerank_hits(
     scorer: ScorePairs,
 ) -> tuple[list[dict[str, Any]], float]:
     started = time.perf_counter()
+    if not hits:
+        return [], 0.0
     scores = list(scorer([(query, str(hit["text"])) for hit in hits]))
     latency_ms = (time.perf_counter() - started) * 1_000
     if len(scores) != len(hits):
         raise ValueError("reranker returned a different number of scores than candidates")
+    if not all(math.isfinite(score) for score in scores):
+        raise ValueError("reranker scores must be finite")
     ranked = [
         hit
         for _score, _index, hit in sorted(
@@ -176,6 +188,17 @@ def evaluate_document(
             expected_pages = set(question.expected_pages)
             observation.update(
                 {
+                    "span_hit_at_5": any(
+                        evidence_matches(int(h["page_number"]), str(h["text"]), question)
+                        for h in hits[:5]
+                    ),
+                    "span_reciprocal_rank": span_reciprocal_rank(hits, question),
+                    "citation_joint_correct": any(
+                        evidence_matches(int(c["page_number"]), str(c["quote"]), question)
+                        for c in answer["citations"]
+                    ),
+                    "answer_joint_correct": joint_answer_correct(answer, question),
+                    "false_refusal": not answer["grounded"],
                     "retrieved_pages": retrieved_pages,
                     "hit_at_1": bool(hit_at_k(retrieved_pages, expected_pages, 1)),
                     "hit_at_5": bool(hit_at_k(retrieved_pages, expected_pages, 5)),
@@ -192,7 +215,7 @@ def evaluate_document(
                     "search_latency_ms": round(search_latency, 2),
                 }
             )
-            if reranker is not None and hits:
+            if reranker is not None:
                 reranked, reranker_latency = rerank_hits(question.question, hits, reranker)
                 reranked_pages = [int(item["page_number"]) for item in reranked]
                 observation.update(
@@ -253,10 +276,36 @@ def build_report(name: str, observations: list[dict[str, Any]]) -> dict[str, Any
         ]
     )
     return {
+        "evaluation_version": "2.0",
+        "measured_at": datetime.now(UTC).isoformat(),
+        "answer_gold_complete": bool(answerable)
+        and all(item.get("answer_joint_correct") is not None for item in answerable),
+        "answerable_questions": len(answerable),
+        "unanswerable_questions": len(unanswerable),
+        "reranked_questions": len(reranked),
+        "candidate_qa_evaluated": False,
         "dataset": name,
         "documents": len({str(item["document_id"]) for item in observations}),
         "questions": len(observations),
         "metrics": {
+            "retrieval_span_hit_rate_at_5": round(
+                mean([float(item.get("span_hit_at_5", False)) for item in answerable]), 6
+            ),
+            "retrieval_span_mrr": round(
+                mean([float(item.get("span_reciprocal_rank", 0)) for item in answerable]), 6
+            ),
+            "citation_joint_accuracy": round(
+                mean([float(item.get("citation_joint_correct", False)) for item in answerable]), 6
+            ),
+            "answer_joint_accuracy": (
+                round(mean([float(item["answer_joint_correct"]) for item in answerable]), 6)
+                if answerable
+                and all(item.get("answer_joint_correct") is not None for item in answerable)
+                else None
+            ),
+            "false_refusal_rate": round(
+                mean([float(item.get("false_refusal", False)) for item in answerable]), 6
+            ),
             "retrieval_hit_rate_at_1": round(
                 mean([float(item["hit_at_1"]) for item in answerable]), 6
             ),
@@ -316,8 +365,8 @@ def build_report(name: str, observations: list[dict[str, Any]]) -> dict[str, Any
                 and not all(
                     (
                         item["hit_at_5"],
-                        item["citation_page_correct"],
-                        item["citation_quote_correct"],
+                        item.get("citation_joint_correct", False),
+                        item.get("answer_joint_correct", False),
                     )
                 )
             )
@@ -359,8 +408,14 @@ def main() -> int:
                 )
             )
     report = build_report(manifest.name, observations)
+    report["manifest_sha256"] = sha256_file(args.manifest)
+    report["evaluation_config"] = {
+        "candidate_limit": args.candidate_limit,
+        "reranker_model": args.reranker_model,
+        "reranker_batch_size": args.reranker_batch_size,
+    }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    rendered = json.dumps(report, ensure_ascii=False, indent=2)
+    rendered = json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False)
     args.output.write_text(f"{rendered}\n", encoding="utf-8")
     print(json.dumps(report["metrics"], ensure_ascii=False, indent=2))
     return 0
