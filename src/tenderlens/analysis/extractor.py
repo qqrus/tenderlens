@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 
 from tenderlens.analysis.models import ConditionCategory, ExtractedCondition
+from tenderlens.domain.text import sentence_spans
 from tenderlens.qa.models import VerifiedCitation
 from tenderlens.retrieval.service import RetrievalHit
 
@@ -19,7 +20,7 @@ class CategorySpec:
 
 DEADLINE_VALUE = re.compile(
     r"(?:"
-    r"\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b"
+    r"(?:\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b)"
     r"(?:\s*(?:г(?:ода)?\.?)?\s*(?:до|в|at)?\s*\d{1,2}[:.]\d{2})?"
     r"|\b\d{1,2}\s+(?:january|february|march|april|may|june|july|august|"
     r"september|october|november|december)\s+\d{4}"
@@ -30,13 +31,14 @@ DEADLINE_VALUE = re.compile(
     r"(?:\s+по\s+(?:московскому|местному)\s+времени)?"
     r"|\b(?:в\s+течение|не\s+позднее|within|no\s+later\s+than)\s+"
     r"\d+(?:\s*\([^)]*\))?\s+"
-    r"(?:календарн(?:ого|ых|ые)?\s+|рабоч(?:его|их|ие)?\s+)?"
+    r"(?:календарн(?:ого|ых|ые)?\s+|рабоч(?:его|их|ие)?\s+|calendar\s+|business\s+)?"
     r"(?:дн(?:я|ей|и)|час(?:а|ов)?|месяц(?:а|ев)?|days?|hours?|months?)\b"
     r")",
     re.IGNORECASE,
 )
 MONEY_VALUE = re.compile(
-    r"\b\d[\d\s.,]*\s*(?:₽|руб(?:\.|лей|ля|ль)?|RUB|USD|EUR|доллар(?:ов|а)?|евро)\b",
+    r"(?:\b(?:USD|EUR|RUB)\s+\d[\d\s.,]*|"
+    r"\b\d[\d\s.,]*\s*(?:₽|руб(?:\.|лей|ля|ль)?|RUB|USD|EUR|доллар(?:ов|а)?|евро))(?!\w)",
     re.IGNORECASE,
 )
 PENALTY_VALUE = re.compile(
@@ -110,8 +112,6 @@ CATEGORY_SPECS = (
     ),
 )
 
-SEGMENT_PATTERN = re.compile(r".+?(?:[!?;](?=\s|$)|\.(?=\s|$)|\n|$)", re.DOTALL)
-
 
 class RuleBasedConditionExtractor:
     def __init__(self, max_items_per_category: int) -> None:
@@ -127,8 +127,12 @@ class RuleBasedConditionExtractor:
         candidates: list[tuple[float, RetrievalHit, int, int]] = []
         seen: set[str] = set()
         for hit in hits:
-            for local_start, local_end in _segments(hit.text):
+            for local_start, local_end in sentence_spans(hit.text):
                 quote = hit.text[local_start:local_end]
+                if spec.category == ConditionCategory.DEADLINE and re.search(
+                    r"не совпадает|не является сроком|not the submission deadline", quote, re.I
+                ):
+                    continue
                 if (
                     spec.category == ConditionCategory.REQUIREMENT
                     and ACTIONABLE_REQUIREMENT.search(quote) is None
@@ -182,16 +186,3 @@ def _display_value(spec: CategorySpec, quote: str) -> str | None:
     if match is None:
         return None
     return " ".join(match.group(0).strip(" .,:;").split())
-
-
-def _segments(text: str) -> list[tuple[int, int]]:
-    spans: list[tuple[int, int]] = []
-    for match in SEGMENT_PATTERN.finditer(text):
-        start, end = match.span()
-        while start < end and text[start].isspace():
-            start += 1
-        while end > start and text[end - 1].isspace():
-            end -= 1
-        if start < end:
-            spans.append((start, end))
-    return spans

@@ -7,6 +7,7 @@ from typing import Any, Protocol
 import httpx
 from pydantic import SecretStr, ValidationError
 
+from tenderlens.domain.text import sentence_spans
 from tenderlens.qa.models import AnswerDraft, DraftClaim, Evidence
 
 
@@ -52,7 +53,6 @@ class ExtractiveAnswerProvider:
 
 
 WORD_PATTERN = re.compile(r"[A-Za-zА-Яа-яЁё0-9]+")
-SEGMENT_PATTERN = re.compile(r".+?(?:[.!?;](?=\s|$)|$)", re.DOTALL)
 STOP_WORDS = {
     "какой",
     "какая",
@@ -111,12 +111,14 @@ CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
     (
         "deadline",
         re.compile(
-            r"прием\w*\s+заяв|подат\w*\s+(?:заяв|предлож)|дедлайн.*подач|"
+            r"срок\w*\s+подач|подач\w*\s+заяв|submission|deadline|дедлайн|"
+            r"при[её]м\w*\s+заяв|подат\w*\s+(?:заяв|предлож)|дедлайн.*подач|"
             r"proposal deadline|bid.*submit|submission cutoff",
             re.IGNORECASE,
         ),
         re.compile(
-            r"прием\w*\s+заяв|последн\w+\s+срок\w*\s+подач|"
+            r"срок\w*\s+подач|submission\s+(?:deadline|cutoff)|"
+            r"при[её]м\w*\s+заяв|последн\w+\s+срок\w*\s+подач|"
             r"направ\w+\s+заявк\w+\s+не позднее|заявк\w+.*отклон|"
             r"proposals? must be received|proposal submission deadline is|"
             r"submit.*offer no later|late (?:bid|submission)",
@@ -126,12 +128,12 @@ CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
     (
         "budget",
         re.compile(
-            r"начальн\w+.*цен|предельн\w+\s+бюджет|сумм\w+.*предлож|"
+            r"бюджет|\bbudget\b|начальн\w+.*цен|предельн\w+\s+бюджет|сумм\w+.*предлож|"
             r"maximum contract value|budget cap|offer not exceed",
             re.IGNORECASE,
         ),
         re.compile(
-            r"начальн\w+\s+(?:максимальн\w+\s+)?цен\w+\s+контракт|"
+            r"\bbudget\b|бюджет|начальн\w+\s+(?:максимальн\w+\s+)?цен\w+\s+контракт|"
             r"предельн\w+\s+бюджет|цен\w+\s+предлож|"
             r"maximum contract value\s+(?:is|equals)|procurement budget|"
             r"offer must not exceed",
@@ -171,11 +173,13 @@ CATEGORY_PATTERNS: tuple[tuple[str, re.Pattern[str], re.Pattern[str]], ...] = (
             r"срок\w*[ \t]+(?:исполнени|поставк|монтаж)\w*|"
             r"\bзаверш\w+.*(?:постав|работ)|"
             r"выполн\w+\s+обязатель|"
-            r"delivery period|delivery.*completed|allowed for performance",
+            r"delivery (?:period|deadline|date)|delivery.*completed|allowed for performance",
             re.IGNORECASE,
         ),
         re.compile(
-            r"срок\w*[ \t]+исполнени\w*|постав\w+.*\bзаверш|\bзаверш\w+.*работ|"
+            r"срок\w*\s+(?:исполнени|поставк)\w*|"
+            r"постав\w+.*(?:\bзаверш|в течение)|\bзаверш\w+.*работ|"
+            r"delivery (?:period|deadline|date)|"
             r"delivery.*completed|required performance period|complete.*scope",
             re.IGNORECASE,
         ),
@@ -210,13 +214,20 @@ def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evi
     candidates: list[tuple[int, int, int, int, int, Evidence, str]] = []
     for evidence_rank, item in enumerate(evidence):
         source = item.hit.text.strip()
-        segments = [match.group(0).strip() for match in SEGMENT_PATTERN.finditer(source)]
+        segments = [source[start:end] for start, end in sentence_spans(source)]
         if not segments and source:
             segments = [source]
         for segment_rank, segment in enumerate(segments):
-            quote = segment[:800].rstrip()
+            # Never cut a sentence before its date, negation or exception.
+            if len(segment) > 2_000:
+                continue
+            quote = segment
+            if not quote_answers_question(question, quote):
+                continue
             overlap = len(question_terms & _normalized_terms(quote))
             category_match = _category_match(question_category, quote)
+            if question_category in {"deadline", "delivery"} and not TEMPORAL_VALUE.search(quote):
+                continue
             candidates.append(
                 (
                     category_match,
@@ -252,10 +263,41 @@ def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evi
 
 
 def _question_category(question: str) -> str | None:
+    if re.search(r"delivery\s+(?:deadline|date|period)|срок\w*\s+поставк", question, re.I):
+        return "delivery"
     for category, question_pattern, _evidence_pattern in CATEGORY_PATTERNS:
         if question_pattern.search(question):
             return category
     return None
+
+
+def quote_answers_question(question: str, quote: str) -> bool:
+    """Conservative topic/value guard, not a semantic entailment classifier."""
+    category = _question_category(question)
+    if category is None:
+        return bool(_normalized_terms(question) & _normalized_terms(quote))
+    if not _category_match(category, quote):
+        return False
+    if category == "deadline" and re.search(
+        r"не совпадает|не является сроком|not the submission deadline", quote, re.I
+    ):
+        return False
+    if category in {"deadline", "delivery"} and not TEMPORAL_VALUE.search(quote):
+        return False
+    if category == "subcontracting" and PERCENTAGE_QUESTION_PATTERN.search(question):
+        return bool(re.search(r"\d+(?:[.,]\d+)?\s*%", quote))
+    if category == "insurance" and POLICY_NUMBER_QUESTION_PATTERN.search(question):
+        return bool(POLICY_NUMBER_EVIDENCE_PATTERN.search(quote))
+    return True
+
+
+TEMPORAL_VALUE = re.compile(
+    r"\b\d{1,4}[./-]\d{1,2}[./-]\d{1,4}\b|"
+    r"\b\d{1,2}\s+(?:январ|феврал|март|апрел|ма[яй]|июн|июл|август|сентябр|октябр|ноябр|декабр|"
+    r"january|february|march|april|may|june|july|august|september|october|november|december)|"
+    r"\b\d+\s+(?:(?:календарных|рабочих|calendar|business)\s+)?(?:дн|дней|дня|час|месяц|days?|hours?|months?)",
+    re.I,
+)
 
 
 def _category_match(category: str | None, passage: str) -> int:
