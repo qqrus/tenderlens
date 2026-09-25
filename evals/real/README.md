@@ -1,4 +1,19 @@
-# Independent real-document holdout
+# Real-document regression set (historical holdout)
+
+## Current status — September 2026
+
+This set has been inspected during development and is now a regression set, **not an
+independent final holdout**. Historical annotations and result_v1.json are preserved.
+The description below records its original composition, not a new human review.
+The manifest has no independent answer gold (`expected_answers`), so evaluator v2
+reports answer accuracy as null and blocks baseline admission until that gap is addressed.
+
+The current gate never authorizes reranker promotion from retrieval scores alone.
+It requires a future end-to-end candidate QA comparison and a new untouched test split;
+the historical policy below is necessary but not sufficient.
+
+OCR completion is not OCR correctness. See [OCR evaluation](ocr-evaluation.md)
+for separate CER/WER measurement and the human review procedure.
 
 This directory defines the privacy-reviewed evaluation set used for the final TenderLens quality
 gate. It contains independently authored public procurement plans, manually written questions,
