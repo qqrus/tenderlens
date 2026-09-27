@@ -11,6 +11,7 @@ from tenderlens.qa.models import (
     GroundedAnswer,
     VerifiedCitation,
 )
+from tenderlens.qa.plan_fields import field_spans, field_value, plan_intent
 from tenderlens.qa.providers import (
     AnswerProvider,
     ExtractiveAnswerProvider,
@@ -93,6 +94,14 @@ def verify_claims(
     question: str | None = None,
 ) -> list[_VerifiedClaim]:
     evidence_by_id = {item.evidence_id: item for item in evidence}
+    if question is not None and plan_intent(question):
+        values = {
+            field_value(question, item.hit.text[start:end])
+            for item in evidence
+            for start, end in field_spans(question, item.hit.text)
+        }
+        if len(values) != 1:
+            return []
     verified: list[_VerifiedClaim] = []
     for claim in draft.claims[:max_claims]:
         item = evidence_by_id.get(claim.evidence_id)
@@ -104,10 +113,13 @@ def verify_claims(
         local_start, local_end = span
         # Restore sentence context: a quoted substring must not drop "not", a date
         # qualifier or an exception. The model selects evidence, not the final wording.
+        context_spans = (
+            field_spans(question, item.hit.text)
+            if question is not None and plan_intent(question)
+            else sentence_spans(item.hit.text)
+        )
         containing = [
-            (start, end)
-            for start, end in sentence_spans(item.hit.text)
-            if start < local_end and end > local_start
+            (start, end) for start, end in context_spans if start < local_end and end > local_start
         ]
         if not containing:
             continue
