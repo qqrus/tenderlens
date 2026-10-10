@@ -1,3 +1,4 @@
+# ruff: noqa: RUF001  # Russian user-facing messages are intentional.
 import re
 from dataclasses import dataclass
 from uuid import UUID
@@ -18,6 +19,7 @@ from tenderlens.qa.providers import (
     GenerationError,
     quote_answers_question,
 )
+from tenderlens.qa.table_evidence import select_table_rows
 from tenderlens.retrieval.service import HybridRetrievalService
 
 logger = structlog.get_logger(__name__)
@@ -66,8 +68,13 @@ class GroundedQuestionAnsweringService:
 
         verified = verify_claims(draft, evidence, max_claims=self.max_claims, question=question)
         if draft.cannot_answer or not verified:
+            table = select_table_rows(question, evidence)
             return GroundedAnswer(
-                answer=_insufficient_evidence_message(question),
+                answer=(
+                    _ambiguous_table_message(question)
+                    if table.applies and not table.rows
+                    else _insufficient_evidence_message(question)
+                ),
                 citations=[],
                 answer_mode=answer_mode,
                 retrieval_mode=retrieval.mode,
@@ -94,6 +101,9 @@ def verify_claims(
     question: str | None = None,
 ) -> list[_VerifiedClaim]:
     evidence_by_id = {item.evidence_id: item for item in evidence}
+    table = select_table_rows(question or "", evidence)
+    if table.applies and not table.rows:
+        return []
     if question is not None and plan_intent(question):
         values = {
             field_value(question, item.hit.text[start:end])
@@ -118,6 +128,12 @@ def verify_claims(
             if question is not None and plan_intent(question)
             else sentence_spans(item.hit.text)
         )
+        if table.applies:
+            context_spans = [
+                (start, end)
+                for evidence_id, start, end in table.rows
+                if evidence_id == claim.evidence_id and start <= local_start and end >= local_end
+            ]
         containing = [
             (start, end) for start, end in context_spans if start < local_end and end > local_start
         ]
@@ -127,7 +143,11 @@ def verify_claims(
         source_quote = item.hit.text[local_start:local_end]
         if len(source_quote) > 2_000 or not claim.text.strip():
             continue
-        if question is not None and not quote_answers_question(question, source_quote):
+        if (
+            not table.applies
+            and question is not None
+            and not quote_answers_question(question, source_quote)
+        ):
             continue
         if any(
             previous.citation.chunk_id == item.hit.chunk_id
@@ -150,6 +170,18 @@ def verify_claims(
         # Literal source wording avoids presenting an unchecked paraphrase as a fact.
         verified.append(_VerifiedClaim(text=" ".join(source_quote.split()), citation=citation))
     return verified
+
+
+def _ambiguous_table_message(question: str) -> str:
+    if re.search(r"[\u0400-\u04ff]", question):
+        return (
+            "Не удалось надёжно связать сумму с нужной строкой и столбцом таблицы. "
+            "Проверьте исходную таблицу в PDF: структура или значение неоднозначны."
+        )
+    return (
+        "The amount could not be reliably linked to the requested table row and column. "
+        "Check the original PDF table: its structure or value is ambiguous."
+    )
 
 
 def _find_quote_span(source: str, quote: str) -> tuple[int, int] | None:
