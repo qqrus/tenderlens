@@ -10,6 +10,7 @@ from pydantic import SecretStr, ValidationError
 from tenderlens.domain.text import sentence_spans
 from tenderlens.qa.models import AnswerDraft, DraftClaim, Evidence
 from tenderlens.qa.plan_fields import field_spans, field_value, plan_intent
+from tenderlens.qa.table_evidence import select_table_rows
 
 
 class GenerationError(RuntimeError):
@@ -210,6 +211,13 @@ def _normalized_terms(value: str) -> set[str]:
 
 
 def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evidence, str]:
+    table = select_table_rows(question, evidence)
+    if table.applies:
+        if not table.rows:
+            return evidence[0], ""
+        evidence_id, start, end = table.rows[0]
+        selected = next(item for item in evidence if item.evidence_id == evidence_id)
+        return selected, selected.hit.text[start:end]
     if plan_intent(question):
         fields = [
             (item, item.hit.text[start:end])
@@ -283,6 +291,15 @@ def _question_category(question: str) -> str | None:
 
 def quote_answers_question(question: str, quote: str) -> bool:
     """Conservative topic/value guard, not a semantic entailment classifier."""
+    # A generic term such as "review" cannot justify citing works for consultants.
+    if re.search(r"consultant|consulting|консульт", question, re.I) and not re.search(
+        r"consultant|consulting|консульт", quote, re.I
+    ):
+        return False
+    if re.search(r"prior\s+review", question, re.I) and not re.search(
+        r"prior\s+review", quote, re.I
+    ):
+        return False
     if plan_intent(question):
         return bool(field_spans(question, quote))
     category = _question_category(question)
