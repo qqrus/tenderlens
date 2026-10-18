@@ -1,0 +1,32 @@
+{
+  "dataset": "independent-real-holdout-v1",
+  "measured_at": "2026-08-24",
+  "answer_provider": "extractive",
+  "reranker": "local models/tenderlens-reranker-v1/final",
+  "documents": 7,
+  "questions": 26,
+  "metrics": {
+    "baseline_hit_at_1": 0.736842,
+    "baseline_hit_at_5": 1.0,
+    "baseline_mrr": 0.855263,
+    "reranker_hit_at_1": 0.894737,
+    "reranker_hit_at_5": 1.0,
+    "reranker_mrr": 0.938596,
+    "citation_page_accuracy": 0.421053,
+    "citation_quote_accuracy": 0.368421,
+    "unanswerable_refusal_accuracy": 1.0,
+    "ocr_success_rate": 1.0,
+    "search_latency_p95_ms": 95.8,
+    "answer_latency_p95_ms": 122.67,
+    "reranker_latency_p95_ms": 831.76
+  },
+  "decision": {
+    "baseline_gate_passed": false,
+    "reranker_metrics_gate_passed": true,
+    "enable_reranker_by_default": false,
+    "blocking_metrics": [
+      "citation_page_accuracy",
+      "citation_quote_accuracy"
+    ]
+  }
+}

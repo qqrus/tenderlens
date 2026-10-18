@@ -1,8 +1,10 @@
 import hashlib
+import io
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+from pypdf import PdfWriter
 
 from tenderlens.evaluation.real_dataset import (
     RealEvaluationManifest,
@@ -22,6 +24,7 @@ def build_manifest(pdf: bytes) -> RealEvaluationManifest:
                     "source_url": "https://example.gov.invalid/public-tender-001.pdf",
                     "sha256": hashlib.sha256(pdf).hexdigest(),
                     "personal_data_reviewed": True,
+                    "privacy_review_status": "no_personal_data_found",
                     "questions": [
                         {
                             "id": "public-tender-001-budget",
@@ -44,7 +47,7 @@ def build_manifest(pdf: bytes) -> RealEvaluationManifest:
 
 
 def test_real_manifest_validates_local_pdf_and_hash(tmp_path: Path) -> None:
-    pdf = b"%PDF-1.7\nsynthetic unit-test placeholder"
+    pdf = valid_pdf(page_count=4)
     (tmp_path / "public-tender-001.pdf").write_bytes(pdf)
 
     summary = validate_real_evaluation_files(build_manifest(pdf), tmp_path)
@@ -59,7 +62,7 @@ def test_real_manifest_validates_local_pdf_and_hash(tmp_path: Path) -> None:
 
 
 def test_real_manifest_rejects_unreviewed_personal_data() -> None:
-    pdf = b"%PDF-1.7"
+    pdf = valid_pdf(page_count=4)
     payload = build_manifest(pdf).model_dump(mode="json")
     payload["documents"][0]["personal_data_reviewed"] = False
 
@@ -68,8 +71,17 @@ def test_real_manifest_rejects_unreviewed_personal_data() -> None:
 
 
 def test_real_manifest_rejects_wrong_file_hash(tmp_path: Path) -> None:
-    pdf = b"%PDF-1.7\nexpected"
-    (tmp_path / "public-tender-001.pdf").write_bytes(b"%PDF-1.7\nchanged")
+    pdf = valid_pdf(page_count=4)
+    (tmp_path / "public-tender-001.pdf").write_bytes(valid_pdf(page_count=5))
 
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         validate_real_evaluation_files(build_manifest(pdf), tmp_path)
+
+
+def valid_pdf(*, page_count: int) -> bytes:
+    writer = PdfWriter()
+    for _ in range(page_count):
+        writer.add_blank_page(width=100, height=100)
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    return buffer.getvalue()

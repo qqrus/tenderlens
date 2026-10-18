@@ -1,0 +1,322 @@
+{
+  "version": "1.0",
+  "name": "independent-real-holdout-v1",
+  "split": "holdout",
+  "documents": [
+    {
+      "id": "wb-georgia-p175629-native",
+      "filename": "worldbank-georgia-procurement-plan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099080323062524970/pdf/P175629057ebf30160a00e0ef0b2fc536ed.pdf",
+      "sha256": "bea53134912b0fc68f1be759364a31a9b1a366dd54ea3ee57df4b51d8d05e1c6",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
+      "questions": [
+        {
+          "id": "georgia-plan-agreement-date",
+          "language": "ru",
+          "question": "На какую дату был согласован план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["Procurement Plan agreed as of February 20, 2023"]
+        },
+        {
+          "id": "georgia-tashiskari-estimated-cost",
+          "language": "ru",
+          "question": "Какова оценочная стоимость реконструкции схемы Tashiskari?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["Rehabilitation of Tashiskari scheme", "31,500,00 0"]
+        },
+        {
+          "id": "georgia-design-supervision-duration",
+          "language": "en",
+          "question": "What is the contract duration for design and supervision of pre-identified schemes?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["Design & supervision of pre-identified schemes", "60 Prior"]
+        },
+        {
+          "id": "georgia-insurance-policy-number",
+          "language": "ru",
+          "question": "Какой номер страхового полиса указан в документе?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-kenya-p176725-native",
+      "filename": "worldbank-kenya-procurement-plan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099061125062012102/pdf/P176725-d74e1852-266d-42ac-86ed-4e734ba7d146.pdf",
+      "sha256": "081f79ff1b4ddf4ce496a0cf75eb029f9d9cf08c7b3c14571f715693e408242e",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
+      "questions": [
+        {
+          "id": "kenya-covered-period",
+          "language": "ru",
+          "question": "Какой период покрывает план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["July 2023 – December 2024"]
+        },
+        {
+          "id": "kenya-project-number",
+          "language": "ru",
+          "question": "Какой номер проекта указан в документе?",
+          "answerable": true,
+          "expected_pages": [1, 3],
+          "expected_quote_fragments": ["Project Number: P176725", "Project ID: P176725"]
+        },
+        {
+          "id": "kenya-revised-plan-date",
+          "language": "en",
+          "question": "What is the revised procurement plan date?",
+          "answerable": true,
+          "expected_pages": [3],
+          "expected_quote_fragments": ["2025-06-11"]
+        },
+        {
+          "id": "kenya-delay-penalty",
+          "language": "ru",
+          "question": "Какой штраф предусмотрен за просрочку исполнения контракта?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-nepal-p505226-native",
+      "filename": "worldbank-nepal-procurement-plan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099082825132575384/pdf/P505226-1e326351-bd29-448f-96d1-95c8faea95ff.pdf",
+      "sha256": "8c73e53637a9eec8ec6553557f1b3462f14568834d7f61a67e0f65bcefc421d0",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
+      "questions": [
+        {
+          "id": "nepal-covered-period",
+          "language": "ru",
+          "question": "За какой период составлен план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["August 1, 2025 – January 31, 2027"]
+        },
+        {
+          "id": "nepal-performance-security",
+          "language": "ru",
+          "question": "Какой размер обеспечения исполнения контракта установлен?",
+          "answerable": true,
+          "expected_pages": [2],
+          "expected_quote_fragments": ["five (5) to ten (10) percent of the contract price"]
+        },
+        {
+          "id": "nepal-it-audit-estimate",
+          "language": "en",
+          "question": "What is the estimated amount for the IT audit and security audit service?",
+          "answerable": true,
+          "expected_pages": [4],
+          "expected_quote_fragments": ["IT Audit/Security audi t", "26,000.00"]
+        },
+        {
+          "id": "nepal-equipment-warranty",
+          "language": "ru",
+          "question": "Какой гарантийный срок установлен для поставляемого оборудования?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-srilanka-p178973-native",
+      "filename": "worldbank-srilanka-procurement-plan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099102725061020185/pdf/P178973-b8a4c375-474a-45f7-81ca-f055bfc9bb64.pdf",
+      "sha256": "3840bea09fdb4b3b6daf6ed0f08641f987d3938cb0236db141d51e66b03d9c33",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
+      "questions": [
+        {
+          "id": "srilanka-covered-period",
+          "language": "ru",
+          "question": "Какой период охватывает план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["January 26, 2024 to January 25, 2025"]
+        },
+        {
+          "id": "srilanka-works-international-threshold",
+          "language": "ru",
+          "question": "При какой стоимости работ применяется открытая международная конкуренция?",
+          "answerable": true,
+          "expected_pages": [2],
+          "expected_quote_fragments": ["> US$10,000,000 Open- Competitive- International"]
+        },
+        {
+          "id": "srilanka-consultant-prior-review",
+          "language": "en",
+          "question": "What is the prior review threshold for individual consultants?",
+          "answerable": true,
+          "expected_pages": [3],
+          "expected_quote_fragments": ["All contracts over US$0.4 million equivalent"]
+        },
+        {
+          "id": "srilanka-bid-bond-number",
+          "language": "ru",
+          "question": "Какой номер банковской гарантии заявки указан в плане?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-turkey-p175011-native",
+      "filename": "worldbank-turkey-procurement-plan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099121224101042454/pdf/P175011-19159096-ce23-4e3a-a21a-bacdf2ce90af.pdf",
+      "sha256": "c4eb1c0f89b04ff913a8d3961e2ba643acf11319bfe8d1c8e908f243b62e2855",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "native",
+      "questions": [
+        {
+          "id": "turkey-covered-period",
+          "language": "ru",
+          "question": "Какой период охватывает план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["February 7, 2022 – August 7, 2023"]
+        },
+        {
+          "id": "turkey-rfq-goods-threshold",
+          "language": "ru",
+          "question": "Каков порог стоимости для RFQ по товарам и IT-услугам?",
+          "answerable": true,
+          "expected_pages": [2],
+          "expected_quote_fragments": ["Contracts less than US$100,000"]
+        },
+        {
+          "id": "turkey-group-three-soil-surveys-estimate",
+          "language": "en",
+          "question": "What is the estimated amount for Group III soil surveys and classification?",
+          "answerable": true,
+          "expected_pages": [4],
+          "expected_quote_fragments": ["Group III Soil Surveys and Classification", "9,300,000"]
+        },
+        {
+          "id": "turkey-liability-insurance",
+          "language": "ru",
+          "question": "Какой лимит страхования гражданской ответственности подрядчика установлен?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-georgia-p175629-skewed-scan",
+      "filename": "worldbank-georgia-table-skew-scan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099080323062524970/pdf/P175629057ebf30160a00e0ef0b2fc536ed.pdf",
+      "sha256": "0c1866dccc0f7b86848b160c4f24dd6cc4f0280112acb6df3db97c4dc7459b4d",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "skewed_scan",
+      "source_document_id": "wb-georgia-p175629-native",
+      "questions": [
+        {
+          "id": "georgia-scan-plan-date",
+          "language": "ru",
+          "question": "На какую дату был согласован план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["February 20, 2023"]
+        },
+        {
+          "id": "georgia-scan-tashiskari-cost",
+          "language": "en",
+          "question": "What is the estimated cost of rehabilitation of the Tashiskari scheme?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["Rehabilitation of Tashiskari scheme", "31,500,000"]
+        },
+        {
+          "id": "georgia-scan-insurance-policy",
+          "language": "ru",
+          "question": "Какой номер страхового полиса указан в документе?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    },
+    {
+      "id": "wb-srilanka-p178973-rotated-scan",
+      "filename": "worldbank-srilanka-rotated-scan.pdf",
+      "language": "en",
+      "source_url": "https://documents1.worldbank.org/curated/en/099102725061020185/pdf/P178973-b8a4c375-474a-45f7-81ca-f055bfc9bb64.pdf",
+      "sha256": "3967adbcf422d5e3a6805eee47264a796f98f661f7c134cc6870dd677e749b57",
+      "personal_data_reviewed": true,
+      "privacy_review_status": "no_personal_data_found",
+      "privacy_review_scope": "all_pages",
+      "redistribution": "local_only",
+      "document_type": "procurement_plan",
+      "extraction_profile": "rotated_scan",
+      "source_document_id": "wb-srilanka-p178973-native",
+      "questions": [
+        {
+          "id": "srilanka-rotated-covered-period",
+          "language": "ru",
+          "question": "Какой период охватывает план закупок?",
+          "answerable": true,
+          "expected_pages": [1],
+          "expected_quote_fragments": ["January 26, 2024 to January 25, 2025"]
+        },
+        {
+          "id": "srilanka-rotated-works-threshold",
+          "language": "en",
+          "question": "At what works value is open international competition used?",
+          "answerable": true,
+          "expected_pages": [2],
+          "expected_quote_fragments": ["US$10,000,000"]
+        },
+        {
+          "id": "srilanka-rotated-bank-guarantee",
+          "language": "ru",
+          "question": "Какой номер банковской гарантии указан в документе?",
+          "answerable": false,
+          "expected_pages": [],
+          "expected_quote_fragments": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,31 +1,52 @@
 # Independent real-document holdout
 
-This directory defines the safe workflow for evaluating TenderLens on independently authored
-public procurement documents. The PDF files and completed local manifest are intentionally not
-committed. Public availability does not guarantee that a document is free of signatures,
-personal data, bank details, or redistribution restrictions.
+This directory defines the privacy-reviewed evaluation set used for the final TenderLens quality
+gate. It contains independently authored public procurement plans, manually written questions,
+gold PDF pages, short gold fragments, and explicit unanswerable questions.
 
-## Collection protocol
+The source PDFs remain local under `evals/real/documents/`. Public availability does not imply
+permission to redistribute a complete file, and a public PDF may still contain names, signatures,
+contact details, or credentials. Git stores only official source URLs, SHA-256 digests, review
+status, and short evaluation annotations.
 
-1. Download a candidate only from its official publisher into `evals/real/documents/`.
-2. Review every page for personal data, signatures, secrets, and redistribution restrictions.
-3. Keep the PDF local unless redistribution is explicitly permitted.
-4. Copy `manifest.example.json` to `manifest.local.json` and record the source URL, SHA-256,
-   language, and `personal_data_reviewed: true`.
-5. Add at least one answerable and one genuinely unanswerable question per document. Annotate
-   expected pages and short quote fragments without copying long copyrighted passages.
-6. Run the validator before any metric calculation:
+## Dataset composition
+
+- five native official World Bank procurement plans;
+- two deterministic OCR stress variants derived from reviewed sources;
+- 26 manually annotated questions: 19 answerable and 7 unanswerable;
+- Russian cross-language questions over English evidence plus English questions;
+- tables, repeated headers/footers, a slightly skewed noisy scan, and a 90-degree rotated scan.
+
+`sources.json` records accepted and rejected candidates. `holdout.json` is the tracked gold
+manifest. The holdout must not be converted into training examples or used to tune model weights.
+
+## Reproduce locally
+
+Download the five accepted files from the official URLs in `holdout.json` and preserve the listed
+filenames. Then run:
 
 ```powershell
+uv run python scripts/build_real_holdout_variants.py
 uv run python scripts/validate_real_eval.py
-uv run python scripts/evaluate_real.py
+docker compose up -d --build
+uv run --extra ml python scripts/evaluate_real.py `
+  --reranker-model models/tenderlens-reranker-v1/final
+uv run python scripts/check_real_quality_gate.py
 ```
 
-The holdout must never be used to generate training examples or tune thresholds. It exists only
-for final comparison of baseline retrieval and TenderLens-Reranker.
+The evaluator writes detailed, ignored reports under `evals/real/reports/`. Those reports may
+contain longer extracted quotes and are intentionally excluded from Git. The checked-in
+`result_v1.json` contains only aggregate metrics and the promotion decision.
 
-## Candidate official sources
+## Quality-gate policy
 
-`sources.json` records starting points discovered on official public-sector websites. Candidate
-status does not mean that a file has passed privacy or reuse review. Do not automate downloads or
-commit the resulting documents.
+Thresholds are declared in `quality_gate.json` before evaluation. The reranker may become the API
+default only when:
+
+1. the baseline retrieval, citation, refusal, OCR, and latency gates pass;
+2. reranking does not reduce Hit@5;
+3. reranking improves MRR by at least the configured margin;
+4. reranking latency remains below the configured p95 limit.
+
+Failing the gate is a valid result. It identifies the next engineering task and prevents a model
+from being promoted based only on synthetic data.
