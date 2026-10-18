@@ -1,0 +1,9 @@
+{
+  "references": [
+    {"id": "synthetic-budget", "text": "Budget: 100 RUB"},
+    {"id": "synthetic-deadline", "text": "Submission deadline: 2026-10-24"}
+  ],
+  "predictions": [
+    {"id": "synthetic-budget", "text": "Budget: 900 RUB"}
+  ]
+}
