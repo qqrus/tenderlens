@@ -9,6 +9,7 @@ from pydantic import SecretStr, ValidationError
 
 from tenderlens.domain.text import sentence_spans
 from tenderlens.qa.models import AnswerDraft, DraftClaim, Evidence
+from tenderlens.qa.plan_fields import field_spans, field_value, plan_intent
 
 
 class GenerationError(RuntimeError):
@@ -209,6 +210,15 @@ def _normalized_terms(value: str) -> set[str]:
 
 
 def _best_extractive_quote(question: str, evidence: list[Evidence]) -> tuple[Evidence, str]:
+    if plan_intent(question):
+        fields = [
+            (item, item.hit.text[start:end])
+            for item in evidence
+            for start, end in field_spans(question, item.hit.text)
+        ]
+        if not fields or len({field_value(question, quote) for _, quote in fields}) != 1:
+            return evidence[0], ""
+        return fields[0]
     question_terms = _normalized_terms(question)
     question_category = _question_category(question)
     candidates: list[tuple[int, int, int, int, int, Evidence, str]] = []
@@ -273,6 +283,8 @@ def _question_category(question: str) -> str | None:
 
 def quote_answers_question(question: str, quote: str) -> bool:
     """Conservative topic/value guard, not a semantic entailment classifier."""
+    if plan_intent(question):
+        return bool(field_spans(question, quote))
     category = _question_category(question)
     if category is None:
         return bool(_normalized_terms(question) & _normalized_terms(quote))
