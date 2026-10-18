@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TenderLens — B · Аналитический кабинет</title>
+    <link rel="stylesheet" href="references.css" />
+  </head>
+  <body class="dark">
+    <div class="concept-label">
+      КОНЦЕПТ B · АНАЛИТИЧЕСКИЙ КАБИНЕТ
+      <span>Демонстрационные данные · макет, не результат анализа</span>
+    </div>
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="reference-b.html"
+          >Tender<span>Lens</span><i>↗</i></a
+        >
+        <div class="topnav">
+          <span class="active">Документы</span><span>ML-эксперименты</span>
+        </div>
+        <a class="other-concept" href="reference-a.html">Концепт A →</a>
+      </header>
+      <main>
+        <header class="workspace-heading">
+          <div>
+            <p class="breadcrumb">Документы / Техническое задание.pdf</p>
+            <h1>Поставка серверов</h1>
+            <p class="file-meta">
+              18 страниц <span>·</span> Текстовый PDF <span>·</span> Источники
+              рядом с выводами
+            </p>
+          </div>
+          <span class="pill">Демо-режим</span>
+        </header>
+        <div class="workspace">
+          <section class="source-panel" aria-label="Источник">
+            <div class="source-toolbar">
+              <strong>▤ &nbsp; Техническое задание.pdf</strong
+              ><span>Стр. 4 / 18</span>
+            </div>
+            <div class="paper-wrap">
+              <div class="paper">
+                <div class="paper-top">
+                  ТЕХНИЧЕСКОЕ ЗАДАНИЕ <span>ДЕМО / 04</span>
+                </div>
+                <h2>2. Порядок подачи заявок<br />и условия поставки</h2>
+                <p>
+                  Настоящий раздел устанавливает условия подачи заявок и
+                  исполнения обязательств по поставке серверного оборудования.
+                </p>
+                <p id="deadline" class="pdf-quote highlighted">
+                  <b>2.1.</b> Окончание срока подачи заявок:
+                  <strong
+                    >24 сентября 2026 года в 12:00 по московскому
+                    времени.</strong
+                  >
+                </p>
+                <p>
+                  Заявка направляется в электронной форме и должна содержать
+                  сведения о предлагаемом оборудовании и комплектности поставки.
+                </p>
+                <p id="budget" class="pdf-quote">
+                  <b>2.2.</b> Начальная цена контракта составляет
+                  <strong>4 800 000 рублей, включая НДС.</strong> В цену
+                  включены доставка и разгрузка оборудования.
+                </p>
+                <p id="delivery" class="pdf-quote">
+                  <b>2.3.</b> Поставка осуществляется в течение
+                  <strong
+                    >60 календарных дней с даты заключения контракта.</strong
+                  >
+                </p>
+                <p>
+                  Приёмка производится после проверки комплектности и
+                  соответствия поставленного оборудования техническому заданию.
+                </p>
+                <div class="paper-bottom">
+                  Учебный пример · не настоящий тендер<span>4</span>
+                </div>
+              </div>
+            </div>
+            <div class="citation-caption" role="status">
+              ↳ Выделен фрагмент о сроке подачи заявки
+            </div>
+            <p class="mock-note">
+              Макет страницы, не настоящий PDF-просмотрщик.
+            </p>
+          </section>
+          <section class="findings" aria-label="Результаты анализа">
+            <div class="tabs" role="tablist" aria-label="Раздел анализа">
+              <button
+                role="tab"
+                id="overview-tab"
+                aria-controls="overview"
+                aria-selected="true"
+                data-panel="overview"
+              >
+                Условия</button
+              ><button
+                role="tab"
+                id="question-tab"
+                aria-controls="question"
+                aria-selected="false"
+                tabindex="-1"
+                data-panel="question"
+              >
+                Вопрос к документу
+              </button>
+            </div>
+            <div id="overview" role="tabpanel" aria-labelledby="overview-tab">
+              <div class="section-heading">
+                <h2>Суть, без потери контекста</h2>
+              </div>
+              <article class="deadline-card">
+                <div class="eyebrow">01 / ПОДАЧА ЗАЯВОК</div>
+                <div class="key-value">24 сентября 2026</div>
+                <div class="time">до 12:00 · московское время</div>
+                <p>
+                  Фиксированная дата подачи. Не следует путать со сроком
+                  поставки оборудования.
+                </p>
+                <button class="source-link" data-source="deadline">
+                  ↖ Показать в документе · стр. 4
+                </button>
+              </article>
+              <div class="condition-grid">
+                <article class="condition">
+                  <span class="eyebrow">02 / БЮДЖЕТ</span
+                  ><strong>4 800 000 ₽</strong>
+                  <p>Начальная цена с НДС.</p>
+                  <button class="source-link" data-source="budget">
+                    ↖ Источник · стр. 4
+                  </button>
+                </article>
+                <article class="condition">
+                  <span class="eyebrow">03 / ПОСТАВКА</span
+                  ><strong>60 дней</strong>
+                  <p>С даты контракта.</p>
+                  <button class="source-link" data-source="delivery">
+                    ↖ Источник · стр. 4
+                  </button>
+                </article>
+              </div>
+              <article class="attention">
+                <div class="attention-title">! Требует внимания</div>
+                <h3>Дата поставки зависит от контракта</h3>
+                <p>
+                  Документ задаёт период, а не календарную дату. Для расчёта
+                  нужна дата заключения.
+                </p>
+                <button class="source-link" data-source="delivery">
+                  Проверить формулировку →
+                </button>
+              </article>
+              <div class="missing">
+                <span>Гарантия</span
+                ><span class="muted">Не найдена в этом примере</span>
+              </div>
+            </div>
+            <div
+              id="question"
+              role="tabpanel"
+              aria-labelledby="question-tab"
+              hidden
+            >
+              <p class="eyebrow">ПРИМЕР ВОПРОСА</p>
+              <h2>Когда нужно подать заявку?</h2>
+              <article class="deadline-card">
+                <p class="answer-text">
+                  Не позднее
+                  <strong
+                    >24 сентября 2026 года, 12:00 по московскому
+                    времени.</strong
+                  >
+                </p>
+                <p>
+                  Поставка выполняется в течение 60 календарных дней с даты
+                  заключения контракта — это другое условие.
+                </p>
+                <button class="source-link" data-source="deadline">
+                  [1] Открыть подтверждение · стр. 4
+                </button>
+              </article>
+              <p class="muted">
+                Заранее подготовленный пример. В макете нет запросов к модели.
+              </p>
+            </div>
+            <footer class="disclaimer">
+              Помогает проверить документ. Не является юридической
+              консультацией.
+            </footer>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="references.js"></script>
+  </body>
+</html>
