@@ -3,9 +3,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { PropsWithChildren } from 'react'
 
 type FileSession = {
+  documentId: string | null
   file: File | null
   objectUrl: string | null
-  setFile: (file: File) => void
+  setFile: (file: File, documentId: string) => void
   clearFile: () => void
 }
 
@@ -13,22 +14,19 @@ const FileSessionContext = createContext<FileSession | null>(null)
 
 export function FileSessionProvider({ children }: PropsWithChildren) {
   const [file, setFileState] = useState<File | null>(null)
+  const [documentId, setDocumentId] = useState<string | null>(null)
   const [objectUrl, setObjectUrl] = useState<string | null>(null)
 
-  const setFile = useCallback((nextFile: File) => {
+  const setFile = useCallback((nextFile: File, nextDocumentId: string) => {
     setFileState(nextFile)
-    setObjectUrl((previous) => {
-      if (previous) URL.revokeObjectURL(previous)
-      return URL.createObjectURL(nextFile)
-    })
+    setDocumentId(nextDocumentId)
+    setObjectUrl(URL.createObjectURL(nextFile))
   }, [])
 
   const clearFile = useCallback(() => {
     setFileState(null)
-    setObjectUrl((previous) => {
-      if (previous) URL.revokeObjectURL(previous)
-      return null
-    })
+    setDocumentId(null)
+    setObjectUrl(null)
   }, [])
 
   useEffect(
@@ -39,8 +37,8 @@ export function FileSessionProvider({ children }: PropsWithChildren) {
   )
 
   const value = useMemo(
-    () => ({ file, objectUrl, setFile, clearFile }),
-    [clearFile, file, objectUrl, setFile],
+    () => ({ documentId, file, objectUrl, setFile, clearFile }),
+    [clearFile, documentId, file, objectUrl, setFile],
   )
 
   return <FileSessionContext.Provider value={value}>{children}</FileSessionContext.Provider>

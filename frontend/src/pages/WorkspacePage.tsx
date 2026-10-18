@@ -22,9 +22,15 @@ const CitationDrawer = lazy(() =>
 )
 
 export function WorkspacePage() {
-  const { locale, pick } = useLocale()
   const { documentId = '' } = useParams()
-  const { objectUrl } = useFileSession()
+  // A new document must not inherit the previous citation, question or PDF page.
+  return <DocumentWorkspace key={documentId} documentId={documentId} />
+}
+
+function DocumentWorkspace({ documentId }: { documentId: string }) {
+  const { locale, pick } = useLocale()
+  const fileSession = useFileSession()
+  const objectUrl = fileSession.documentId === documentId ? fileSession.objectUrl : null
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('summary')
   const [selectedCitation, setSelectedCitation] = useState<CitationResponse | null>(null)
   const [pageNumber, setPageNumber] = useState(1)
@@ -101,11 +107,20 @@ export function WorkspacePage() {
           <div className="workspace-document-meta">
             <span className="workspace-status-dot" data-status={document.status} />
             <div>
-              <strong>{document.original_filename}</strong>
+              <h1>{document.original_filename}</h1>
               <span>
-                {document.status === 'ready'
-                  ? pick('Анализ завершён', 'Analysis complete')
-                  : pick('Документ обрабатывается', 'Document is processing')}
+                {document.status === 'failed'
+                  ? pick('Ошибка обработки', 'Processing failed')
+                  : document.status !== 'ready'
+                    ? pick('Документ обрабатывается', 'Document is processing')
+                    : analysisQuery.isSuccess
+                      ? pick('Анализ завершён', 'Analysis complete')
+                      : analysisQuery.isError
+                        ? pick('PDF готов · анализ недоступен', 'PDF ready · analysis unavailable')
+                        : pick(
+                            'PDF готов · анализируем условия',
+                            'PDF ready · analyzing conditions',
+                          )}
                 {document.page_count ? ` · ${document.page_count} ${pick('стр.', 'pages')}` : ''}
                 {document.ocr_page_count
                   ? ` · OCR ${document.ocr_page_count} ${pick('стр.', 'pages')}`
@@ -117,9 +132,9 @@ export function WorkspacePage() {
             <span className="workspace-updated">
               {pick('Обновлён', 'Updated')} {formatWorkspaceDate(document.updated_at, locale)}
             </span>
-            {visibleCitation && (
+            {document.status === 'ready' && (
               <button className="source-toggle" type="button" onClick={() => setSourceOpen(true)}>
-                <FileCheck2 aria-hidden="true" /> {pick('Источник · стр.', 'Source · p.')}{' '}
+                <FileCheck2 aria-hidden="true" /> {pick('Открыть PDF · стр.', 'Open PDF · p.')}{' '}
                 {visiblePage}
               </button>
             )}
@@ -134,6 +149,8 @@ export function WorkspacePage() {
             />
           ) : document.status !== 'ready' ? (
             <DocumentStatus status={document.status} />
+          ) : activeTab === 'questions' ? (
+            <QuestionPanel documentId={documentId} onCitationOpen={openCitation} />
           ) : analysisQuery.isLoading ? (
             <LoadingSkeleton />
           ) : analysisQuery.isError || !analysisQuery.data ? (
@@ -163,6 +180,8 @@ export function WorkspacePage() {
         }
       >
         <CitationDrawer
+          key={documentId}
+          open={sourceOpen}
           citation={visibleCitation}
           sourceUrl={pdfSourceUrl}
           pageNumber={visiblePage}
@@ -232,8 +251,8 @@ function WorkspaceContent({
           <h1>{pick('Условия документа', 'Document conditions')}</h1>
           <p>
             {pick(
-              'Каждое найденное условие связано с точной цитатой и страницей PDF. Технический процент показывает совпадение правила, а не юридическую оценку.',
-              'Every extracted condition is linked to an exact quote and PDF page. The technical percentage is a rule match score, not a legal assessment.',
+              'Значения и контекст из документа. Откройте источник, чтобы проверить формулировку.',
+              'Values and context from the document. Open the source to check the wording.',
             )}
           </p>
         </div>

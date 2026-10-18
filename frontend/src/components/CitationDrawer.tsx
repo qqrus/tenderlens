@@ -1,9 +1,19 @@
 import { BookOpenCheck, Quote, X } from 'lucide-react'
+import { useRef, useSyncExternalStore } from 'react'
 import type { CitationResponse } from '../api/types'
 import { useLocale } from '../i18n/LocaleContext'
 import { PdfViewer } from './PdfViewer'
+import { useDialogFocus } from './useDialogFocus'
+
+const mobileQuery = '(max-width: 760px)'
+const subscribeMobile = (callback: () => void) => {
+  const media = window.matchMedia(mobileQuery)
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
+}
 
 type Props = {
+  open?: boolean
   citation: CitationResponse | null
   sourceUrl: string | null
   pageNumber: number
@@ -15,6 +25,7 @@ type Props = {
 }
 
 export function CitationDrawer({
+  open = false,
   citation,
   sourceUrl,
   pageNumber,
@@ -25,9 +36,17 @@ export function CitationDrawer({
   onSourceRetry,
 }: Props) {
   const { pick } = useLocale()
+  const panelRef = useRef<HTMLElement>(null)
+  const mobile = useSyncExternalStore(subscribeMobile, () => window.matchMedia(mobileQuery).matches)
+  const modal = mobile && open
+  useDialogFocus(panelRef, modal, onClose)
   return (
     <aside
       className="source-panel"
+      ref={panelRef}
+      tabIndex={-1}
+      role={modal ? 'dialog' : undefined}
+      aria-modal={modal || undefined}
       data-open={Boolean(citation)}
       aria-label={pick('Панель источника', 'Source panel')}
     >
@@ -59,7 +78,7 @@ export function CitationDrawer({
           <p>{citation.quote}</p>
           <footer>
             {pick('Страница', 'Page')} {citation.page_number} ·{' '}
-            {pick('точная цитата backend', 'exact backend quote')}
+            {pick('цитата из документа', 'quote from the document')}
           </footer>
         </blockquote>
       )}
@@ -71,7 +90,7 @@ export function CitationDrawer({
         sourceLoading={sourceLoading}
         sourceError={sourceError}
         onSourceRetry={onSourceRetry}
-        highlightQuote={citation?.quote}
+        highlightQuote={citation?.page_number === pageNumber ? citation.quote : null}
       />
     </aside>
   )

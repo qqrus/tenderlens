@@ -55,7 +55,7 @@ export function ConditionCard({ condition, onCitationOpen }: Props) {
         </blockquote>
       )}
       <footer>
-        <span>{pick('Проверено по PDF', 'Verified in PDF')}</span>
+        <span>{pick('Цитата из PDF', 'Quote from PDF')}</span>
         <CitationLink citation={condition.citation} onOpen={onCitationOpen} />
       </footer>
     </article>

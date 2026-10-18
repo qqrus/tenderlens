@@ -14,11 +14,12 @@ The canonical plan is [ROADMAP.md](ROADMAP.md) (Russian). See the
 known correctness issues, and the distinction between historical ML results and
 current checks. The project is an experimental MVP, not yet a validated v1.0 release.
 
-Proposed interface directions, pending selection:
-[A — light document workspace](docs/design/reference-a.html) ·
-[B — graphite analysis workspace](docs/design/reference-b.html).
-These standalone mockups use fictional data; they are not the implemented frontend.
-Preview images: [A](docs/design/reference-a.png) · [B](docs/design/reference-b.png).
+The selected **B — graphite workspace** is now implemented: PDF on the left, findings
+on the right, readable values and a compact document library. See the
+[implementation report](docs/design/graphite-implementation.md).
+Screenshots use a real synthetic PDF with mocked API responses, not a new model evaluation:
+[document library](docs/design/implemented-b-library.png) ·
+[analysis workspace](docs/design/implemented-b-workspace.png).
 
 ## Quick start
 
