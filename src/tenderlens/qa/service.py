@@ -4,13 +4,19 @@ from uuid import UUID
 
 import structlog
 
+from tenderlens.domain.text import numeric_tokens, sentence_spans
 from tenderlens.qa.models import (
     AnswerDraft,
     Evidence,
     GroundedAnswer,
     VerifiedCitation,
 )
-from tenderlens.qa.providers import AnswerProvider, ExtractiveAnswerProvider, GenerationError
+from tenderlens.qa.providers import (
+    AnswerProvider,
+    ExtractiveAnswerProvider,
+    GenerationError,
+    quote_answers_question,
+)
 from tenderlens.retrieval.service import HybridRetrievalService
 
 logger = structlog.get_logger(__name__)
@@ -57,7 +63,7 @@ class GroundedQuestionAnsweringService:
             draft = await self.fallback_provider.generate(question, evidence)
             answer_mode = "extractive_fallback"
 
-        verified = verify_claims(draft, evidence, max_claims=self.max_claims)
+        verified = verify_claims(draft, evidence, max_claims=self.max_claims, question=question)
         if draft.cannot_answer or not verified:
             return GroundedAnswer(
                 answer=_insufficient_evidence_message(question),
@@ -84,6 +90,7 @@ def verify_claims(
     evidence: list[Evidence],
     *,
     max_claims: int,
+    question: str | None = None,
 ) -> list[_VerifiedClaim]:
     evidence_by_id = {item.evidence_id: item for item in evidence}
     verified: list[_VerifiedClaim] = []
@@ -95,6 +102,31 @@ def verify_claims(
         if span is None:
             continue
         local_start, local_end = span
+        # Restore sentence context: a quoted substring must not drop "not", a date
+        # qualifier or an exception. The model selects evidence, not the final wording.
+        containing = [
+            (start, end)
+            for start, end in sentence_spans(item.hit.text)
+            if start < local_end and end > local_start
+        ]
+        if not containing:
+            continue
+        local_start, local_end = containing[0][0], containing[-1][1]
+        source_quote = item.hit.text[local_start:local_end]
+        if len(source_quote) > 2_000 or not claim.text.strip():
+            continue
+        if question is not None and not quote_answers_question(question, source_quote):
+            continue
+        if any(
+            previous.citation.chunk_id == item.hit.chunk_id
+            and previous.citation.start_char == item.hit.start_char + local_start
+            and previous.citation.end_char == item.hit.start_char + local_end
+            for previous in verified
+        ):
+            continue
+        if not numeric_tokens(claim.text) <= numeric_tokens(source_quote):
+            logger.info("answer_claim_rejected", reason="unsupported_number")
+            continue
         citation = VerifiedCitation(
             number=len(verified) + 1,
             chunk_id=item.hit.chunk_id,
@@ -103,11 +135,14 @@ def verify_claims(
             start_char=item.hit.start_char + local_start,
             end_char=item.hit.start_char + local_end,
         )
-        verified.append(_VerifiedClaim(text=claim.text, citation=citation))
+        # Literal source wording avoids presenting an unchecked paraphrase as a fact.
+        verified.append(_VerifiedClaim(text=" ".join(source_quote.split()), citation=citation))
     return verified
 
 
 def _find_quote_span(source: str, quote: str) -> tuple[int, int] | None:
+    if not quote.strip():
+        return None
     exact_start = source.find(quote)
     if exact_start >= 0:
         return exact_start, exact_start + len(quote)

@@ -24,6 +24,26 @@ def spec(category: ConditionCategory):  # type: ignore[no-untyped-def]
     return next(item for item in CATEGORY_SPECS if item.category == category)
 
 
+def test_iso_deadline_keeps_time_and_wrapped_line() -> None:
+    text = "Submission deadline:\n2026-10-24 at 15:30."
+    result = RuleBasedConditionExtractor(5).extract(
+        spec(ConditionCategory.DEADLINE),
+        [make_hit(text)],
+        citation_start=1,
+    )
+    assert result[0].value == "2026-10-24 at 15:30"
+    assert result[0].citation.quote == text
+
+
+def test_ruble_symbol_is_a_currency_value() -> None:
+    result = RuleBasedConditionExtractor(5).extract(
+        spec(ConditionCategory.BUDGET),
+        [make_hit("Бюджет: 1 000 000 ₽.")],
+        citation_start=1,
+    )
+    assert result[0].value == "1 000 000 ₽"
+
+
 def test_extracts_budget_with_exact_page_offsets() -> None:
     text = "Introduction. Maximum budget: 1 000 000 RUB. Payment terms follow."
     hit = make_hit(text, page=2, start_char=100)

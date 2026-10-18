@@ -13,15 +13,23 @@ class RealEvaluationQuestion(BaseModel):
     answerable: bool = True
     expected_pages: list[int] = Field(default_factory=list)
     expected_quote_fragments: list[str] = Field(default_factory=list)
+    # All entries are required facts, not alternative answers. Missing in legacy v1 gold.
+    expected_answers: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_ground_truth(self) -> Self:
         if self.answerable and (not self.expected_pages or not self.expected_quote_fragments):
             raise ValueError("answerable questions require expected pages and quote fragments")
-        if not self.answerable and (self.expected_pages or self.expected_quote_fragments):
+        if not self.answerable and (
+            self.expected_pages or self.expected_quote_fragments or self.expected_answers
+        ):
             raise ValueError("unanswerable questions cannot contain expected evidence")
         if any(page < 1 for page in self.expected_pages):
             raise ValueError("expected page numbers must be positive")
+        if any(
+            not value.strip() for value in self.expected_quote_fragments + self.expected_answers
+        ):
+            raise ValueError("gold fragments and answers must not be blank")
         return self
 
 
