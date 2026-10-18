@@ -29,3 +29,16 @@ def test_zero_cost_answer_provider_is_default() -> None:
 def test_analysis_limits_are_bounded() -> None:
     with pytest.raises(ValidationError):
         Settings(analysis_retrieval_limit=21)
+
+
+def test_ocr_defaults_are_free_and_bilingual() -> None:
+    settings = Settings()
+
+    assert settings.ocr_enabled is True
+    assert settings.ocr_languages == "rus+eng"
+    assert settings.ocr_dpi == 200
+
+
+def test_ocr_language_format_is_validated() -> None:
+    with pytest.raises(ValidationError):
+        Settings(ocr_languages="russian,english")

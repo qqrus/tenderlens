@@ -49,6 +49,12 @@ ACTIONABLE_REQUIREMENT = re.compile(
     r"(?:bidder|supplier|contractor)\s+(?:must|shall))",
     re.IGNORECASE,
 )
+REQUIREMENT_CONTEXT = re.compile(
+    r"(?:требован\w*|requirements?)\s+"
+    r"(?:к|для|участник|поставщик|исполнитель|состав|документ|опыт|"
+    r"квалификац|характерист|bidder|supplier|contractor)",
+    re.IGNORECASE,
+)
 
 CATEGORY_SPECS = (
     CategorySpec(
@@ -86,7 +92,7 @@ CATEGORY_SPECS = (
         queries=("penalty fine liquidated damages", "штраф пени неустойка"),
         keyword_pattern=re.compile(
             r"(?:penalt(?:y|ies)|fine|liquidated\s+damages|"
-            r"штраф\w*|пен(?:я|и|ей)|неустойк\w*)",
+            r"штраф\w*|пен(?:я|и|ей|ю)|неустойк\w*)",
             re.IGNORECASE,
         ),
         value_pattern=PENALTY_VALUE,
@@ -125,8 +131,8 @@ class RuleBasedConditionExtractor:
                 quote = hit.text[local_start:local_end]
                 if (
                     spec.category == ConditionCategory.REQUIREMENT
-                    and len(quote.split()) < 7
                     and ACTIONABLE_REQUIREMENT.search(quote) is None
+                    and (len(quote.split()) < 7 or REQUIREMENT_CONTEXT.search(quote) is None)
                 ):
                     continue
                 keyword_matches = list(spec.keyword_pattern.finditer(quote))

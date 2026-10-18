@@ -36,6 +36,8 @@ class Document(Base):
     page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    extraction_method: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    ocr_page_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
@@ -58,6 +60,11 @@ class Document(Base):
             name="valid_status",
         ),
         CheckConstraint("size_bytes > 0", name="positive_size"),
+        CheckConstraint("ocr_page_count >= 0", name="non_negative_ocr_page_count"),
+        CheckConstraint(
+            "extraction_method IS NULL OR extraction_method IN ('native', 'ocr', 'mixed')",
+            name="valid_extraction_method",
+        ),
     )
 
 

@@ -246,6 +246,9 @@ export interface components {
             error_code: string | null;
             /** Error Message */
             error_message: string | null;
+            extraction_method: components["schemas"]["ExtractionMethod"] | null;
+            /** Ocr Page Count */
+            ocr_page_count: number;
             /**
              * Created At
              * Format: date-time
@@ -262,6 +265,11 @@ export interface components {
          * @enum {string}
          */
         DocumentStatus: "uploaded" | "processing" | "ready" | "failed";
+        /**
+         * ExtractionMethod
+         * @enum {string}
+         */
+        ExtractionMethod: "native" | "ocr" | "mixed";
         /** DocumentUploadResponse */
         DocumentUploadResponse: {
             document: components["schemas"]["DocumentResponse"];

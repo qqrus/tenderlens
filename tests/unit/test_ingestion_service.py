@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Sequence
 from io import BytesIO
 from pathlib import Path
 
@@ -13,11 +13,20 @@ from starlette.datastructures import Headers
 from tenderlens.core.errors import AppError
 from tenderlens.db.base import Base
 from tenderlens.db.models.document import DocumentChunk, DocumentPage
-from tenderlens.domain.documents import DocumentStatus
+from tenderlens.domain.documents import DocumentStatus, ExtractionMethod
 from tenderlens.ingestion.chunking import PageAwareChunker
 from tenderlens.ingestion.extractor import PdfTextExtractor
 from tenderlens.ingestion.service import DocumentIngestionService
 from tenderlens.ingestion.storage import FileSystemDocumentStorage
+
+
+class FakeOcrEngine:
+    def recognize_pages(self, path: Path, page_indexes: Sequence[int]) -> dict[int, str]:
+        del path
+        return {
+            index: "Срок подачи заявок: 24 октября 2026 года. Бюджет: 500 000 рублей."
+            for index in page_indexes
+        }
 
 
 def pdf_bytes(text: str | None) -> bytes:
@@ -70,6 +79,8 @@ async def test_service_processes_and_deduplicates_document(
     assert processed is not None
     assert processed.status == DocumentStatus.READY.value
     assert processed.page_count == 1
+    assert processed.extraction_method == ExtractionMethod.NATIVE.value
+    assert processed.ocr_page_count == 0
     assert duplicate.id == document.id
     assert is_duplicate is True
 
@@ -99,6 +110,20 @@ async def test_service_marks_document_failed_when_ocr_is_required(
     assert processed is not None
     assert processed.status == DocumentStatus.FAILED.value
     assert processed.error_code == "no_extractable_text"
+
+
+@pytest.mark.asyncio
+async def test_service_persists_ocr_metadata(service: DocumentIngestionService) -> None:
+    service.extractor = PdfTextExtractor(max_pages=20, ocr_engine=FakeOcrEngine())
+    document, _ = await service.register_upload(upload(pdf_bytes(None), "scan.pdf"))
+
+    await service.process(document.id)
+    processed = await service.get_document(document.id)
+
+    assert processed is not None
+    assert processed.status == DocumentStatus.READY.value
+    assert processed.extraction_method == ExtractionMethod.OCR.value
+    assert processed.ocr_page_count == 1
 
 
 @pytest.mark.asyncio

@@ -87,11 +87,19 @@ export function DocumentSummary({ document, analysis, onCitationOpen }: Props) {
           complete
         />
         <FlowStep
-          label={pick('Текст извлечён', 'Text extracted')}
+          label={
+            document.ocr_page_count
+              ? pick('Текст распознан', 'Text recognized')
+              : pick('Текст извлечён', 'Text extracted')
+          }
           value={
-            document.page_count
-              ? `${document.page_count} ${pick('страниц', 'pages')}`
-              : pick('готово', 'ready')
+            document.ocr_page_count
+              ? document.extraction_method === 'mixed'
+                ? `OCR · ${document.ocr_page_count}/${document.page_count ?? '—'} ${pick('стр.', 'pages')}`
+                : `OCR · ${document.ocr_page_count} ${pick('стр.', 'pages')}`
+              : document.page_count
+                ? `${document.page_count} ${pick('страниц', 'pages')}`
+                : pick('готово', 'ready')
           }
           complete
         />

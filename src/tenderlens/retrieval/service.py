@@ -18,7 +18,11 @@ from tenderlens.retrieval.indexing import ChunkIndexingService
 logger = structlog.get_logger(__name__)
 
 SEMANTIC_QUERY_EXPANSIONS: tuple[tuple[str, str], ...] = (
-    (r"срок|дата", "deadline due date"),
+    (r"срок.*(?:подач|заяв)|дата|дедлайн", "deadline due date"),
+    (
+        r"срок.*(?:постав|монтаж|исполн)|(?:постав|монтаж|исполн).*срок",
+        "delivery period completion installation",
+    ),
     (r"бюджет|цен", "budget contract price"),
     (r"штраф|неустойк|пен[ияи]", "penalty fine liquidated damages"),
     (r"требован", "requirements eligibility"),
@@ -81,6 +85,20 @@ INTENT_RULES: tuple[tuple[re.Pattern[str], re.Pattern[str]], ...] = (
             r"(?:прием\w*\s+заяв|срок\w*\s+подач|направ\w+\s+заявк|"
             r"proposal deadline|proposals? must be received|submit.*offer no later)"
             r".{0,260}(?:\d{1,2}[:.]\d{2}|\d{1,2}\s+[A-Za-zА-Яа-яЁё]+\s+20\d{2})",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    ),
+    (
+        re.compile(
+            r"срок\w*.*(?:постав|монтаж|исполн)|"
+            r"(?:постав|монтаж|исполн).*срок|delivery period|completion period",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"(?:постав\w+|монтаж\w+|исполнени\w+).{0,260}"
+            r"(?:в течение\s+)?\d+\s*(?:календарн\w+|рабоч\w+)?\s*дн|"
+            r"(?:delivery|completion).{0,260}\d+\s*"
+            r"(?:business days?|calendar days?|days?)",
             re.IGNORECASE | re.DOTALL,
         ),
     ),

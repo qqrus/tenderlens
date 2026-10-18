@@ -3,8 +3,9 @@
 TenderLens is an AI-assisted service for extracting tender conditions, answering questions
 with page-level evidence, and producing a risk checklist. It is not legal advice.
 
-The project is under active development. The first milestone provides the production-style
-FastAPI and PostgreSQL/pgvector foundation.
+The project is under active development. The current version provides a production-style
+FastAPI and PostgreSQL/pgvector foundation, a React interface, hybrid retrieval, verified
+citations, and local OCR for Russian and English scans.
 
 ## Quick start
 
@@ -29,8 +30,10 @@ curl -X POST http://localhost:8000/api/v1/documents \
 ```
 
 The upload endpoint returns `202 Accepted`. Use `GET /api/v1/documents/{document_id}` to
-poll the processing status. At this stage digitally generated PDFs are supported; scanned
-documents return `no_extractable_text` until the OCR milestone is implemented.
+poll the processing status. TenderLens first reads the native PDF text. Pages with little or
+no text are rendered in memory and recognized locally with Tesseract (`rus+eng` by default).
+The API and interface expose whether extraction was `native`, `ocr`, or `mixed`, including the
+number of OCR pages. Docker Compose installs the OCR binary and language packs automatically.
 
 List documents and open the original PDF in a browser viewer:
 
@@ -149,8 +152,24 @@ uv run python scripts/smoke_pdf_pack.py
 
 These results are regression baselines, not claims of legal accuracy. The documents are
 programmatically generated fixtures, latency is hardware-dependent, generative LLM quality is
-not measured in the default extractive mode, and scanned PDFs remain unsupported. See
+not measured in the default extractive mode. See
 [`evals/README.md`](evals/README.md) and [`evals/baseline.json`](evals/baseline.json).
+
+The OCR benchmark is a separate six-page, image-only Russian tender. It contains no text layer,
+so the whole ingestion and question-answering path must use local OCR. On the reviewed Docker
+CPU run, all 6 pages were recognized in 6.40 seconds and the five-question check reached 1.0
+for Retrieval Hit@5, MRR, citation-page accuracy, citation-quote accuracy, correct refusal, and
+analysis category/page recall.
+
+```powershell
+uv run python scripts/generate_ocr_fixture.py
+uv run python scripts/evaluate_ocr.py
+```
+
+Each evaluation run changes only temporary PDF metadata to bypass upload deduplication, ensuring
+that ingestion latency measures real OCR rather than a cached result. See
+[`evals/ocr/README.md`](evals/ocr/README.md) and
+[`evals/ocr/baseline_v1.json`](evals/ocr/baseline_v1.json).
 
 An independent real-document holdout protocol is scaffolded under [`evals/real`](evals/real).
 The source PDFs and completed annotations remain local and Git-ignored; validation requires
@@ -184,6 +203,14 @@ Windows helpers:
 .\scripts\test.ps1
 .\scripts\test-all.ps1
 ```
+
+When running through Docker, no host OCR installation is required. A direct host run needs
+Tesseract with `rus` and `eng` language data available on `PATH`; alternatively set
+`OCR_TESSERACT_COMMAND` to the executable path or `OCR_ENABLED=false`.
+
+OCR is intentionally bounded to 80 low-text pages per document by default. It targets printed,
+upright text; handwriting, severe blur, unusual rotations, and complex table reconstruction may
+reduce quality. The original PDF remains available so every extracted claim can be checked.
 
 ## Development checks
 

@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tenderlens.db.models.document import Document, DocumentChunk, DocumentPage
-from tenderlens.domain.documents import DocumentStatus, ExtractedPage, TextChunk
+from tenderlens.domain.documents import DocumentStatus, ExtractedPage, ExtractionMethod, TextChunk
 from tenderlens.ingestion.storage import StoredUpload
 
 
@@ -57,6 +57,9 @@ class DocumentRepository:
         document: Document,
         pages: list[ExtractedPage],
         chunks: list[TextChunk],
+        *,
+        extraction_method: ExtractionMethod,
+        ocr_page_count: int,
     ) -> None:
         pages_by_number: dict[int, DocumentPage] = {}
         for extracted_page in pages:
@@ -85,6 +88,8 @@ class DocumentRepository:
             )
 
         document.page_count = len(pages)
+        document.extraction_method = extraction_method.value
+        document.ocr_page_count = ocr_page_count
         document.status = DocumentStatus.READY.value
         document.error_code = None
         document.error_message = None

@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     upload_dir: Path = Path("data/uploads")
     max_upload_size_mb: int = Field(default=20, ge=1, le=100)
     max_pdf_pages: int = Field(default=300, ge=1, le=2_000)
+    ocr_enabled: bool = True
+    ocr_languages: str = Field(default="rus+eng", pattern=r"^[a-z]{3}(?:\+[a-z]{3})*$")
+    ocr_dpi: int = Field(default=200, ge=150, le=300)
+    ocr_timeout_seconds: float = Field(default=30.0, ge=1, le=120)
+    ocr_max_pages: int = Field(default=80, ge=1, le=500)
+    ocr_min_text_chars: int = Field(default=40, ge=0, le=1_000)
+    ocr_tesseract_command: str = "tesseract"
     chunk_size_chars: int = Field(default=1_600, ge=200, le=10_000)
     chunk_overlap_chars: int = Field(default=200, ge=0, le=2_000)
 

@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from tenderlens.domain.documents import DocumentStatus
+from tenderlens.domain.documents import DocumentStatus, ExtractionMethod
 
 
 class DocumentResponse(BaseModel):
@@ -17,6 +17,8 @@ class DocumentResponse(BaseModel):
     page_count: int | None
     error_code: str | None
     error_message: str | None
+    extraction_method: ExtractionMethod | None
+    ocr_page_count: int
     created_at: datetime
     updated_at: datetime
 

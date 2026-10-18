@@ -14,7 +14,7 @@ from tenderlens.core.logging import configure_logging
 from tenderlens.core.middleware import RequestContextMiddleware
 from tenderlens.db.session import Database
 from tenderlens.ingestion.chunking import PageAwareChunker
-from tenderlens.ingestion.extractor import PdfTextExtractor
+from tenderlens.ingestion.extractor import PdfTextExtractor, TesseractPdfOcr
 from tenderlens.ingestion.service import DocumentIngestionService
 from tenderlens.ingestion.storage import FileSystemDocumentStorage
 from tenderlens.qa.providers import (
@@ -64,10 +64,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             resolved_settings.max_upload_size_bytes,
         )
         await storage.ensure_ready()
+        ocr_engine = (
+            TesseractPdfOcr(
+                command=resolved_settings.ocr_tesseract_command,
+                languages=resolved_settings.ocr_languages,
+                dpi=resolved_settings.ocr_dpi,
+                timeout_seconds=resolved_settings.ocr_timeout_seconds,
+            )
+            if resolved_settings.ocr_enabled
+            else None
+        )
         ingestion_service = DocumentIngestionService(
             database.session_factory,
             storage,
-            PdfTextExtractor(resolved_settings.max_pdf_pages),
+            PdfTextExtractor(
+                resolved_settings.max_pdf_pages,
+                ocr_engine=ocr_engine,
+                ocr_min_text_chars=resolved_settings.ocr_min_text_chars,
+                ocr_max_pages=resolved_settings.ocr_max_pages,
+            ),
             PageAwareChunker(
                 resolved_settings.chunk_size_chars,
                 resolved_settings.chunk_overlap_chars,
