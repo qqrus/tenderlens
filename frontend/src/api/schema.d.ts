@@ -90,6 +90,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/documents/{document_id}/tables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Document Tables */
+        get: operations["get_document_tables_api_v1_documents__document_id__tables_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/{document_id}/table-answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Answer Table Cell */
+        post: operations["answer_table_cell_api_v1_documents__document_id__table_answer_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/documents/{document_id}/search": {
         parameters: {
             query?: never;
@@ -174,6 +208,25 @@ export interface components {
              * @description Tender document in PDF format.
              */
             file: string;
+        };
+        /** Box */
+        Box: {
+            /** X0 */
+            x0: number;
+            /** Top */
+            top: number;
+            /** X1 */
+            x1: number;
+            /** Bottom */
+            bottom: number;
+        };
+        /** CellEvidence */
+        CellEvidence: {
+            /** Page Number */
+            page_number: number;
+            row_label: components["schemas"]["TableCell"];
+            column_header: components["schemas"]["TableCell"];
+            value: components["schemas"]["TableCell"];
         };
         /** CitationResponse */
         CitationResponse: {
@@ -265,11 +318,6 @@ export interface components {
          * @enum {string}
          */
         DocumentStatus: "uploaded" | "processing" | "ready" | "failed";
-        /**
-         * ExtractionMethod
-         * @enum {string}
-         */
-        ExtractionMethod: "native" | "ocr" | "mixed";
         /** DocumentUploadResponse */
         DocumentUploadResponse: {
             document: components["schemas"]["DocumentResponse"];
@@ -286,6 +334,37 @@ export interface components {
             /** Match Score */
             match_score: number;
             citation: components["schemas"]["CitationResponse"];
+        };
+        /**
+         * ExtractionMethod
+         * @enum {string}
+         */
+        ExtractionMethod: "native" | "ocr" | "mixed";
+        /** GeometrySnapshot */
+        GeometrySnapshot: {
+            /**
+             * Schema Version
+             * @default 1
+             * @constant
+             */
+            schema_version: "1";
+            /** Source Sha256 */
+            source_sha256: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_processed" | "disabled" | "unsupported" | "page_limit" | "ready" | "failed";
+            /**
+             * Coordinate System
+             * @default pdf_points_top_left
+             * @constant
+             */
+            coordinate_system: "pdf_points_top_left";
+            /** Extractor Version */
+            extractor_version?: string | null;
+            /** Tables */
+            tables?: components["schemas"]["PageTable"][];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -305,6 +384,17 @@ export interface components {
              * @default 0.1.0
              */
             version: string;
+        };
+        /** PageTable */
+        PageTable: {
+            /** Page Number */
+            page_number: number;
+            /** Page Width */
+            page_width: number;
+            /** Page Height */
+            page_height: number;
+            /** Rows */
+            rows: (components["schemas"]["TableCell"] | null)[][];
         };
         /** QuestionRequest */
         QuestionRequest: {
@@ -366,6 +456,38 @@ export interface components {
             mode: string;
             /** Hits */
             hits: components["schemas"]["SearchHitResponse"][];
+        };
+        /** TableAnswerRequest */
+        TableAnswerRequest: {
+            /** Source Sha256 */
+            source_sha256: string;
+            /** Table Index */
+            table_index: number;
+            /** Row Label */
+            row_label: string;
+            /** Column Header */
+            column_header: string;
+        };
+        /** TableAnswerResponse */
+        TableAnswerResponse: {
+            /**
+             * Document Id
+             * Format: uuid
+             */
+            document_id: string;
+            /** Source Sha256 */
+            source_sha256: string;
+            /** Page Width */
+            page_width: number;
+            /** Page Height */
+            page_height: number;
+            evidence: components["schemas"]["CellEvidence"];
+        };
+        /** TableCell */
+        TableCell: {
+            /** Text */
+            text: string;
+            box: components["schemas"]["Box"];
         };
         /** ValidationError */
         ValidationError: {
@@ -542,6 +664,72 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_document_tables_api_v1_documents__document_id__tables_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GeometrySnapshot"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    answer_table_cell_api_v1_documents__document_id__table_answer_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TableAnswerRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableAnswerResponse"];
+                };
             };
             /** @description Validation Error */
             422: {

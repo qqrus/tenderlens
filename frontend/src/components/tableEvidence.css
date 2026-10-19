@@ -1,0 +1,70 @@
+.table-question-panel {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #64748b66;
+  border-radius: 8px;
+}
+.table-question-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.table-question-panel p {
+  line-height: 1.6;
+}
+.table-controls {
+  display: grid;
+  gap: 14px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.table-controls label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.table-controls select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  color: inherit;
+  background: var(--surface, #192331);
+  border: 1px solid #64748b;
+  border-radius: 4px;
+}
+.table-answer {
+  margin-top: 20px;
+  padding: 16px;
+  border-left: 3px solid #3b82f6;
+  background: #3b82f610;
+}
+.table-answer > p {
+  font-size: 20px;
+  font-weight: 600;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.table-answer small {
+  display: block;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.table-evidence-legend {
+  padding: 12px 20px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.table-evidence-legend span {
+  margin-right: 12px;
+}
+.pdf-geometry-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.pdf-geometry-box {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid;
+}

@@ -1,6 +1,9 @@
 import { BookOpenCheck, Quote, X } from 'lucide-react'
 import { useRef, useSyncExternalStore } from 'react'
 import type { CitationResponse } from '../api/types'
+import type { TableAnswerResponse } from '../api/types'
+import { tableColors } from './tableHighlight'
+import './tableEvidence.css'
 import { useLocale } from '../i18n/LocaleContext'
 import { PdfViewer } from './PdfViewer'
 import { useDialogFocus } from './useDialogFocus'
@@ -15,6 +18,8 @@ const subscribeMobile = (callback: () => void) => {
 type Props = {
   open?: boolean
   citation: CitationResponse | null
+  tableEvidence?: TableAnswerResponse | null
+  geometryWarning?: string | null
   sourceUrl: string | null
   pageNumber: number
   onPageChange: (page: number) => void
@@ -27,6 +32,8 @@ type Props = {
 export function CitationDrawer({
   open = false,
   citation,
+  tableEvidence,
+  geometryWarning,
   sourceUrl,
   pageNumber,
   onPageChange,
@@ -47,7 +54,7 @@ export function CitationDrawer({
       tabIndex={-1}
       role={modal ? 'dialog' : undefined}
       aria-modal={modal || undefined}
-      data-open={Boolean(citation)}
+      data-open={Boolean(citation || tableEvidence)}
       aria-label={pick('Панель источника', 'Source panel')}
     >
       <header className="source-header">
@@ -83,6 +90,23 @@ export function CitationDrawer({
         </blockquote>
       )}
 
+      {geometryWarning && (
+        <p role="status" className="table-evidence-legend">
+          {geometryWarning}
+        </p>
+      )}
+      {tableEvidence && (
+        <div className="table-evidence-legend">
+          <p>{tableEvidence.evidence.value.text}</p>
+          <span style={{ color: tableColors.row_label }}>
+            {pick('Жёлтый: строка', 'Yellow: row')}
+          </span>
+          <span style={{ color: tableColors.column_header }}>
+            {pick('Фиолетовый: столбец', 'Purple: column')}
+          </span>
+          <span style={{ color: tableColors.value }}>{pick('Синий: значение', 'Blue: value')}</span>
+        </div>
+      )}
       <PdfViewer
         sourceUrl={sourceUrl}
         pageNumber={pageNumber}
@@ -91,6 +115,7 @@ export function CitationDrawer({
         sourceError={sourceError}
         onSourceRetry={onSourceRetry}
         highlightQuote={citation?.page_number === pageNumber ? citation.quote : null}
+        tableEvidence={tableEvidence}
       />
     </aside>
   )

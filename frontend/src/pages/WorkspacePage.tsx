@@ -13,6 +13,9 @@ import { EmptyState } from '../components/EmptyState'
 import { ErrorState } from '../components/ErrorState'
 import { LoadingSkeleton } from '../components/LoadingSkeleton'
 import { QuestionPanel } from '../components/QuestionPanel'
+import { TableQuestionPanel } from '../components/TableQuestionPanel'
+import { pdfSha256 } from '../components/tableHighlight'
+import type { TableAnswerResponse } from '../api/types'
 import { RiskChecklist } from '../components/RiskChecklist'
 import { useFileSession } from '../context/FileSessionContext'
 import { useLocale } from '../i18n/LocaleContext'
@@ -33,6 +36,7 @@ function DocumentWorkspace({ documentId }: { documentId: string }) {
   const objectUrl = fileSession.documentId === documentId ? fileSession.objectUrl : null
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('summary')
   const [selectedCitation, setSelectedCitation] = useState<CitationResponse | null>(null)
+  const [tableEvidence, setTableEvidence] = useState<TableAnswerResponse | null>(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [sourceOpen, setSourceOpen] = useState(false)
 
@@ -62,12 +66,26 @@ function DocumentWorkspace({ documentId }: { documentId: string }) {
   })
   const remoteObjectUrl = useBlobObjectUrl(fileQuery.data)
   const pdfSourceUrl = objectUrl ?? remoteObjectUrl
+  const sourceBlob = objectUrl ? fileSession.file : fileQuery.data
+  const hashQuery = useQuery({
+    queryKey: ['source-hash', documentId, pdfSourceUrl],
+    queryFn: () => pdfSha256(sourceBlob!),
+    enabled: Boolean(sourceBlob && tableEvidence),
+    retry: false,
+    staleTime: Number.POSITIVE_INFINITY,
+  })
+  const verifiedTableEvidence =
+    tableEvidence?.document_id === documentId && hashQuery.data === tableEvidence.source_sha256
+      ? tableEvidence
+      : null
 
   const fallbackCitation = analysisQuery.data?.conditions[0]?.citation ?? null
-  const visibleCitation = selectedCitation ?? fallbackCitation
-  const visiblePage = selectedCitation ? pageNumber : (fallbackCitation?.page_number ?? pageNumber)
+  const visibleCitation = tableEvidence ? null : (selectedCitation ?? fallbackCitation)
+  const visiblePage =
+    selectedCitation || tableEvidence ? pageNumber : (fallbackCitation?.page_number ?? pageNumber)
 
   const openCitation = (citation: CitationResponse) => {
+    setTableEvidence(null)
     setSelectedCitation(citation)
     setPageNumber(citation.page_number)
     setSourceOpen(true)
@@ -150,7 +168,19 @@ function DocumentWorkspace({ documentId }: { documentId: string }) {
           ) : document.status !== 'ready' ? (
             <DocumentStatus status={document.status} />
           ) : activeTab === 'questions' ? (
-            <QuestionPanel documentId={documentId} onCitationOpen={openCitation} />
+            <>
+              <QuestionPanel documentId={documentId} onCitationOpen={openCitation} />
+              <TableQuestionPanel
+                documentId={documentId}
+                onEvidenceOpen={(answer) => {
+                  if (answer.document_id !== documentId) return
+                  setSelectedCitation(null)
+                  setTableEvidence(answer)
+                  setPageNumber(answer.evidence.page_number)
+                  setSourceOpen(true)
+                }}
+              />
+            </>
           ) : analysisQuery.isLoading ? (
             <LoadingSkeleton />
           ) : analysisQuery.isError || !analysisQuery.data ? (
@@ -183,6 +213,15 @@ function DocumentWorkspace({ documentId }: { documentId: string }) {
           key={documentId}
           open={sourceOpen}
           citation={visibleCitation}
+          tableEvidence={verifiedTableEvidence}
+          geometryWarning={
+            tableEvidence && !verifiedTableEvidence
+              ? pick(
+                  'Подсветка скрыта: проверяем соответствие PDF источнику или не удалось подтвердить файл.',
+                  'Highlight hidden: checking the PDF source, or the file could not be verified.',
+                )
+              : null
+          }
           sourceUrl={pdfSourceUrl}
           pageNumber={visiblePage}
           onPageChange={(page) => {

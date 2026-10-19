@@ -1,4 +1,7 @@
 import type {
+  GeometrySnapshot,
+  TableAnswerRequest,
+  TableAnswerResponse,
   AnswerResponse,
   DocumentAnalysisResponse,
   DocumentListResponse,
@@ -80,6 +83,21 @@ export function getDocument(documentId: string): Promise<DocumentResponse> {
   return request<DocumentResponse>(`/api/v1/documents/${documentId}`)
 }
 
+export function getDocumentTables(documentId: string): Promise<GeometrySnapshot> {
+  return request(`/api/v1/documents/${documentId}/tables`)
+}
+
+export function answerTableCell(
+  documentId: string,
+  body: TableAnswerRequest,
+): Promise<TableAnswerResponse> {
+  return request(`/api/v1/documents/${documentId}/table-answer`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+}
+
 export function listDocuments(limit = 20, offset = 0): Promise<DocumentListResponse> {
   const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
   return request<DocumentListResponse>(`/api/v1/documents?${params}`)
@@ -116,6 +134,18 @@ export function askQuestion(documentId: string, question: string): Promise<Answe
 export function humanizeError(error: unknown, locale: 'ru' | 'en' = 'ru'): string {
   const pick = (ru: string, en: string) => (locale === 'ru' ? ru : en)
   if (error instanceof ApiError) {
+    if (error.code === 'geometry_source_mismatch')
+      return pick(
+        'Источник таблицы изменился. Обновите страницу и выберите ячейку снова.',
+        'The table source changed. Refresh the page and select the cell again.',
+      )
+    if (error.code === 'table_not_ready')
+      return pick(
+        'Геометрия таблиц ещё не готова или недоступна для этого документа.',
+        'Table geometry is not ready or is unavailable for this document.',
+      )
+    if (error.code === 'table_not_found')
+      return pick('Таблица не найдена. Обновите страницу.', 'Table not found. Refresh the page.')
     if (error.code === 'no_extractable_text') {
       return pick(
         'Не удалось извлечь или распознать текст. Проверьте качество страниц PDF.',
