@@ -81,6 +81,8 @@ async def test_service_processes_and_deduplicates_document(
     assert processed.page_count == 1
     assert processed.extraction_method == ExtractionMethod.NATIVE.value
     assert processed.ocr_page_count == 0
+    assert processed.table_geometry is not None
+    assert processed.table_geometry["status"] == "disabled"
     assert duplicate.id == document.id
     assert is_duplicate is True
 
@@ -114,6 +116,7 @@ async def test_service_marks_document_failed_when_ocr_is_required(
 
 @pytest.mark.asyncio
 async def test_service_persists_ocr_metadata(service: DocumentIngestionService) -> None:
+    service.table_geometry_enabled = True
     service.extractor = PdfTextExtractor(max_pages=20, ocr_engine=FakeOcrEngine())
     document, _ = await service.register_upload(upload(pdf_bytes(None), "scan.pdf"))
 
@@ -124,6 +127,23 @@ async def test_service_persists_ocr_metadata(service: DocumentIngestionService) 
     assert processed.status == DocumentStatus.READY.value
     assert processed.extraction_method == ExtractionMethod.OCR.value
     assert processed.ocr_page_count == 1
+    assert processed.table_geometry["status"] == "unsupported"
+
+
+@pytest.mark.asyncio
+async def test_table_failure_does_not_break_text_ingestion(
+    service: DocumentIngestionService,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("fake private text must not appear in logs")
+
+    monkeypatch.setattr("tenderlens.ingestion.service.build_geometry_snapshot", fail)
+    document, _ = await service.register_upload(upload(pdf_bytes("Budget 100 RUB")))
+    await service.process(document.id)
+    processed = await service.get_document(document.id)
+    assert processed.status == "ready"
+    assert processed.table_geometry["status"] == "failed"
 
 
 @pytest.mark.asyncio
@@ -137,3 +157,37 @@ async def test_service_reports_missing_source_file(
         await service.get_document_source(document.id)
 
     assert error.value.code == "document_file_not_found"
+
+
+@pytest.fixture
+def native_table_pdf() -> bytes:
+    source = (
+        Path(__file__).resolve().parents[2] / "output/pdf/tenderlens-eval-v2/ru-servers-001.pdf"
+    )
+    return source.read_bytes()
+
+
+@pytest.mark.asyncio
+async def test_native_pdf_geometry_survives_database_roundtrip(
+    service: DocumentIngestionService,
+    native_table_pdf: bytes,
+) -> None:
+    pytest.importorskip("pdfplumber")
+    service.table_geometry_enabled = True
+    document, _ = await service.register_upload(upload(native_table_pdf, "synthetic-tables.pdf"))
+    await service.process(document.id)
+    processed = await service.get_document(document.id)
+    assert processed is not None and processed.status == "ready"
+    snapshot = processed.table_geometry
+    assert snapshot is not None and snapshot["status"] == "ready"
+    assert snapshot["source_sha256"] == processed.sha256
+    assert snapshot["extractor_version"].startswith("pdfplumber/")
+    assert len(snapshot["tables"]) > 0
+    for table in snapshot["tables"]:
+        assert 1 <= table["page_number"] <= processed.page_count
+        for row in table["rows"]:
+            for cell in row:
+                if cell is not None:
+                    assert 0 <= cell["box"]["x0"] < cell["box"]["x1"] <= table["page_width"]
+    duplicate, deduplicated = await service.register_upload(upload(native_table_pdf, "copy.pdf"))
+    assert deduplicated and duplicate.table_geometry == snapshot

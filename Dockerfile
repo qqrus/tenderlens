@@ -17,12 +17,12 @@ RUN apt-get update \
 
 COPY --from=uv /uv /uvx /bin/
 COPY pyproject.toml uv.lock README.md ./
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --extra tables --no-install-project
 
 COPY src ./src
 COPY alembic.ini ./
 COPY alembic ./alembic
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --extra tables
 
 EXPOSE 8000
 

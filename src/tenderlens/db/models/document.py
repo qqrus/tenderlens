@@ -1,8 +1,10 @@
 from datetime import datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
+    JSON,
     BigInteger,
     CheckConstraint,
     DateTime,
@@ -38,6 +40,7 @@ class Document(Base):
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     extraction_method: Mapped[str | None] = mapped_column(String(20), nullable=True)
     ocr_page_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    table_geometry: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()

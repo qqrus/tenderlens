@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = Field(default=20, ge=1, le=100)
     max_pdf_pages: int = Field(default=300, ge=1, le=2_000)
     ocr_enabled: bool = True
+    table_geometry_enabled: bool = False
+    table_geometry_max_pages: int = Field(default=20, ge=1, le=100)
     ocr_languages: str = Field(default="rus+eng", pattern=r"^[a-z]{3}(?:\+[a-z]{3})*$")
     ocr_dpi: int = Field(default=200, ge=150, le=300)
     ocr_timeout_seconds: float = Field(default=30.0, ge=1, le=120)

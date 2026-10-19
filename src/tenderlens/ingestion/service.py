@@ -2,6 +2,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 import structlog
+from anyio import to_thread
 from fastapi import UploadFile
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -10,6 +11,7 @@ from tenderlens.core.errors import AppError
 from tenderlens.db.models.document import Document
 from tenderlens.ingestion.chunking import PageAwareChunker
 from tenderlens.ingestion.extractor import PdfExtractionError, PdfTextExtractor
+from tenderlens.ingestion.geometry_snapshot import GeometrySnapshot, build_geometry_snapshot
 from tenderlens.ingestion.repository import DocumentRepository
 from tenderlens.ingestion.storage import FileSystemDocumentStorage
 
@@ -23,11 +25,16 @@ class DocumentIngestionService:
         storage: FileSystemDocumentStorage,
         extractor: PdfTextExtractor,
         chunker: PageAwareChunker,
+        *,
+        table_geometry_enabled: bool = False,
+        table_geometry_max_pages: int = 20,
     ) -> None:
         self.session_factory = session_factory
         self.storage = storage
         self.extractor = extractor
         self.chunker = chunker
+        self.table_geometry_enabled = table_geometry_enabled
+        self.table_geometry_max_pages = table_geometry_max_pages
 
     async def register_upload(self, upload: UploadFile) -> tuple[Document, bool]:
         document_id = uuid4()
@@ -84,8 +91,23 @@ class DocumentIngestionService:
             await session.commit()
 
         try:
+            source_sha256 = document.sha256
             extraction = await self.extractor.extract(self.storage.source_path(document_id))
             chunks = self.chunker.chunk_pages(extraction.pages)
+            try:
+                geometry = await to_thread.run_sync(
+                    lambda: build_geometry_snapshot(
+                        self.storage.source_path(document_id),
+                        source_sha256,
+                        extraction,
+                        enabled=self.table_geometry_enabled,
+                        max_pages=self.table_geometry_max_pages,
+                    )
+                )
+            except Exception:
+                # Optional enrichment must not break successful text ingestion or log PDF content.
+                logger.warning("table_geometry_failed", document_id=str(document_id))
+                geometry = GeometrySnapshot(source_sha256=source_sha256, status="failed")
             async with self.session_factory() as session:
                 repository = DocumentRepository(session)
                 document = await repository.get(document_id)
@@ -99,6 +121,7 @@ class DocumentIngestionService:
                     extraction_method=extraction.method,
                     ocr_page_count=extraction.ocr_page_count,
                 )
+                document.table_geometry = geometry.model_dump(mode="json")
                 await session.commit()
             logger.info(
                 "document_processed",

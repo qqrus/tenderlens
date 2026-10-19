@@ -10,6 +10,7 @@ from tenderlens.api.schemas.documents import (
     DocumentUploadResponse,
 )
 from tenderlens.core.errors import AppError
+from tenderlens.ingestion.geometry_snapshot import GeometrySnapshot
 
 router = APIRouter(prefix="/documents")
 
@@ -83,3 +84,23 @@ async def get_document_file(
         content_disposition_type="inline",
         headers={"Cache-Control": "private, no-store"},
     )
+
+
+@router.get("/{document_id}/tables", response_model=GeometrySnapshot)
+async def get_document_tables(
+    document_id: UUID,
+    ingestion_service: IngestionServiceDependency,
+) -> GeometrySnapshot:
+    document = await ingestion_service.get_document(document_id)
+    if document is None:
+        raise AppError(
+            code="document_not_found", message="Document was not found.", status_code=404
+        )
+    if document.table_geometry is None:
+        return GeometrySnapshot(source_sha256=document.sha256, status="not_processed")
+    snapshot = GeometrySnapshot.model_validate(document.table_geometry)
+    if snapshot.source_sha256 != document.sha256:
+        raise AppError(
+            code="geometry_source_mismatch", message="Geometry source mismatch.", status_code=409
+        )
+    return snapshot

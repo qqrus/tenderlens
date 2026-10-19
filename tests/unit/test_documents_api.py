@@ -72,6 +72,50 @@ def create_app(service: FakeIngestionService) -> FastAPI:
     return app
 
 
+def test_old_document_reports_geometry_not_processed() -> None:
+    document = make_document()
+    with TestClient(create_app(FakeIngestionService(document))) as client:
+        response = client.get(f"/api/v1/documents/{document.id}/tables")
+    assert response.status_code == 200
+    assert response.json()["status"] == "not_processed"
+    assert response.json()["tables"] == []
+
+
+def test_geometry_with_wrong_source_hash_is_not_exposed() -> None:
+    document = make_document()
+    document.table_geometry = {"source_sha256": "b" * 64, "status": "ready", "tables": []}
+    with TestClient(create_app(FakeIngestionService(document))) as client:
+        response = client.get(f"/api/v1/documents/{document.id}/tables")
+    assert response.status_code == 409
+
+
+def test_geometry_endpoint_returns_404_for_missing_document() -> None:
+    with TestClient(create_app(FakeIngestionService(None))) as client:
+        response = client.get(f"/api/v1/documents/{uuid4()}/tables")
+    assert response.status_code == 404
+
+
+def test_geometry_endpoint_preserves_cell_coordinates() -> None:
+    document = make_document()
+    table = {
+        "page_number": 1,
+        "page_width": 100,
+        "page_height": 200,
+        "rows": [[{"text": "Budget", "box": {"x0": 10, "top": 20, "x1": 90, "bottom": 40}}]],
+    }
+    document.table_geometry = {
+        "source_sha256": document.sha256,
+        "status": "ready",
+        "tables": [table],
+        "extractor_version": "test/1",
+    }
+    with TestClient(create_app(FakeIngestionService(document))) as client:
+        response = client.get(f"/api/v1/documents/{document.id}/tables")
+    assert response.status_code == 200
+    assert response.json()["coordinate_system"] == "pdf_points_top_left"
+    assert response.json()["tables"] == [table]
+
+
 def test_upload_schedules_processing() -> None:
     document = make_document()
     service = FakeIngestionService(document)
