@@ -87,6 +87,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 resolved_settings.chunk_size_chars,
                 resolved_settings.chunk_overlap_chars,
             ),
+            table_geometry_enabled=resolved_settings.table_geometry_enabled,
+            table_geometry_max_pages=resolved_settings.table_geometry_max_pages,
         )
         embedding_provider = FastEmbedEmbeddingProvider(
             resolved_settings.embedding_model,
